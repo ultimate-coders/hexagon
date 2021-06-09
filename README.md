@@ -1,4 +1,4 @@
-# hexagon
+# Hexagon
 
 ## Authors
 
@@ -21,11 +21,27 @@ A social network website that allows creative individuals to share their own cre
 
 Hexagon is a social media for creative people such as artists, that will allow them to share their work with the users who are interested in art in general. Hexagon will increase the chance for creative users to grow their audience and fanbase, arrange or attend events related to what they love.
 
-## Data modeling
+## User stories
+
+1. As a user, I should be able to create posts.
+
+2. As a user, I should be able to edit my own posts.
+
+3. As a user, I should be able to delete my own posts
+
+4. As a user, I should be able to comment on my own and others' posts.
+
+5. As a user, I should be able to follow other users.
+
+6. As a user, I should be able to rate others' posts.
+
+## Domain Modeling
+
+![Domain Model](projectModel.png)
 
 ## Uml Diagram
 
-![UML](link)
+![UML - In progress](link)
 
 ### Resources
 
