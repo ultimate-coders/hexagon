@@ -38,24 +38,28 @@ function Post(post) {
 }
 
 // Get all posts
-async function getAllPosts(categoryId = '', pageNumber = 1) {
+async function getAllPosts(categoryName = '', pageNumber = 1) {
   try {
     let sqlQuery = `
-    SELECT post.id AS post_id, profile.id AS profile_id, user_file.id AS file_id, file AS profile_picture, client.id AS user_id, catigory.id AS category_id, name AS category_name, text, first_name, last_name, caption, file as profile_picture, user_name, email FROM post JOIN profile ON post.profile_id = profile.id JOIN client ON client.id = profile.user_id JOIN catigory ON post.catigory_id = catigory.id JOIN user_file ON profile.profile_picture = user_file.id ORDER BY post.id DESC LIMIT $1 OFFSET $2;
+    SELECT post.id AS post_id, profile.id AS profile_id, user_file.id AS file_id, file AS profile_picture, client.id AS user_id, category.id AS category_id, name AS category_name, text, first_name, last_name, caption, file as profile_picture, user_name, email FROM post JOIN profile ON post.profile_id = profile.id JOIN client ON client.id = profile.user_id JOIN category ON post.category_id = category.id JOIN user_file ON profile.profile_picture = user_file.id ORDER BY post.id DESC LIMIT $1 OFFSET $2;
     `;
-    let safeValues = [PAGE_SIZE, pageNumber];
+    let startFrom = (pageNumber - 1) * PAGE_SIZE;
+    let safeValues = [PAGE_SIZE, startFrom];
     // Filtering
-    if(keyword && keyword !== ''){
-      keyword = `%${keyword}%`;
-      sqlQuery = 'SELCET user_profile.id AS user_profile_id, user.id AS user_id, files.id AS file_id, first_name, last_name, caption, files.file as profile_image, username, email, FROM user_profile JOIN user ON user_profile.user_id = user.id JOIN files ON user_profile.profile_picture_id = files.id WHERE UPPER(first_name) LIKE UPPER($1) OR UPPER(last_name) LIKE UPPER($1) OR UPPER(username) LIKE UPPER($1) OR UPPER(email) LIKE UPPER($1) ORDER BY user_profile.id DESC LIMIT $1 OFFSET $2;';
-      safeValues = [keyword, PAGE_SIZE, pageNumber];
+    if(categoryName && categoryName !== ''){
+      sqlQuery = `
+      SELECT post.id AS post_id, profile.id AS profile_id, user_file.id AS file_id, file AS profile_picture, client.id AS user_id, category.id AS category_id, name AS category_name, text, first_name, last_name, caption, file as profile_picture, user_name, email FROM post JOIN profile ON post.profile_id = profile.id JOIN client ON client.id = profile.user_id JOIN category ON post.category_id = category.id JOIN user_file ON profile.profile_picture = user_file.id WHERE category_name = $1 ORDER BY post.id DESC LIMIT $2 OFFSET $3;
+      `;
+      startFrom = (pageNumber - 1) * PAGE_SIZE;
+      safeValues = [categoryName, PAGE_SIZE, startFrom];
     }
     // Query the database
-    const profilesData = await client.query(sqlQuery, safeValues);
+    const postsData = await client.query(sqlQuery, safeValues);
+    const hasNext = parseInt(postsData.rowCount) > startFrom + PAGE_SIZE;
     const response = {
-      results: profilesData.rows.map(profile => new Profile(profile)),
-      count: profilesData.rowCount,
-      has_next: parseInt(profilesData.rowCount) > pageNumber + PAGE_SIZE,
+      results: postsData.rows.map(post => new Post(post)),
+      count: postsData.rowCount,
+      hasNext,
     };
     return response;   
   } catch (e) {

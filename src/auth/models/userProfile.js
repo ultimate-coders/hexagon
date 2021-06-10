@@ -46,9 +46,9 @@ async function getAllProfiles(keyword = '', pageNumber = 1) {
       `;
       safeValues = [keyword, PAGE_SIZE, pageNumber];
     }
-    const hasNext = parseInt(profilesData.rowCount) > startFrom + PAGE_SIZE;
     // Query the database
     const profilesData = await client.query(sqlQuery, safeValues);
+    const hasNext = parseInt(profilesData.rowCount) > startFrom + PAGE_SIZE;
     const response = {
       results: profilesData.rows.map(profile => new Profile(profile)),
       count: profilesData.rowCount,
