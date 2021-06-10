@@ -23,6 +23,10 @@ io.listen(httpServer);
 // Esoteric Resources
 const errorHandler = require('./error-handlers/500.js');
 const notFound = require('./error-handlers/404.js');
+const v1Router = require('./routes/v1');
+const authRouter = require('./auth/routes');
+
+
 
 // App Level MW
 app.use(cors());
@@ -47,6 +51,8 @@ messages.on('connection', () => {
 app.get('/test', (req, res) => {
   res.send('Hello Word');
 });
+// app.use('/auth',authRouter);
+app.use('/api/v1',v1Router);
 
 // Catchalls
 app.use(notFound);
