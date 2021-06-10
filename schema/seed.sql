@@ -28,6 +28,8 @@ INSERT INTO follow(follower,following) VALUES (5,3);
 INSERT INTO follow(follower,following) VALUES (5,2);
 
 INSERT INTO message(sender_id,reciver_id,message,seen) VALUES (1,4,'hi',true);
+INSERT INTO message(sender_id,reciver_id,message,seen) VALUES (4,1,'hello',true);
+
 INSERT INTO message(sender_id,reciver_id,message,seen) VALUES (5,2,'hi',false);
 INSERT INTO message(sender_id,reciver_id,message,seen) VALUES (3,1,'hi',true);
 INSERT INTO message(sender_id,reciver_id,message,seen) VALUES (2,3,'hi',false);
