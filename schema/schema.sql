@@ -16,7 +16,6 @@ CREATE TABLE client(
   id SERIAL PRIMARY KEY,
   user_name VARCHAR(50),
   hashed_password VARCHAR(100),
-  salt VARCHAR(50),
   email VARCHAR(70),
   verified boolean
 );
@@ -35,7 +34,7 @@ CREATE TABLE profile(
   first_name VARCHAR(20),
   last_name VARCHAR(20),
   caption VARCHAR(50),
-  profile_picture VARCHAR(1000),
+  profile_picture int,
 
   FOREIGN KEY (user_id) REFERENCES client(id)
 );
@@ -66,8 +65,8 @@ CREATE TABLE user_file(
   created_at date not null default current_timestamp
 );
 
-DROP TABLE IF EXISTS catigory;
-CREATE TABLE catigory(
+DROP TABLE IF EXISTS category;
+CREATE TABLE category(
   id SERIAL PRIMARY KEY,
   name VARCHAR(20)
 );
@@ -76,11 +75,11 @@ CREATE TABLE catigory(
 CREATE TABLE post(
   id SERIAL PRIMARY KEY,
   profile_id int,
-  catigory_id int,
+  category_id int,
   text text,
 
   FOREIGN KEY (profile_id) REFERENCES profile(id),
-  FOREIGN KEY (catigory_id) REFERENCES catigory(id)
+  FOREIGN KEY (category_id) REFERENCES category(id)
 );
 
 CREATE TABLE attachment(
@@ -98,14 +97,12 @@ CREATE TABLE comment(
     rate int,
     number_like int,
     post_id int,
-    seen boolean,
 
     FOREIGN KEY (post_id) REFERENCES post(id)
 );
 
 CREATE TABLE notification(
   id SERIAL PRIMARY KEY,
-  sender_id int,
   reciver_id int,
   message text ,
   post_id int,
