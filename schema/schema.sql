@@ -98,6 +98,7 @@ CREATE TABLE comment(
     rate int,
     number_like int,
     post_id int,
+    seen boolean,
 
     FOREIGN KEY (post_id) REFERENCES post(id)
 );
@@ -108,6 +109,7 @@ CREATE TABLE notification(
   reciver_id int,
   message text ,
   post_id int,
+  seen boolean,
 
   FOREIGN KEY (reciver_id) REFERENCES profile(id)
 );
