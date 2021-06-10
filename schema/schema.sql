@@ -42,13 +42,12 @@ CREATE TABLE profile(
 
 CREATE TABLE follow(
   id SERIAL PRIMARY KEY,
-  user_id int,
-  follower VARCHAR(20),
-  following VARCHAR(20),
+  follower int,
+  following int,
 
-  FOREIGN KEY (user_id) REFERENCES client(id)
+  FOREIGN KEY (follower) REFERENCES profile(id),
+  FOREIGN KEY (following) REFERENCES profile(id)
 );
-
 
 CREATE TABLE message(
   id SERIAL PRIMARY KEY,
