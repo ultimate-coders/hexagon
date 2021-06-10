@@ -14,26 +14,26 @@ DROP TABLE IF EXISTS client;
 
 CREATE TABLE client(
   id SERIAL PRIMARY KEY,
-  user_name VARCHAR(50),
-  hashed_password VARCHAR(100),
-  email VARCHAR(70),
+  user_name VARCHAR(100) UNIQUE,
+  hashed_password VARCHAR(250),
+  email VARCHAR(150) UNIQUE,
   verified boolean
 );
 
 CREATE TABLE jwt(
   id SERIAL PRIMARY KEY,
   user_id int,
-  access_token VARCHAR(100),
-  refresh_token VARCHAR(100),
+  access_token VARCHAR(250),
+  refresh_token VARCHAR(250),
   FOREIGN KEY (user_id) REFERENCES client(id)
 );
 
 CREATE TABLE profile(
   id SERIAL PRIMARY KEY,
   user_id int,
-  first_name VARCHAR(20),
-  last_name VARCHAR(20),
-  caption VARCHAR(50),
+  first_name VARCHAR(100),
+  last_name VARCHAR(100),
+  caption VARCHAR(250),
   profile_picture int,
 
   FOREIGN KEY (user_id) REFERENCES client(id)

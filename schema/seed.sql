@@ -1,3 +1,5 @@
+
+
 INSERT INTO client(user_name,hashed_password,email,verified) VALUES ('tamara','sss','tamara@yahoo.com',true);
 INSERT INTO client(user_name,hashed_password,email,verified) VALUES ('wessam','5879','wessam@yahoo.com',false);
 INSERT INTO client(user_name,hashed_password,email,verified) VALUES ('amjad','8863','amjad@yahoo.com',false);
@@ -28,7 +30,7 @@ INSERT INTO follow(follower,following) VALUES (5,3);
 INSERT INTO follow(follower,following) VALUES (5,2);
 
 INSERT INTO message(sender_id,reciver_id,message,seen) VALUES (1,4,'hi',true);
-INSERT INTO message(sender_id,reciver_id,message,seen) VALUES (4,1,'hello',true);
+INSERT INTO message(sender_id,reciver_id,message,seen) VALUES (4,1,'hi',true);
 
 INSERT INTO message(sender_id,reciver_id,message,seen) VALUES (5,2,'hi',false);
 INSERT INTO message(sender_id,reciver_id,message,seen) VALUES (3,1,'hi',true);
