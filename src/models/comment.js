@@ -45,3 +45,5 @@ async function deleteComment(id){
     throw new Error(e);
   }
 }
+
+module.exports={getPostComments,createComment,updateComment,deleteComment};
