@@ -55,6 +55,7 @@ CREATE TABLE message(
   sender_id int,
   reciver_id int,
   message text ,
+  seen boolean,
   FOREIGN KEY (sender_id) REFERENCES profile(id)
 );
 
