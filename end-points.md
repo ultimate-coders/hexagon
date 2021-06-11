@@ -13,7 +13,7 @@
 
 | Method | Endpint        | Description                                |
 | ------ | -------------- | ------------------------------------------ |
-| GET    | `/profile/me`  | Get profile information for logged in user |
+| GET    | `/me-profile`  | Get profile information for logged in user |
 | GET    | `/profile`     | Get all users' profiles information        |
 | GET    | `/profile/:id` | Get user' profiles information             |
 | POST   | `/profile`     | Create user's profile                      |
