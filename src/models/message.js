@@ -1,10 +1,10 @@
 const client = require('./db');
 
-const PAGE_SIZE = 10;
+const { PAGE_SIZE } = require('../configurations');
 
 
 let createMessage = async (message , senderId, receiverId)=>{
-  let SQL = `INSERT INTO message (message,sender_id,reciver_id) VALUES ($1,$2,$3) RETURNING *;`;
+  let SQL = `INSERT INTO message (message,sender_id,receiver_id) VALUES ($1,$2,$3) RETURNING *;`;
   let safeValues = [message,senderId,receiverId];
   let result = await client.query(SQL, safeValues);
   return result;
@@ -12,7 +12,7 @@ let createMessage = async (message , senderId, receiverId)=>{
 let getMessage = async (senderId , receiverId, pageNumber = 1) =>{
   try {
     let startFrom = (pageNumber - 1) * PAGE_SIZE;
-    let SQL = `SELECT DISTINCT * FROM message WHERE (sender_id=$1 AND reciver_id=$2) OR (sender_id=$2 AND reciver_id=$1) ORDER BY id DESC LIMIT $3 OFFSET $4;`;
+    let SQL = `SELECT DISTINCT * FROM message WHERE (sender_id=$1 AND receiver_id=$2) OR (sender_id=$2 AND receiver_id=$1) ORDER BY id DESC LIMIT $3 OFFSET $4;`;
     let safeValues = [ senderId,receiverId, PAGE_SIZE, startFrom];
     let result = await client.query(SQL, safeValues);
     console.log(result, safeValues);

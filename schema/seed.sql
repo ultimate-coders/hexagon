@@ -12,6 +12,12 @@ INSERT INTO jwt(user_id,access_token,refresh_token) VALUES ('3','hhh','qqq');
 INSERT INTO jwt(user_id,access_token,refresh_token) VALUES ('4','hhh','qqq');
 INSERT INTO jwt(user_id,access_token,refresh_token) VALUES ('5','hhh','qqq');
 
+INSERT INTO user_file(file) VALUES ('../img/female.jpg');
+INSERT INTO user_file(file) VALUES ('../img/male.jpg');
+INSERT INTO user_file(file) VALUES ('../img/male.jpg');
+INSERT INTO user_file(file) VALUES ('../img/male.jpg');
+INSERT INTO user_file(file) VALUES ('../img/female.jpg');
+
 INSERT INTO profile(user_id,first_name,last_name,caption,profile_picture) VALUES ('1','tamara','al-rashed','artist',1);
 INSERT INTO profile(user_id,first_name,last_name,caption,profile_picture) VALUES ('2','wesam','al-masri','artist',2);
 INSERT INTO profile(user_id,first_name,last_name,caption,profile_picture) VALUES ('3','amjad','mesmar','desighner',2);
@@ -29,19 +35,13 @@ INSERT INTO follow(follower,following) VALUES (4,1);
 INSERT INTO follow(follower,following) VALUES (5,3);
 INSERT INTO follow(follower,following) VALUES (5,2);
 
-INSERT INTO message(sender_id,reciver_id,message,seen) VALUES (1,4,'hi',true);
-INSERT INTO message(sender_id,reciver_id,message,seen) VALUES (4,1,'hi',true);
+INSERT INTO message(sender_id,receiver_id,message,seen) VALUES (1,4,'hi',true);
+INSERT INTO message(sender_id,receiver_id,message,seen) VALUES (4,1,'hi',true);
 
-INSERT INTO message(sender_id,reciver_id,message,seen) VALUES (5,2,'hi',false);
-INSERT INTO message(sender_id,reciver_id,message,seen) VALUES (3,1,'hi',true);
-INSERT INTO message(sender_id,reciver_id,message,seen) VALUES (2,3,'hi',false);
-INSERT INTO message(sender_id,reciver_id,message,seen) VALUES (4,5,'hi',true);
-
-INSERT INTO user_file(file) VALUES ('../img/female.jpg');
-INSERT INTO user_file(file) VALUES ('../img/male.jpg');
-INSERT INTO user_file(file) VALUES ('../img/male.jpg');
-INSERT INTO user_file(file) VALUES ('../img/male.jpg');
-INSERT INTO user_file(file) VALUES ('../img/female.jpg');
+INSERT INTO message(sender_id,receiver_id,message,seen) VALUES (5,2,'hi',false);
+INSERT INTO message(sender_id,receiver_id,message,seen) VALUES (3,1,'hi',true);
+INSERT INTO message(sender_id,receiver_id,message,seen) VALUES (2,3,'hi',false);
+INSERT INTO message(sender_id,receiver_id,message,seen) VALUES (4,5,'hi',true);
 
 INSERT INTO category(name) VALUES ('artist');
 INSERT INTO category(name) VALUES ('engneer');
@@ -67,10 +67,10 @@ INSERT INTO comment (comment,rate,number_like,post_id) VALUES ('i dont like it',
 INSERT INTO comment (comment,rate,number_like,post_id) VALUES ('perfect',4,3,4);
 INSERT INTO comment (comment,rate,number_like,post_id) VALUES ('i dont like it',4,3,5);
 
-INSERT INTO notification (reciver_id,message,post_id,seen) VALUES (2,'tamara like your post',2,false);
-INSERT INTO notification (reciver_id,message,post_id,seen) VALUES (2,'amjad commented on your post',2,true);
-INSERT INTO notification (reciver_id,message,post_id,seen) VALUES (4,'anwar like your post',5,false);
-INSERT INTO notification (reciver_id,message,post_id,seen) VALUES (5,'wessam like your post',6,true);
-INSERT INTO notification (reciver_id,message,post_id,seen) VALUES (2,'wessam commented on your post',4,false);
-INSERT INTO notification (reciver_id,message,post_id,seen) VALUES (4,'amjad like your post',5,false);
-INSERT INTO notification (reciver_id,message,post_id,seen) VALUES (4,'wessam like your post',5,false);
+INSERT INTO notification (receiver_id,message,post_id,seen) VALUES (2,'tamara like your post',2,false);
+INSERT INTO notification (receiver_id,message,post_id,seen) VALUES (2,'amjad commented on your post',2,true);
+INSERT INTO notification (receiver_id,message,post_id,seen) VALUES (4,'anwar like your post',5,false);
+INSERT INTO notification (receiver_id,message,post_id,seen) VALUES (5,'wessam like your post',6,true);
+INSERT INTO notification (receiver_id,message,post_id,seen) VALUES (2,'wessam commented on your post',4,false);
+INSERT INTO notification (receiver_id,message,post_id,seen) VALUES (4,'amjad like your post',5,false);
+INSERT INTO notification (receiver_id,message,post_id,seen) VALUES (4,'wessam like your post',5,false);
