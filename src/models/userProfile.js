@@ -10,7 +10,7 @@ function UserProfile(profileObj) {
   this.first_name = profileObj.first_name || '';
   this.last_name = profileObj.last_name || '';
   this.caption = profileObj.caption || '';
-  this.profile_picture = profileObj.profile_picture || '';
+  this.profile_picture = profileObj.profile_picture || null;
 }
 
 // To format the response
@@ -50,9 +50,9 @@ async function getAllProfiles(keyword = '', pageNumber = 1) {
     const profilesData = await client.query(sqlQuery, safeValues);
     const hasNext = profilesData.rowCount > PAGE_SIZE;
     let results = profilesData.rows.map(profile => new Profile(profile));
-    if(hasNext) results.slice(0, -1);
+    if(hasNext)  results = results.slice(0, -1);
     const response = {
-      count: profilesData.rowCount,
+      count: profilesData.rowCount - 1,
       hasNext: hasNext,
       results: results,
     };
@@ -66,7 +66,23 @@ async function getAllProfiles(keyword = '', pageNumber = 1) {
 async function getSingleProfile(id) {
   try {
     let sqlQuery = `
-    SELECT profile.id AS user_profile_id, client.id AS user_id, user_file.id as file_id, first_name, last_name, caption, file as profile_picture, user_name, email FROM profile JOIN client ON profile.user_id = client.id JOIN user_file ON profile.profile_picture = user_file.id WHERE profile.id = $1;
+    SELECT profile.id AS profile_id, client.id AS user_id, user_file.id as file_id, first_name, last_name, caption, file as profile_picture, user_name, email FROM profile JOIN client ON profile.user_id = client.id JOIN user_file ON profile.profile_picture = user_file.id WHERE profile.id = $1;
+    `;
+    let safeValues = [id];
+    // Query the database
+    const profileData = await client.query(sqlQuery, safeValues);
+    const response = new Profile(profileData.rows[0]);
+    return response;
+  } catch (e) {
+    throw new Error(e);
+  }
+}
+
+// Get profile by user id
+async function getProfileByUserId(id) {
+  try {
+    let sqlQuery = `
+    SELECT profile.id AS profile_id, client.id AS user_id, user_file.id as file_id, first_name, last_name, caption, file as profile_picture, user_name, email FROM profile JOIN client ON profile.user_id = client.id JOIN user_file ON profile.profile_picture = user_file.id WHERE client.id = $1;
     `;
     let safeValues = [id];
     // Query the database
@@ -81,12 +97,21 @@ async function getSingleProfile(id) {
 // Create user profile (Need to be enhanced the response like the get all)
 async function createProfile(profileObj) {
   try {
-    let sqlQuery = 'INSERT INTO profile (user_id, first_name, last_name, caption, profile_picture) VALUES ($1, $2, $3, $4 , $5);';
+    let sqlQuery = 'INSERT INTO profile (user_id, first_name, last_name, caption, profile_picture) VALUES ($1, $2, $3, $4 , $5) RETURNING *;';
     let profile = new UserProfile(profileObj);
-    let safeValues = [profile.user_id, profile.first_name, profile.last_name, profile.caption, profile.profile_picture_id];
+    let safeValues = [profile.user_id, profile.first_name, profile.last_name, profile.caption, profile.profile_picture];
     // Query the database
-    const profileData = await client.query(sqlQuery, safeValues);
-    return profile;
+    let profileData = await client.query(sqlQuery, safeValues);
+    if(profileData.rowCount>0){
+      sqlQuery = `
+      SELECT profile.id AS profile_id, client.id AS user_id, user_file.id as file_id, first_name, last_name, caption, file as profile_picture, user_name, email FROM profile JOIN client ON profile.user_id = client.id JOIN user_file ON profile.profile_picture = user_file.id WHERE profile.id = $1;
+      `;
+      safeValues = [profileData.rows[0].id];
+      profileData = await client.query(sqlQuery, safeValues);
+      profile = new Profile(profileData.rows[0]);
+      return profile;
+    }
+    throw new Error('Something went wrong!');
   } catch (e) {
     throw new Error(e);
   }
@@ -97,10 +122,19 @@ async function updateProfile(id, profileObj) {
   try {
     let sqlQuery = 'UPDATE profile SET first_name = $1, last_name = $2, caption = $3, profile_picture = $4 WHERE id = $5 RETURNING *;';
     let profile = new UserProfile(profileObj);
-    let safeValues = [profile.first_name, profile.last_name, profile.caption, profile.profile_picture_id, id];
+    let safeValues = [profile.first_name, profile.last_name, profile.caption, profile.profile_picture, id];
     // Query the database
-    const profileData = await client.query(sqlQuery, safeValues);
-    return profile;
+    let profileData = await client.query(sqlQuery, safeValues);
+    if(profileData.rowCount>0){
+      sqlQuery = `
+      SELECT profile.id AS profile_id, client.id AS user_id, user_file.id as file_id, first_name, last_name, caption, file as profile_picture, user_name, email FROM profile JOIN client ON profile.user_id = client.id JOIN user_file ON profile.profile_picture = user_file.id WHERE profile.id = $1;
+      `;
+      safeValues = [profileData.rows[0].id];
+      profileData = await client.query(sqlQuery, safeValues);
+      profile = new Profile(profileData.rows[0]);
+      return profile;
+    }
+    throw new Error('Something went wrong!');
   } catch (e) {
     throw new Error(e);
   }
@@ -109,6 +143,7 @@ async function updateProfile(id, profileObj) {
 module.exports = {
   getAllProfiles,
   getSingleProfile,
+  getProfileByUserId,
   createProfile,
   updateProfile,
 };

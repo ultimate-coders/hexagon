@@ -1,6 +1,9 @@
 DROP TABLE IF EXISTS follow;
 DROP TABLE IF EXISTS jwt;
 
+DROP TABLE IF EXISTS user_file;
+DROP TABLE IF EXISTS category;
+
 DROP TABLE IF EXISTS message;
 
 DROP TABLE IF EXISTS comment;
@@ -22,7 +25,7 @@ CREATE TABLE client(
 
 CREATE TABLE jwt(
   id SERIAL PRIMARY KEY,
-  user_id int,
+  user_id int UNIQUE,
   access_token VARCHAR(250),
   refresh_token VARCHAR(250),
   FOREIGN KEY (user_id) REFERENCES client(id)
@@ -30,13 +33,14 @@ CREATE TABLE jwt(
 
 CREATE TABLE profile(
   id SERIAL PRIMARY KEY,
-  user_id int,
+  user_id int UNIQUE,
   first_name VARCHAR(100),
   last_name VARCHAR(100),
   caption VARCHAR(250),
   profile_picture int,
 
-  FOREIGN KEY (user_id) REFERENCES client(id)
+  FOREIGN KEY (user_id) REFERENCES client(id),
+  FOREIGN KEY (profile_picture) REFERENCES user_file(id)
 );
 
 CREATE TABLE follow(
@@ -57,7 +61,6 @@ CREATE TABLE message(
   FOREIGN KEY (sender_id) REFERENCES profile(id)
 );
 
-DROP TABLE IF EXISTS user_file;
 CREATE TABLE user_file(
   id SERIAL PRIMARY KEY,
   profile_id int,
@@ -65,7 +68,6 @@ CREATE TABLE user_file(
   created_at date not null default current_timestamp
 );
 
-DROP TABLE IF EXISTS category;
 CREATE TABLE category(
   id SERIAL PRIMARY KEY,
   name VARCHAR(20)

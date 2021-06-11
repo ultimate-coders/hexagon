@@ -37,11 +37,11 @@ INSERT INTO message(sender_id,reciver_id,message,seen) VALUES (3,1,'hi',true);
 INSERT INTO message(sender_id,reciver_id,message,seen) VALUES (2,3,'hi',false);
 INSERT INTO message(sender_id,reciver_id,message,seen) VALUES (4,5,'hi',true);
 
-INSERT INTO user_file(profile_id,file) VALUES (1,'../img/female.jpg');
-INSERT INTO user_file(profile_id,file) VALUES (2,'../img/male.jpg');
-INSERT INTO user_file(profile_id,file) VALUES (3,'../img/male.jpg');
-INSERT INTO user_file(profile_id,file) VALUES (4,'../img/male.jpg');
-INSERT INTO user_file(profile_id,file) VALUES (5,'../img/female.jpg');
+INSERT INTO user_file(file) VALUES ('../img/female.jpg');
+INSERT INTO user_file(file) VALUES ('../img/male.jpg');
+INSERT INTO user_file(file) VALUES ('../img/male.jpg');
+INSERT INTO user_file(file) VALUES ('../img/male.jpg');
+INSERT INTO user_file(file) VALUES ('../img/female.jpg');
 
 INSERT INTO category(name) VALUES ('artist');
 INSERT INTO category(name) VALUES ('engneer');
