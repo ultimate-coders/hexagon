@@ -65,6 +65,8 @@ INSERT INTO comment (comment,rate,number_like,post_id) VALUES ('great job',4,3,1
 INSERT INTO comment (comment,rate,number_like,post_id) VALUES ('i like it',4,3,2);
 INSERT INTO comment (comment,rate,number_like,post_id) VALUES ('i dont like it',4,3,3);
 INSERT INTO comment (comment,rate,number_like,post_id) VALUES ('perfect',4,3,4);
+INSERT INTO comment (comment,rate,number_like,post_id) VALUES ('woooooow',4,3,4);
+INSERT INTO comment (comment,rate,number_like,post_id) VALUES ('not good',4,2,4);
 INSERT INTO comment (comment,rate,number_like,post_id) VALUES ('i dont like it',4,3,5);
 
 INSERT INTO notification (receiver_id,message,post_id,seen) VALUES (2,'tamara like your post',2,false);
