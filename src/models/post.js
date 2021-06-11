@@ -1,7 +1,7 @@
 'use strict';
 
 const client = require('./db');
-const PAGE_SIZE = require('../configurations');
+const { PAGE_SIZE } = require('../configurations');
 
 // Constructors (data formatters)
 // For creating a profile record

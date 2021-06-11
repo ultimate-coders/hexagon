@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const {createMessageHandler, getMessageHandler, deleteMessageHandler,updateMessageHandler} = require('../controllers/messageControllers');
 const {createNotificationHandler, getNotificationHandler, updateNotificationHandler} = require('../controllers/notificationController');
+const {getAllProfilesHandler} = require('../controllers/profileController');
 
 router.post('/messages', createMessageHandler);
 router.get('/messages', getMessageHandler);
@@ -12,7 +13,7 @@ router.post('/notifications', createNotificationHandler);
 router.get('/notifications', getNotificationHandler);
 router.put('/notifications/:id', updateNotificationHandler);
 
-
+router.get('/profile', getAllProfilesHandler);
 
 router.get('/test', (req,res)=>{
   res.send('working well');

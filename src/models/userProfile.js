@@ -1,7 +1,7 @@
 'use strict';
 
-const client = require('../../models/db');
-const PAGE_SIZE = require('../../configurations');
+const client = require('./db');
+const { PAGE_SIZE } = require('../configurations');
 
 // Constructors (data formatters)
 // For creating a profile record
@@ -37,22 +37,24 @@ async function getAllProfiles(keyword = '', pageNumber = 1) {
     SELECT profile.id AS profile_id, client.id AS user_id, user_file.id as file_id, first_name, last_name, caption, file as profile_picture, user_name, email FROM profile JOIN client ON profile.user_id = client.id JOIN user_file ON profile.profile_picture = user_file.id ORDER BY profile.id DESC LIMIT $1 OFFSET $2;
     `;
     let startFrom = (pageNumber - 1) * PAGE_SIZE;
-    let safeValues = [PAGE_SIZE, startFrom];
+    let safeValues = [PAGE_SIZE + 1, startFrom];
     // Filtering
     if(keyword && keyword !== ''){
       keyword = `%${keyword}%`;
       sqlQuery = `
-      SELECT profile.id AS profile_id, client.id AS user_id, user_file.id as file_id, first_name, last_name, caption, file as profile_picture, user_name, email FROM profile JOIN client ON profile.user_id = client.id JOIN user_file ON profile.profile_picture = user_file.id WHERE UPPER(first_name) LIKE UPPER($1) OR UPPER(last_name) LIKE UPPER($1) OR UPPER(user_name) LIKE UPPER($1) OR UPPER(email) LIKE UPPER($1) ORDER BY profile.id DESC LIMIT $1 OFFSET $2;
+      SELECT profile.id AS profile_id, client.id AS user_id, user_file.id as file_id, first_name, last_name, caption, file as profile_picture, user_name, email FROM profile JOIN client ON profile.user_id = client.id JOIN user_file ON profile.profile_picture = user_file.id WHERE UPPER(first_name) LIKE UPPER($1) OR UPPER(last_name) LIKE UPPER($1) OR UPPER(user_name) LIKE UPPER($1) OR UPPER(email) LIKE UPPER($1) ORDER BY profile.id DESC LIMIT $2 OFFSET $3;
       `;
-      safeValues = [keyword, PAGE_SIZE, pageNumber];
+      safeValues = [keyword, PAGE_SIZE + 1, startFrom];
     }
     // Query the database
     const profilesData = await client.query(sqlQuery, safeValues);
-    const hasNext = parseInt(profilesData.rowCount) > startFrom + PAGE_SIZE;
+    const hasNext = profilesData.rowCount > PAGE_SIZE;
+    let results = profilesData.rows.map(profile => new Profile(profile));
+    if(hasNext) results.slice(0, -1);
     const response = {
-      results: profilesData.rows.map(profile => new Profile(profile)),
       count: profilesData.rowCount,
       hasNext: hasNext,
+      results: results,
     };
     return response;   
   } catch (e) {
