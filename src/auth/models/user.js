@@ -10,7 +10,10 @@ async function createUser (data){
     let  SQL = `INSERT INTO client (user_name,hashed_password,email) VALUES ($1,$2,$3) RETURNING *;`;
     data.password = await bcrypt.hash(data.password, 10);
 
-    let safeValues = [data.user_name,data.password,data.email];
+    let user = data.user_name.toLowerCase().trim();  // make user_name a lower case.
+    let email = data.email.toLowerCase().trim();   // make email a lower case.
+
+    let safeValues = [user,data.password,email];
     let usernameQuery = await client.query(SQL,safeValues);
 
     return usernameQuery;

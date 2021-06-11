@@ -3,7 +3,6 @@
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const{getUser,getUserById} = require('./user');
-const {getTokenById} = require('./jwt');
 
 // BASIC AUTH
 async function authenticateBasic (username, password) {

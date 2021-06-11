@@ -51,7 +51,7 @@ messages.on('connection', () => {
 app.get('/test', (req, res) => {
   res.send('Hello Word');
 });
-// app.use('/auth',authRouter);
+app.use('/auth',authRouter);
 app.use('/api/v1',v1Router);
 
 // Catchalls
