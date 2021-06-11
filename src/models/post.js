@@ -55,6 +55,7 @@ async function getAllPosts(categoryName = '', pageNumber = 1) {
     }
     // Query the database
     const postsData = await client.query(sqlQuery, safeValues);
+    console.log(postsData.rows);
     const hasNext = parseInt(postsData.rowCount) > startFrom + PAGE_SIZE;
     const response = {
       results: postsData.rows.map(post => new Post(post)),

@@ -13,3 +13,7 @@ const getAllPostsHandler = async (req, res, next) => {
     next(e);
   }
 };
+
+module.exports = {
+  getAllPostsHandler,
+};
