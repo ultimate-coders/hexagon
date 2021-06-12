@@ -13,6 +13,19 @@ const {createUser,getUser} = require('./models/user');
 authRouter.post('/signup',async (req, res, next) => {
 
   try {
+    let email = req.body.email;
+    let password = req.body.password;
+    if(!validateEmail(email)){
+      res.status(403).json({message:'Please insert a valid email'});
+      // throw new Error('Please insert a valid email');
+      return;
+    }
+    if(!validatePassword(password)){
+      res.status(403).json({message:'Please insert a valid password'});
+      return;
+      // throw new Error('Please insert a valid password');
+    }
+
     console.log('req',req.body);
     let user = await getUser(req.body.user_name);
     console.log('user data', user);
@@ -58,5 +71,14 @@ authRouter.get('/test', authenticateBearer, (req, res, next) => {
   }
 
 });
+
+function validateEmail(email) {
+  const re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+  return re.test(String(email).toLowerCase());
+}
+function validatePassword(password) {
+  const regularExpression = /^(?=.*[0-9])(?=.*[!@#$%^&*])[a-zA-Z0-9!@#$%^&*]{6,16}$/;
+  return regularExpression.test(password);
+}
 
 module.exports = authRouter;
