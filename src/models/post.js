@@ -104,7 +104,7 @@ async function getSinglePost(id) {
 async function createPost(postObj) {
   try {
     let sqlQuery = `
-    INSERT INTO post (profile_id, text, category_id) VALUES ($1, $2, $3) RETURNING id;
+    INSERT INTO post (profile_id, text, category_id) VALUES ($1, $2, $3) RETURNING *;
     `;
     let post = new UserPost(postObj);
     let safeValues = [post.profile_id, post.text, post.category_id];
@@ -112,18 +112,18 @@ async function createPost(postObj) {
     const postsData = await client.query(sqlQuery, safeValues);
     let attachmentsSqlQuery = 'INSERT INTO attachment (post_id, file_id) VALUES ';
     safeValues = [postsData.rows[0].id];
+    let attachmentData;
     if(postObj.images && postObj.images.length > 0){
       postObj.images.forEach((image_id, i) => {
         if(i > 0) attachmentsSqlQuery += ',';
         attachmentsSqlQuery += `($1, $${i+2}) `;
         safeValues.push(image_id);
       });
-      attachmentsSqlQuery += ';';
+      attachmentsSqlQuery += 'RETURNING post_id;';
+      attachmentData = await client.query(attachmentsSqlQuery, safeValues);
     }
-
-    let attachmentData = await client.query(attachmentsSqlQuery, safeValues);
     
-    return attachmentData.rows;   
+    return {profile_id: postsData.rows[0].profile_id, post_id: postsData.rows[0].id};   
   } catch (e) {
     throw new Error(e);
   }

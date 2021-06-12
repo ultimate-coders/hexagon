@@ -1,13 +1,13 @@
 'use strict';
 
-const { notifications } = require('../server');
-const events = require('./event');
+const { messages } = require('../server');
+// const events = require('./event');
 
-events.on('notification', (payload) => {
-  notifications.to(payload.user_id, payload);
-});
+// events.on('message', (payload) => {
+//   messages.to(payload.receiver_id, payload);
+// });
 
 
-notifications.on('connection', (socket) => {
+messages.on('connection', (socket) => {
   // events go here
 });

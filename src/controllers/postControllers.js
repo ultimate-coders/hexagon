@@ -8,6 +8,8 @@ const {
   deletePost,
 } = require('../models/post');
 
+const { sendNotification } = require('../utils/helpers');
+
 const { saveFile } = require('../models/file');
 
 const getAllPostsHandler = async (req, res, next) => {
@@ -40,6 +42,7 @@ const createPostsHandler = async (req, res, next) => {
     let fileUploadResponse = await saveFile(req.files);
     req.body['images'] = fileUploadResponse.map((file) => file.id);
     const response = await createPost(req.body);
+    await sendNotification(`You have a new comment on`, response.profile_id, response.post_id);
     res.status(201).json({
       message: 'successfully created',
     });
