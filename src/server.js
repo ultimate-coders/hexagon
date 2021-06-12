@@ -11,7 +11,7 @@ const morgan = require('morgan');
 // Setup the server and the socket
 const app = express();
 const httpServer = http.createServer(app);
-const io = socketServer(http, {
+const io = socketServer(httpServer, {
   cors: {
     origin: '*',
     methods: ['GET', 'POST'],
@@ -24,7 +24,7 @@ io.listen(httpServer);
 const errorHandler = require('./error-handlers/500.js');
 const notFound = require('./error-handlers/404.js');
 const v1Router = require('./routes/v1');
-const v2Router = require('./routes/v2');
+// const v2Router = require('./routes/v2');
 
 const authRouter = require('./auth/routes');
 
@@ -55,16 +55,16 @@ app.get('/test', (req, res) => {
 });
 app.use('/auth',authRouter);
 app.use('/api/v1',v1Router);
-app.use('/api/v2',v2Router);
+// app.use('/api/v2',v2Router);
 
 // Catchalls
 app.use(notFound);
 app.use(errorHandler);
 
 module.exports = {
-  server: app,
+  app: app,
   start: (port) => {
-    app.listen(port, () => {
+    httpServer.listen(port, () => {
       console.log(`Server Up on ${port}`);
     });
   },
