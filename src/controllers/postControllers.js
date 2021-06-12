@@ -12,6 +12,7 @@ const { saveFile } = require('../models/file');
 
 const getAllPostsHandler = async (req, res, next) => {
   try {
+    
     const keyword = req.query.category || '';
     const page = req.query.page || '1';
 
