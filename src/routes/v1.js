@@ -3,7 +3,7 @@ const router = express.Router();
 const {createMessageHandler, getMessageHandler, deleteMessageHandler,updateMessageHandler} = require('../controllers/messageControllers');
 const {createNotificationHandler, getNotificationHandler, updateNotificationHandler} = require('../controllers/notificationController');
 const {getAllProfilesHandler, getProfileHandler, meHandler, createProfileHandler, updateProfileHandler} = require('../controllers/profileController');
-const {getAllPostsHandler} = require('../controllers/postControllers');
+const {getAllPostsHandler, getSinglePostsHandler, createPostsHandler, updatePostsHandler, deletePostsHandler} = require('../controllers/postControllers');
 
 router.post('/messages', createMessageHandler);
 router.get('/messages', getMessageHandler);
@@ -21,6 +21,10 @@ router.post('/profile/', createProfileHandler);
 router.put('/profile/:id', updateProfileHandler);
 
 router.get('/posts', getAllPostsHandler);
+router.get('/posts/:id', getSinglePostsHandler);
+router.post('/posts/', createPostsHandler);
+router.put('/posts/:id', updatePostsHandler);
+router.delete('/posts/:id', deletePostsHandler);
 
 router.get('/test', (req,res)=>{
   res.send('working well');
