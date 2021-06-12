@@ -90,10 +90,10 @@ CREATE TABLE post(
 CREATE TABLE attachment(
   id SERIAL PRIMARY KEY,
   post_id int NOT NULL,
-  file_id int NOT NULL,
+  file_id int NOT NULL
 
-  FOREIGN KEY (post_id) REFERENCES post(id),
-  FOREIGN KEY (file_id) REFERENCES user_file(id)
+  -- FOREIGN KEY (post_id) REFERENCES post(id),
+  -- FOREIGN KEY (file_id) REFERENCES user_file(id)
 );
 
 CREATE TABLE comment(
@@ -101,9 +101,9 @@ CREATE TABLE comment(
     comment text NOT NULL,
     rate int,
     number_like int,
-    post_id int NOT NULL,
+    post_id int NOT NULL
 
-    FOREIGN KEY (post_id) REFERENCES post(id)
+    -- FOREIGN KEY (post_id) REFERENCES post(id)
 );
 
 CREATE TABLE notification(
