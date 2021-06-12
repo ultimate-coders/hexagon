@@ -34,7 +34,7 @@ router.put('/profile/:id', updateProfileHandler);
 
 router.get('/posts', getAllPostsHandler);
 router.get('/posts/:id', getSinglePostsHandler);
-router.post('/posts/', uploadS3.array('image'), createPostsHandler);
+router.post('/posts', uploadS3.array('image'), createPostsHandler);
 router.put('/posts/:id', updatePostsHandler);
 router.delete('/posts/:id', deletePostsHandler);
 

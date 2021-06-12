@@ -6,7 +6,7 @@ let createNotification = async (message, receiverId, postId )=>{
     let SQL = `INSERT INTO notification (message, receiver_id, post_id) VALUES ($1,$2,$3) RETURNING *;`;
     let safeValues = [message, receiverId, postId];
     let result = await client.query(SQL, safeValues);
-    return result.rows;
+    return result.rows[0];
   } catch (error) {
     throw new Error(error);
   }
@@ -34,10 +34,10 @@ let getNotification = async (receiverId, pageNumber = 1)=>{
 
 let updateNotification =  async (id)=>{
   try {
-    let SQL = `UPDATE notification SET seen=$1 WHERE id=$2;`;
+    let SQL = `UPDATE notification SET seen=$1 WHERE id=$2 RETURNING *;`;
     let safeValues = [true ,id];
     let result = await client.query(SQL, safeValues);
-    return result; 
+    return result.rows[0]; 
   } catch (error) {
     throw new Error(error);
   }
