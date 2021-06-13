@@ -33,6 +33,19 @@ async function createUser(data) {
   }
 }
 
+async function updateUserPassword(user_id, user_password) {
+  try {
+    const hashed_password = await bcrypt.hash(user_password, 10);
+    const SQL = `UPDATE client SET hashed_password = $1 WHERE id = $2 RETURNING *;`;
+
+    const safeValues = [hashed_password, user_id];
+    const result = await client.query(SQL, safeValues);
+    return result.rows[0];
+  } catch (e) {
+    throw new Error(e.message);
+  }
+}
+
 async function getUser(username) {
   try {
     let SQL = `SELECT * FROM client WHERE user_name=$1`;
@@ -87,4 +100,4 @@ function randomGenerator(length) {
   return result;
 }
 
-module.exports = { createUser, getUser, getUserById, getUserByEmail };
+module.exports = { createUser, getUser, getUserById, getUserByEmail, updateUserPassword };

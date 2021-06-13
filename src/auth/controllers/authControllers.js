@@ -1,10 +1,15 @@
 'use strict';
 
 const { createToken, deleteToken, getTokenRecord } = require('../models/jwt');
-const { createUser, getUserByEmail } = require('../models/user');
+const {
+  createUser,
+  getUserByEmail,
+  getUserById,
+  updateUserPassword,
+} = require('../models/user');
 const { createProfile } = require('../../models/userProfile');
 const { authenticateWithToken } = require('../models/helpers');
-const { validateEmail, validatePassword } = require('./helpers');
+const { validateEmail, validatePassword, checkPassword } = require('./helpers');
 
 const signUpHandler = async (req, res, next) => {
   try {
@@ -40,6 +45,39 @@ const signUpHandler = async (req, res, next) => {
       res.status(200).json(userTokens);
     } else {
       res.status(403).json({ message: 'User already exist!' });
+    }
+  } catch (e) {
+    next(e);
+  }
+};
+
+const updateUserPasswordHandler = async (req, res, next) => {
+  try {
+    const oldPassword = req.body.old_password;
+    const newPassword = req.body.new_password;
+    if (!validatePassword(newPassword)) {
+      res.status(403).json({
+        status: 403,
+        error: 'Please insert a valid password',
+      });
+      return;
+    }
+
+    let user = await getUserById(req.user.id);
+    const valid = await checkPassword(oldPassword, user.hashed_password);
+    console.log('valid pass : ', valid);
+    if (valid) {
+      user = await updateUserPassword(user.id, newPassword);
+      const response = {
+        status: 200,
+        message: 'Password updated successfully',
+      };
+      res.status(200).json(response);
+    } else {
+      res.status(403).json({
+        status: 403,
+        message: 'Invalid password',
+      });
     }
   } catch (e) {
     next(e);
@@ -88,4 +126,5 @@ module.exports = {
   signInHandler,
   logoutHandler,
   refreshHandler,
+  updateUserPasswordHandler,
 };
