@@ -99,7 +99,8 @@ describe('post tests', ()=>{
       .field('category_id', 1)
       .field('text', 'ok')
       .field('profile_id', 1)
-      .attach('images', fs.readFileSync(`img/female.jpg`));
+      .attach('image', fs.readFileSync(`img/female.jpg`));
+      console.log('res.files', res.files)
     expect(res.status).toEqual(201);
   });
   it('should create a post', async ()=>{
