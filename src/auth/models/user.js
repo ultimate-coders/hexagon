@@ -46,6 +46,18 @@ async function updateUserPassword(user_id, user_password) {
   }
 }
 
+async function updateUserVerification(user_id) {
+  try {
+    const SQL = `UPDATE client SET verified = true WHERE id = $1 RETURNING *;`;
+
+    const safeValues = [user_id];
+    const result = await client.query(SQL, safeValues);
+    return result.rows[0];
+  } catch (e) {
+    throw new Error(e.message);
+  }
+}
+
 async function getUser(username) {
   try {
     let SQL = `SELECT * FROM client WHERE user_name=$1`;
@@ -100,4 +112,4 @@ function randomGenerator(length) {
   return result;
 }
 
-module.exports = { createUser, getUser, getUserById, getUserByEmail, updateUserPassword };
+module.exports = { createUser, getUser, getUserById, getUserByEmail, updateUserPassword, updateUserVerification, randomGenerator };

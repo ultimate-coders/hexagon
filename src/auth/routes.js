@@ -7,6 +7,7 @@ const authenticateBasic = require('./middleware/basic');
 const authenticateBearer = require('./middleware/bearer');
 const googleAuth = require('./oauth/google-oauth');
 const { signUpHandler, signInHandler, logoutHandler, refreshHandler, updateUserPasswordHandler } = require('./controllers/authControllers');
+const { verifyUserHandler, sendVerificationCodeHandler } = require('./controllers/verificationControllers');
 
 authRouter.use(googleAuth); // calling google oauth
 
@@ -15,7 +16,10 @@ authRouter.post('/signup', signUpHandler);
 authRouter.post('/signin', authenticateBasic, signInHandler);
 authRouter.get('/logout',authenticateBearer, logoutHandler);
 authRouter.get('/refresh', refreshHandler);
-authRouter.put('/user-password',authenticateBearer, updateUserPasswordHandler);
+authRouter.put('/user/password',authenticateBearer, updateUserPasswordHandler);
+
+authRouter.post('/user/verify',authenticateBearer, verifyUserHandler);
+authRouter.post('/user/verification',authenticateBearer, sendVerificationCodeHandler);
 
 authRouter.get('/test', authenticateBearer, (req, res, next) => {
   try {
