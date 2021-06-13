@@ -2,15 +2,14 @@
 
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-const{getUser,getUserById} = require('./user');
-// const {getTokenById} = require('./jwt');
+const{getUserById,getEmail} = require('./user');
 
 // BASIC AUTH
-async function authenticateBasic (username, password) {
+async function authenticateBasic (email, password) {
 
   try{
 
-    let user = await getUser(username);
+    let user = await getEmail(email);
 
     const valid = await bcrypt.compare(password, user.hashed_password);
     if (valid) { return user; }

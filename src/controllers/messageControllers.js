@@ -1,9 +1,11 @@
 const { createMessage, getMessage, deleteMessage,  updateMessage } = require('../models/message');
+const events = require('../socket/event');
 
 let createMessageHandler = async (req,res,next) =>{
   try {
     let {message , sender_id, receiver_id} = req.body;
-    let result = await createMessage(message , sender_id, receiver_id);        
+    let result = await createMessage(message , sender_id, receiver_id);
+    events.emit('message', {message , sender_id, receiver_id});        
     res.status(201).json({status: 'successful', message: result.rows[0].message});
   } catch (error) {
     next(error);
