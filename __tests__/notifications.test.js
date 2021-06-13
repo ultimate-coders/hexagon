@@ -25,7 +25,6 @@ describe('notifications test', ()=>{
           
     };
     let res = await request.post('/api/v1/notifications').send(obj);
-    // console.log(res.body);
           
     expect(res.status).toEqual(201);
     expect(res.body).toEqual(obj.message);
@@ -37,7 +36,6 @@ describe('notifications test', ()=>{
       receiver_id: 4,
     };
     let res = await request.get('/api/v1/notifications').send(obj);
-    // console.log(res.body);
           
     expect(res.status).toEqual(200);
     expect(res.body.results[0].message).toEqual('he liked your post');
@@ -45,7 +43,7 @@ describe('notifications test', ()=>{
   it('should update notification', async ()=>{
     
     let res = await request.put('/api/v1/notifications/15');
-    console.log(res.body);
+   
           
     expect(res.status).toEqual(200);
     expect(res.body.status).toEqual('successful');
