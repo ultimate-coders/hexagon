@@ -11,7 +11,7 @@ const morgan = require('morgan');
 // Setup the server and the socket
 const app = express();
 const httpServer = http.createServer(app);
-const io = socketServer(http, {
+const io = socketServer(httpServer, {
   cors: {
     origin: '*',
     methods: ['GET', 'POST'],
@@ -75,9 +75,9 @@ app.use(notFound);
 app.use(errorHandler);
 
 module.exports = {
-  server: app,
+  app: app,
   start: (port) => {
-    app.listen(port, () => {
+    httpServer.listen(port, () => {
       console.log(`Server Up on ${port}`);
     });
   },
