@@ -13,15 +13,5 @@ describe('error handlers', ()=> {
     let response = await serverRequest.get('/not-found-route');
     expect(response.status).toEqual(404);
   });
-  
-  it('404 on a bad method', async ()=> {
-    let response = await serverRequest.get('/auth/signup');
-    expect(response.status).toEqual(404);
-  });
 
-  it('500 if no name in the query string', async ()=> {
-    let response = await serverRequest.get('/auth/google/failed');
-    expect(response.status).toEqual(500);
-  });
-   
 });

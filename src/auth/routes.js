@@ -17,22 +17,9 @@ authRouter.use(googleAuth);   // calling google oauth
 authRouter.post('/signup',async (req, res, next) => {
 
   try {
-    let email = req.body.email;
-    let password = req.body.password;
-    if(!validateEmail(email)){
-      res.status(403).json({message:'Please insert a valid email'});
-      // throw new Error('Please insert a valid email');
-      return;
-    }
-    if(!validatePassword(password)){
-      res.status(403).json({message:'Please insert a valid password'});
-      return;
-      // throw new Error('Please insert a valid password');
-    }
-
-    console.log('req',req.body);
+    // console.log('req',req.body);
     let user = await getEmail(req.body.email);
-
+    console.log('email', user);
     console.log('user data', user);
     if(!user) {
       user = await createUser(req.body);
@@ -79,14 +66,32 @@ authRouter.get('/test', authenticateBearer, (req, res, next) => {
 
 });
 
+authRouter.get ('/client', async(req, res, next) => {
+  try{
+    let SQL =`select * from client;`;
+    let data = await client.query(SQL);
 
-function validateEmail(email) {
-  const re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-  return re.test(String(email).toLowerCase());
-}
-function validatePassword(password) {
-  const regularExpression = /^(?=.*[0-9])(?=.*[!@#$%^&*])[a-zA-Z0-9!@#$%^&*]{6,16}$/;
-  return regularExpression.test(password);
-}
+    res.json(data.rows);
+
+  }
+  catch (e) {
+    next(e.message);
+  }
+
+});
+
+authRouter.get ('/jwt', async(req, res, next) => {
+  try{
+    let SQL =`select * from jwt;`;
+    let data = await client.query(SQL);
+
+    res.json(data.rows);
+
+  }
+  catch (e) {
+    next(e.message);
+  }
+
+});
 
 module.exports = authRouter;
