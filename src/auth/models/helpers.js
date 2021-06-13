@@ -28,9 +28,9 @@ async function authenticateWithToken(token) {
     if (user) {
       return user;
     }
-    throw new Error('User Not Found');
+    throw new Error('Invalid Login');
   } catch (e) {
-    throw new Error(e.message);
+    throw new Error(e);
   }
 }
 

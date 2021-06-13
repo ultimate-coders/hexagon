@@ -1,6 +1,6 @@
 'use strict';
 
-const { createToken } = require('../models/jwt');
+const { createToken, deleteToken } = require('../models/jwt');
 const { createUser, getUserByEmail } = require('../models/user');
 const { createProfile } = require('../../models/userProfile');
 const { validateEmail, validatePassword } = require('./helpers');
@@ -9,12 +9,12 @@ const signUpHandler = async (req, res, next) => {
   try {
     let email = req.body.email;
     let password = req.body.password;
-    
+
     if (!validateEmail(email)) {
       res.status(403).json({ message: 'Please insert a valid email' });
       return;
     }
-    
+
     if (!validatePassword(password)) {
       res.status(403).json({ message: 'Please insert a valid password' });
       return;
@@ -41,21 +41,32 @@ const signUpHandler = async (req, res, next) => {
       res.status(403).json({ message: 'User already exist!' });
     }
   } catch (e) {
-    next(e.message);
+    next(e);
   }
 };
 
-const signInHandler = (req, res, next) => {
+const signInHandler = async (req, res, next) => {
   try {
+    res.status(200).json(req.tokens);
+  } catch (e) {
+    next(e);
+  }
+};
+
+const logoutHandler = async (req, res, next) => {
+  try {
+    await deleteToken(req.user.id);
     res.status(200).json({
-      userTokens: req.tokens,
+      status: 200,
+      message: 'successfully logged out',
     });
   } catch (e) {
-    next(e.message);
+    next(e);
   }
 };
 
 module.exports = {
   signUpHandler,
   signInHandler,
+  logoutHandler,
 };

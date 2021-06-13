@@ -2,6 +2,7 @@
 
 const { authenticateWithToken } = require('../models/helpers');
 const { getProfileByUserId } = require('../../models/userProfile');
+const { getTokenRecord } = require('../models/jwt');
 
 module.exports = async (req, res, next) => {
   try {
@@ -10,6 +11,10 @@ module.exports = async (req, res, next) => {
     }
 
     const token = req.headers.authorization.split(' ').pop();
+
+    const tokenRecord = await getTokenRecord(token, 'access');
+    if(!tokenRecord) throw new Error('Invalid Login');
+
     const validUser = await authenticateWithToken(token);
     const userProfile = await getProfileByUserId(validUser.id);
 

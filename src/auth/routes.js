@@ -6,13 +6,15 @@ const authRouter = express.Router();
 const authenticateBasic = require('./middleware/basic');
 const authenticateBearer = require('./middleware/bearer');
 const googleAuth = require('./oauth/google-oauth');
-const { signUpHandler, signInHandler } = require('./controllers/authControllers');
+const { signUpHandler, signInHandler, logoutHandler } = require('./controllers/authControllers');
 
 authRouter.use(googleAuth); // calling google oauth
 
 authRouter.post('/signup', signUpHandler);
 
 authRouter.post('/signin', authenticateBasic, signInHandler);
+
+authRouter.get('/logout',authenticateBearer, logoutHandler);
 
 authRouter.get('/test', authenticateBearer, (req, res, next) => {
   try {
