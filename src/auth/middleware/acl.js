@@ -14,13 +14,12 @@ async function commentCheck(req,res,next){
   
 }
 
-async function messageCheck(data){
+async function messageCheck(req,res,next){
   try {
     let SQL=`select user_id from profile where id in (select sender_id from message where id =$1) ;`;
-    let safeValue=[data.comment_id];
+    let safeValue=[req.body.id];
     let query =  await Client.query(SQL, safeValue);
-    if(data.user_id === query.rows[0].user_id) return true;
-    else return false;
+    if(req.user.id === query.rows[0].user_id) next();
   } catch (error) {
     throw new Error(error);
   }

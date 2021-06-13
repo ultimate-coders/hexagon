@@ -76,25 +76,3 @@ INSERT INTO notification (receiver_id,message,post_id,seen) VALUES (5,'wessam li
 INSERT INTO notification (receiver_id,message,post_id,seen) VALUES (2,'wessam commented on your post',4,false);
 INSERT INTO notification (receiver_id,message,post_id,seen) VALUES (4,'amjad like your post',5,false);
 INSERT INTO notification (receiver_id,message,post_id,seen) VALUES (4,'wessam like your post',5,false);
-
-
--- {
---     "user_name":"rahaf",
---     "email":"vvvv@yahoo.com",
---     "password":"Anwar998@"
---      "accessToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEwLCJpYXQiOjE2MjM1MjU5MDksImV4cCI6MTYyMzUyNjIwOX0.PBqWjkCkjXzuqrD86-IpuGqfW2VNUcKyzaxfAHbwOAU",
---    "refreshToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEwLCJpYXQiOjE2MjM1MjU5MDksImV4cCI6MTYyMzUyNjgwOX0.igCYRuWJN_5veZO9hPAln2BjOFBsKjykc6F4tMFwhCU"
--- }
-
--- { "comment": "'wowwwww'", "id": 12 }
-
--- {
---     "done": [
---         {
---             "id": 10,
---             "comment": "'wowwwww'",
---             "post_id": 2,
---             "profile_id": 6
---         }
---     ]
--- }
