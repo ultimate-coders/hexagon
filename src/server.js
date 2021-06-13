@@ -19,6 +19,19 @@ const io = socketServer(httpServer, {
 });
 io.listen(httpServer);
 
+// send notifications
+const events = require('./socket/event');
+
+events.on('notification', (payload) => {
+  console.log('Notification has been triggered',payload);
+  notifications.to(payload.receiver_id, payload);
+});
+
+// send messages
+events.on('message', (payload) => {
+  console.log('Message has been triggered',payload);
+  messages.to(payload.receiver_id, payload);
+});
 
 // Esoteric Resources
 const errorHandler = require('./error-handlers/500.js');

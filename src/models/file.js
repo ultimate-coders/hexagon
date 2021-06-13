@@ -2,12 +2,28 @@
 
 const Client = require('./db');
 
-async function saveFile(fileUrl) {
+function File(fileObj) {
+  this.id = fileObj.id;
+  this.file = fileObj.file;
+}
+
+async function saveFile(files) {
   try {
-    let sqlQuery = 'INSERT INTO file (file) VALUES ($1) RETURNING *;';
-    let safeValues = [fileUrl];
-    let fileData = await Client.query(sqlQuery, safeValues);
-    return fileData[0];
+    if (files.length > 0) {
+      let sqlQuery = 'INSERT INTO user_file (file) VALUES ';
+      let safeValues = [];
+      files.forEach((file, i) => {
+        if (i > 0) sqlQuery += ',';
+        sqlQuery += `($${i + 1})`;
+        safeValues.push(file.location);
+      });
+      sqlQuery += ' RETURNING *;';
+      let fileData = await Client.query(sqlQuery, safeValues);
+      let results = fileData.rows.map((file) => new File(file));
+      return results;
+    } else {
+      return [];
+    }
   } catch (e) {
     throw new Error(e);
   }
