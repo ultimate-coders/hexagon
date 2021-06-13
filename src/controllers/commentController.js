@@ -23,7 +23,7 @@ async function createCommentHandler(req, res, next) {
 async function updateCommentHandler(req, res, next) {
   try {
     console.log('update');
-    let result = await updateComment(req.body);
+    let result = await updateComment(req);
     console.log('done -----------',result);
 
     res.status(201).json(result.rows);
@@ -34,7 +34,7 @@ async function updateCommentHandler(req, res, next) {
 
 async function deleteCommentHandler(req, res, next) {
   try {
-    let result = await deleteComment(req.body.id);
+    let result = await deleteComment(req.params.id);
     res.status(201).json(result);
   } catch (error) {
     next(error);

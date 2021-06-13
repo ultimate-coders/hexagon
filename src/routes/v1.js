@@ -10,6 +10,8 @@ const bearer = require('../auth/middleware/bearer');
 const {commentCheck,messageCheck}=require('../auth/middleware/acl');
 
 // router.use(bearer)
+//make bearer global middelware
+
 router.post('/messages', createMessageHandler);
 router.get('/messages', getMessageHandler);
 router.delete('/messages/:id',messageCheck, deleteMessageHandler);
@@ -21,8 +23,8 @@ router.put('/notifications/:id', updateNotificationHandler);
 
 router.get('/comment/:postId',getPostCommentsHandler);
 router.post('/comment',bearer,createCommentHandler);
-router.put('/comment',bearer,commentCheck,updateCommentHandler);
-router.delete('/comment',bearer,commentCheck,deleteCommentHandler);
+router.put('/comment/:id',bearer,commentCheck,updateCommentHandler);
+router.delete('/comment/:id',bearer,commentCheck,deleteCommentHandler);
 
 router.post('/follow',followHndler);
 

@@ -13,6 +13,7 @@ module.exports = async (req, res, next) => {
     const validUser = await authenticateWithToken(token);
     console.log('validUser ----------',validUser);
     req.user = validUser;
+    // req.user.profile_id
     next();
 
   } catch (e) {
