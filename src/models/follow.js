@@ -10,13 +10,15 @@ async function followHndler(data){
     let safeValues=[data.follower,data.following];
     let query= await Client.query(SQL, safeValues);
     if(query.rows.length===0) {
-      let SQL=`INSERT INTO follow (follower,following) VALUES ($1,$2);`;
+      let SQL=`INSERT INTO follow (follower,following) VALUES ($1,$2) returning * ;`;
       let safeValues=[data.follower,data.following];
-      await Client.query(SQL, safeValues);
+      let result = await Client.query(SQL, safeValues);
+      return result.rows;
     }else{
-      let SQL=`delete from follow where follower=$1 AND following=$2;`;
+      let SQL=`delete from follow where follower=$1 AND following=$2 returning *;`;
       let safeValues=[data.follower,data.following];
-      await Client.query(SQL, safeValues);
+      let result = await Client.query(SQL, safeValues);
+      return result.rows;
     }
   }catch(e){
     throw new Error(e);

@@ -1,10 +1,10 @@
 const {createNotification, getNotification, updateNotification} = require('../models/notification');
 
-
+// No need for this controller and its route handler
 let createNotificationHandler = async (req,res,next) =>{
   try {
-    let {message, receiverId, postId} = req.body;
-    let result = await createNotification(message, receiverId, postId);
+    let {message, receiver_id, post_id} = req.body;
+    let result = await createNotification(message, receiver_id, post_id);
     res.status(201).json(result[0].message);
   } catch (error) {
     next(error);
@@ -13,8 +13,10 @@ let createNotificationHandler = async (req,res,next) =>{
 
 let getNotificationHandler = async (req,res,next)=>{
   try {
-    let result = await getNotification(req.body.receiverId);
-    res.status(200).json({result});
+    const page = req.query.page || '1';
+
+    let result = await getNotification(req.body.receiver_id, page);
+    res.status(200).json(result);
   } catch (error) {
     next(error);
   }

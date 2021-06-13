@@ -1,9 +1,11 @@
 const { createMessage, getMessage, deleteMessage,  updateMessage } = require('../models/message');
+const events = require('../socket/event');
 
 let createMessageHandler = async (req,res,next) =>{
   try {
-    let {message , senderId, receiverId} = req.body;
-    let result = await createMessage(message , senderId, receiverId);        
+    let {message , sender_id, receiver_id} = req.body;
+    let result = await createMessage(message , sender_id, receiver_id);
+    events.emit('message', {message , sender_id, receiver_id});        
     res.status(201).json({status: 'successful', message: result.rows[0].message});
   } catch (error) {
     next(error);
@@ -12,8 +14,10 @@ let createMessageHandler = async (req,res,next) =>{
 
 let getMessageHandler = async (req,res,next) =>{
   try {
-    let {senderId , receiverId} = req.body;
-    let result = await getMessage(senderId,receiverId);
+    const page = req.query.page || '1';
+
+    let {sender_id , receiver_id} = req.body;
+    let result = await getMessage(sender_id,receiver_id, page);
     res.status(200).json(result);
   } catch (error) {
     next(error);

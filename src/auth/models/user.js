@@ -1,11 +1,11 @@
 'use strict';
 
 const client = require('../../models/db');
+
 const bcrypt = require('bcrypt');
 const randomGenerator = require('./randomGenerator');
 
 async function createUser (data){
-  
   try{
     let usernameQuery;
     if(data.provider === 'google')
@@ -24,32 +24,27 @@ async function createUser (data){
     else {
       let  SQL = `INSERT INTO client (user_name,hashed_password,email) VALUES ($1,$2,$3) RETURNING *;`;
       data.password = await bcrypt.hash(data.password, 10);
-
-      let safeValues = [data.user_name,data.password,data.email];
+      let user = data.user_name.toLowerCase().trim();  // make user_name a lower case.
+      let email = data.email.toLowerCase().trim();    // make email a lower case.
+      
+      let safeValues = [user,data.password,email];
       usernameQuery = await client.query(SQL,safeValues);
     }
     return usernameQuery;
   } catch (e) {
     throw new Error(e.message);
   }
-
 }
 
-
 async function getUser (username){
-
   try {
-
     let SQL = `SELECT * FROM client WHERE user_name=$1`;
     let checkUsername = [username];
     let usernameQuery = await client.query(SQL,checkUsername);
-
     return usernameQuery.rows[0];
   } catch (e) {
     throw new Error(e.message);
   }
-
-
 }
 
 async function getEmail (email){
@@ -87,12 +82,11 @@ async function getUserById (id,idType = 'primary'){
       usernameQuery = await client.query(SQL,checkId);
     }
 
-        
     return usernameQuery.rows[0];
   } catch (e) {
     throw new Error(e.message);
   }
-
 }
 
 module.exports = {createUser,getUser,getUserById,getEmail};
+
