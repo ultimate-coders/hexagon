@@ -2,6 +2,7 @@
 
 const { createToken } = require('../models/jwt');
 const { createUser, getUserByEmail } = require('../models/user');
+const { createProfile } = require('../../models/userProfile');
 const { validateEmail, validatePassword } = require('./helpers');
 
 const signUpHandler = async (req, res, next) => {
@@ -23,6 +24,14 @@ const signUpHandler = async (req, res, next) => {
 
     if (!user) {
       user = await createUser(req.body);
+      // Create user profile
+      let profileObj = {
+        user_id: user.id,
+        first_name: user.user_name,
+        last_name: '',
+        caption: '',
+      };
+      await createProfile(profileObj);
       let userId = user.id;
       let userTokens = await createToken(userId);
       delete userTokens.id;

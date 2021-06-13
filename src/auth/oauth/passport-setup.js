@@ -3,6 +3,7 @@
 const passport = require('passport');
 const { createUser, getUserByEmail, getUserById } = require('../models/user');
 const { createToken, deleteToken } = require('../models/jwt');
+const { createProfile } = require('../../models/userProfile');
 
 var GoogleStrategy = require('passport-google-oauth20').Strategy;
 
@@ -28,9 +29,16 @@ passport.use(
 
         let user = await getUserById(googleId, 'google');
         let email = await getUserByEmail(googleEmail);
-        console.log('dfdfdsfds : ', user, email, !user && !email);
         if (!user && !email) {
           user = await createUser(profile);
+          // Create user profile
+          let profileObj = {
+            user_id: user.id,
+            first_name: profile.name.givenName,
+            last_name: profile.name.familyName,
+            caption: '',
+          };
+          await createProfile(profileObj);
           let userTokens = await createToken(user.id);
           delete user.hashed_password;
           delete userTokens.user_id;
