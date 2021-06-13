@@ -39,6 +39,7 @@ const getSinglePostsHandler = async (req, res, next) => {
 const createPostsHandler = async (req, res, next) => {
   try {
     // Upload the files and return the results
+    console.log('req.files',req.files)
     let fileUploadResponse = await saveFile(req.files);
     req.body['images'] = fileUploadResponse.map((file) => file.id);
     const response = await createPost(req.body);
@@ -55,6 +56,7 @@ const updatePostsHandler = async (req, res, next) => {
   try {
     const id = req.params.id;
     const response = await updatePost(id, req.body);
+    console.log('req.body',req.body)
     res.status(200).json({
       message: 'successfully updated',
     });

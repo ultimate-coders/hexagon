@@ -47,7 +47,7 @@ function Post(post) {
 }
 
 // Get all posts
-async function getAllPosts(categoryName = '', pageNumber = 1) {
+async function getAllPosts(categoryName, pageNumber = 1) {
   try {
     let sqlQuery = `
     SELECT post.id AS post_id, profile.id AS profile_id, profile_image.id AS file_id, profile_image.file AS profile_picture, client.id AS user_id, category.id AS category_id, name AS category_name, text, first_name, last_name, caption, user_name, email, post_image.id AS image_id, post_image.file AS image_link FROM post JOIN profile ON post.profile_id = profile.id JOIN client ON client.id = profile.user_id JOIN category ON post.category_id = category.id JOIN user_file AS profile_image ON profile.profile_picture = profile_image.id JOIN attachment ON attachment.post_id = post.id JOIN user_file AS post_image ON attachment.file_id = post_image.id ORDER BY post.id DESC LIMIT $1 OFFSET $2;
@@ -106,6 +106,7 @@ async function createPost(postObj) {
     let sqlQuery = `
     INSERT INTO post (profile_id, text, category_id) VALUES ($1, $2, $3) RETURNING *;
     `;
+    console.log(postObj);
     let post = new UserPost(postObj);
     let safeValues = [post.profile_id, post.text, post.category_id];
     // Query the database
@@ -113,6 +114,8 @@ async function createPost(postObj) {
     let attachmentsSqlQuery = 'INSERT INTO attachment (post_id, file_id) VALUES ';
     safeValues = [postsData.rows[0].id];
     let attachmentData;
+    console.log(postObj.images);
+
     if(postObj.images && postObj.images.length > 0){
       postObj.images.forEach((image_id, i) => {
         if(i > 0) attachmentsSqlQuery += ',';
@@ -133,15 +136,20 @@ async function createPost(postObj) {
 async function updatePost(id, postObj) {
   try {
     let sqlQuery = `
-    UPDATE post SET text = $1, category_id = $2 RETURNING id;
+    UPDATE post SET text = $1, category_id = $2 WHERE id=$3 RETURNING id;
     `;
+
+    // console.log(postObj)
     let post = new UserPost(postObj);
-    let safeValues = [post.text, post.category_id];
+    
+    let safeValues = [post.text, post.category_id, parseInt(id)];
+    console.log('safeValues', safeValues);
     // Query the database
     const postsData = await client.query(sqlQuery, safeValues);
+    console.log(postsData,'postsData');
     let attachmentsSqlQuery = 'INSERT INTO attachment (post_id, file_id) VALUES ';
     safeValues = [postsData.rows[0].id];
-    
+    // console.log(postsData.rows);
     if(postObj.images && postObj.images.length > 0){
       let deleteAttachmentQuery = `
       DELETE FROM attachment WHERE id = $1;
@@ -154,11 +162,11 @@ async function updatePost(id, postObj) {
         safeValues.push(image_id);
       });
       attachmentsSqlQuery += ';';
+      let attachmentData = await client.query(attachmentsSqlQuery, safeValues);
+      return attachmentData.rows;   
     }
-
-    let attachmentData = await client.query(attachmentsSqlQuery, safeValues);
-    
-    return attachmentData.rows;   
+    // we raised attachmentData and return statement to make the code working
+    // console.log(postsData,'postsData222');
   } catch (e) {
     throw new Error(e);
   }
