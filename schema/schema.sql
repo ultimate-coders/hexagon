@@ -21,6 +21,7 @@ CREATE TABLE client(
   user_name VARCHAR(100) NOT NULL UNIQUE,
   hashed_password VARCHAR(250) NOT NULL,
   email VARCHAR(150) NOT NULL UNIQUE,
+  google_id VARCHAR(200) UNIQUE,
   verified boolean DEFAULT false
 );
 

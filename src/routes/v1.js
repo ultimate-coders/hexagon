@@ -1,5 +1,7 @@
 const express = require('express');
 const router = express.Router();
+const uploadS3 = require('../middleware/uploader');
+
 const {createMessageHandler, getMessageHandler, deleteMessageHandler,updateMessageHandler} = require('../controllers/messageControllers');
 const {createNotificationHandler, getNotificationHandler, updateNotificationHandler} = require('../controllers/notificationController');
 const {getPostCommentsHandler,createCommentHandler,updateCommentHandler,deleteCommentHandler}=require('../controllers/commentController');
@@ -8,6 +10,7 @@ const {getAllProfilesHandler, getProfileHandler, meHandler, createProfileHandler
 const {getAllPostsHandler, getSinglePostsHandler, createPostsHandler, updatePostsHandler, deletePostsHandler} = require('../controllers/postControllers');
 const bearer = require('../auth/middleware/bearer');
 const {commentCheck,messageCheck}=require('../auth/middleware/acl');
+const {fileUploadHandler} = require('../controllers/fileControllers');
 
 // router.use(bearer)
 //make bearer global middelware
@@ -36,9 +39,11 @@ router.put('/profile/:id', updateProfileHandler);
 
 router.get('/posts', getAllPostsHandler);
 router.get('/posts/:id', getSinglePostsHandler);
-router.post('/posts/', createPostsHandler);
+router.post('/posts', uploadS3.array('image'), createPostsHandler);
 router.put('/posts/:id', updatePostsHandler);
 router.delete('/posts/:id', deletePostsHandler);
+
+router.post('/file-upload', uploadS3.array('file'), fileUploadHandler);
 
 router.get('/test', (req,res)=>{
   res.send('working well');
