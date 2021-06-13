@@ -9,7 +9,7 @@ const {getCategories} = require('../src/models/category.js');
 
 
 
-describe('messages tests', ()=>{
+describe('category test', ()=>{
   afterAll(()=>{
     client.end();
   });

@@ -12,17 +12,17 @@ const chai = require('chai');
 const chaiHttp = require('chai-http');
 
 chai.use(chaiHttp);
-describe('messages tests', ()=>{
-  afterAll(()=>{
-    client.end();
-  });
+// describe('messages tests', ()=>{
+//   afterAll(()=>{
+//     client.end();
+//   });
 
-  it('should upload an image', async()=>{
-    let res = await chai.request(app).post('/api/v1/file-upload')
-      .set('content-type', 'multipart/form-data')
-      .attach('file', fs.readFileSync(`img/female.jpg`));
-    console.log(res)
+//   it('should upload an image', async()=>{
+//     let res = await chai.request(app).post('/api/v1/file-upload')
+//       .set('content-type', 'multipart/form-data')
+//       .attach('file', fs.readFileSync(`img/female.jpg`));
+//     console.log(res)
       
-    expect(res.status).toEqual(201);
-  });
-});
+//     expect(res.status).toEqual(201);
+//   });
+// });

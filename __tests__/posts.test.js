@@ -103,7 +103,7 @@ describe('post tests', ()=>{
       console.log('res.files', res.files)
     expect(res.status).toEqual(201);
   });
-  it('should create a post', async ()=>{
+  it('should update a post', async ()=>{
   
     // let res = await chai.request(app).put('/api/v1/posts/2')
     //   .set('content-type', 'multipart/form-data')
