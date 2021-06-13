@@ -1,8 +1,9 @@
 'use strict';
 
-const { createToken, deleteToken } = require('../models/jwt');
+const { createToken, deleteToken, getTokenRecord } = require('../models/jwt');
 const { createUser, getUserByEmail } = require('../models/user');
 const { createProfile } = require('../../models/userProfile');
+const { authenticateWithToken } = require('../models/helpers');
 const { validateEmail, validatePassword } = require('./helpers');
 
 const signUpHandler = async (req, res, next) => {
@@ -65,8 +66,26 @@ const logoutHandler = async (req, res, next) => {
   }
 };
 
+const refreshHandler = async (req, res, next) => {
+  try {
+    const user = await authenticateWithToken(req.body.refresh_token, 'refresh');
+    if (user) {
+      await deleteToken(user.id);
+      const newTokens = await createToken(user.id);
+      delete newTokens.id;
+      delete newTokens.user_id;
+      res.status(200).json(newTokens);
+    } else {
+      throw new Error('Invalid token');
+    }
+  } catch (e) {
+    next(e);
+  }
+};
+
 module.exports = {
   signUpHandler,
   signInHandler,
   logoutHandler,
+  refreshHandler,
 };

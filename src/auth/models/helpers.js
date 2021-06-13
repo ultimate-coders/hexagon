@@ -20,15 +20,18 @@ async function authenticateBasic(email, password) {
 }
 
 // BEARER AUTH
-async function authenticateWithToken(token) {
+async function authenticateWithToken(token, type = 'access') {
   try {
     const parsedToken = jwt.verify(token, process.env.SECRET); //verify token
+
+    if (parsedToken.token_type !== type) throw new Error('Invalid Token');
+
     const user = await getUserById(parsedToken.userId); // get user data from user table
 
     if (user) {
       return user;
     }
-    throw new Error('Invalid Login');
+    throw new Error('Invalid Token');
   } catch (e) {
     throw new Error(e);
   }
@@ -36,13 +39,17 @@ async function authenticateWithToken(token) {
 
 function getToken(userId, tokenType = 'access') {
   try {
+    let payload = {
+      userId,
+      token_type: tokenType,
+    };
     let expireDate = 300; // five minutes in seconds
 
     if (tokenType === 'refresh') {
       expireDate = 60 * 15; // one day in seconds
     }
 
-    return jwt.sign({ userId }, process.env.SECRET, { expiresIn: expireDate });
+    return jwt.sign(payload, process.env.SECRET, { expiresIn: expireDate });
   } catch (e) {
     throw new Error(e.message);
   }
