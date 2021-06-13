@@ -14,6 +14,7 @@ async function createToken (user_id){
     let tokenValues = [accessToken,refreshToken,user_id];
     let tokenQuery = await client.query(SQL,tokenValues);
     return {accessToken,refreshToken};
+  
   }
   catch(e){
     throw new Error (e);

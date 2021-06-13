@@ -17,7 +17,8 @@ CREATE TABLE client(
   user_name VARCHAR(100) UNIQUE,
   hashed_password VARCHAR(250),
   email VARCHAR(150) UNIQUE,
-  verified boolean
+  google_id VARCHAR(200) UNIQUE,
+  verified boolean DEFAULT false
 );
 
 CREATE TABLE jwt(
