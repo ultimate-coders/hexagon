@@ -20,7 +20,7 @@ describe('error handlers', ()=> {
   });
 
   it('500 if no name in the query string', async ()=> {
-    let response = await serverRequest.get('/auth/google/failed');
+    let response = await serverRequest.get('/api/v1/me-profile/');
     expect(response.status).toEqual(500);
   });
    
