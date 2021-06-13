@@ -61,13 +61,13 @@ INSERT INTO attachment(post_id,file_id) VALUES (3,3);
 INSERT INTO attachment(post_id,file_id) VALUES (4,4);
 INSERT INTO attachment(post_id,file_id) VALUES (5,5);
 
-INSERT INTO comment (comment,rate,number_like,post_id) VALUES ('great job',4,3,1);
-INSERT INTO comment (comment,rate,number_like,post_id) VALUES ('i like it',4,3,2);
-INSERT INTO comment (comment,rate,number_like,post_id) VALUES ('i dont like it',4,3,3);
-INSERT INTO comment (comment,rate,number_like,post_id) VALUES ('perfect',4,3,4);
-INSERT INTO comment (comment,rate,number_like,post_id) VALUES ('woooooow',4,3,4);
-INSERT INTO comment (comment,rate,number_like,post_id) VALUES ('not good',4,2,4);
-INSERT INTO comment (comment,rate,number_like,post_id) VALUES ('i dont like it',4,3,5);
+INSERT INTO comment (comment,profile_id,post_id) VALUES ('great job',3,1);
+INSERT INTO comment (comment,profile_id,post_id) VALUES ('i like it',3,2);
+INSERT INTO comment (comment,profile_id,post_id) VALUES ('i dont like it',3,3);
+INSERT INTO comment (comment,profile_id,post_id) VALUES ('perfect',1,4);
+INSERT INTO comment (comment,profile_id,post_id) VALUES ('woooooow',5,4);
+INSERT INTO comment (comment,profile_id,post_id) VALUES ('not good',2,4);
+INSERT INTO comment (comment,profile_id,post_id) VALUES ('i dont like it',3,5);
 
 INSERT INTO notification (receiver_id,message,post_id,seen) VALUES (2,'tamara like your post',2,false);
 INSERT INTO notification (receiver_id,message,post_id,seen) VALUES (2,'amjad commented on your post',2,true);
@@ -76,3 +76,25 @@ INSERT INTO notification (receiver_id,message,post_id,seen) VALUES (5,'wessam li
 INSERT INTO notification (receiver_id,message,post_id,seen) VALUES (2,'wessam commented on your post',4,false);
 INSERT INTO notification (receiver_id,message,post_id,seen) VALUES (4,'amjad like your post',5,false);
 INSERT INTO notification (receiver_id,message,post_id,seen) VALUES (4,'wessam like your post',5,false);
+
+
+-- {
+--     "user_name":"rahaf",
+--     "email":"vvvv@yahoo.com",
+--     "password":"Anwar998@"
+--      "accessToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEwLCJpYXQiOjE2MjM1MjU5MDksImV4cCI6MTYyMzUyNjIwOX0.PBqWjkCkjXzuqrD86-IpuGqfW2VNUcKyzaxfAHbwOAU",
+--    "refreshToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEwLCJpYXQiOjE2MjM1MjU5MDksImV4cCI6MTYyMzUyNjgwOX0.igCYRuWJN_5veZO9hPAln2BjOFBsKjykc6F4tMFwhCU"
+-- }
+
+-- { "comment": "'wowwwww'", "id": 12 }
+
+-- {
+--     "done": [
+--         {
+--             "id": 10,
+--             "comment": "'wowwwww'",
+--             "post_id": 2,
+--             "profile_id": 6
+--         }
+--     ]
+-- }

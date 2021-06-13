@@ -1,5 +1,5 @@
 'use strict';
-const {createToken} = require('../models/jwt');
+const {createToken,deleteToken} = require('../models/jwt');
 const base64 = require('base-64');
 const {authenticateBasic} = require('../models/helpers');
 module.exports = async (req, res, next) => {
@@ -12,6 +12,7 @@ module.exports = async (req, res, next) => {
   try {
 
     let userData = await authenticateBasic(user, pass);
+    deleteToken(userData.id);
     const userTokens = await createToken(userData.id);
     req.user = userData;
     req.tokens = userTokens;

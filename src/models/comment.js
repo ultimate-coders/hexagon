@@ -16,8 +16,8 @@ async function getPostComments(postId){
 async function createComment(data){
   try{
   
-    let SQL=`INSERT INTO comment (comment,rate,number_like,post_id) VALUES ($1,$2,$3,$4) returning *;`;
-    let safeValues=[data.comment,data.rate,data.number_like,data.post_id];
+    let SQL=`INSERT INTO comment (comment,profile_id,post_id) VALUES ($1,$2,$3) returning *;`;
+    let safeValues=[data.body.comment,data.user.id,data.body.post_id];
     let result = await Client.query(SQL, safeValues);
     return result.rows;
   }catch(e){
@@ -27,7 +27,6 @@ async function createComment(data){
 
 async function updateComment(data){
   try{
-    
     let SQL=`UPDATE comment SET comment =$1 WHERE id=$2 returning *;`;
     let safeValues=[data.comment,data.id];
     let result = await Client.query(SQL, safeValues);
