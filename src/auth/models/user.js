@@ -30,7 +30,7 @@ async function createUser (data){
       let safeValues = [user,data.password,email];
       usernameQuery = await client.query(SQL,safeValues);
     }
-    return usernameQuery;
+    return usernameQuery.rows[0];
   } catch (e) {
     throw new Error(e.message);
   }
