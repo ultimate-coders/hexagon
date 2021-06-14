@@ -5,6 +5,7 @@ const client = require('../../models/db');
 
 async function commentCheck(req, res, next) {
   try {
+
     if(req.method.toLowerCase() === 'get' || req.method.toLowerCase() === 'post') {
       next();
       return;
