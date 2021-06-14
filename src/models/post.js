@@ -18,7 +18,7 @@ function Image(imageObj) {
 }
 
 // To format the response
-function Post(post) {
+function Post(post,likes) {
   this.id = post.post_id;
   this.text = post.text;
   this.category = {
@@ -40,6 +40,7 @@ function Post(post) {
       email: post.email,
     },
   };
+  this.likes =likes;
   this.images = [{
     id: post.image_id,
     link: post.image_link,
@@ -65,7 +66,12 @@ async function getAllPosts(categoryName, pageNumber = 1) {
     // Query the database
     const postsData = await client.query(sqlQuery, safeValues);
     const hasNext = postsData.rowCount > PAGE_SIZE;
-    let results = postsData.rows.map(post => new Post(post));
+    let results = postsData.rows.map(post => {
+      let likes=post.likes? post.likes.split(',')[1].split(')')[0]:0;
+      return new Post(post,likes);
+    });
+    console.log('sql.rows',postsData);
+    console.log('results',results);
     if(hasNext)  results = results.slice(0, -1);
     const response = {
       count: results.length,
@@ -88,8 +94,12 @@ async function getSinglePost(id) {
     let safeValues = [id];
     // Query the database
     const postsData = await client.query(sqlQuery, safeValues);
-    const post = new Post(postsData.rows[0]);
-    post['likes'] = postsData.rows[0].likes.split('(')[1].split(')')[0];
+    console.log('jjjjjjj',postsData.rows[0]);
+
+    let likes=postsData.rows[0].likes? postsData.rows[0].likes.split('(')[1].split(')')[0]:0;
+
+    const post = new Post(postsData.rows[0],likes);
+    // post['likes'] =postsData.rows[0].likes? postsData.rows[0].likes.split('(')[1].split(')')[0]:0;
     let imageSqlQuery = `
     SELECT user_file.id AS file_id, file AS link FROM attachment LEFT JOIN user_file ON attachment.file_id = user_file.id WHERE attachment.post_id = $1;
     `;
