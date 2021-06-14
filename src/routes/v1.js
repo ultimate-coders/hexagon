@@ -5,43 +5,43 @@ const uploadS3 = require('../middleware/uploader');
 const {createMessageHandler, getMessageHandler, deleteMessageHandler,updateMessageHandler} = require('../controllers/messageControllers');
 const {createNotificationHandler, getNotificationHandler, updateNotificationHandler} = require('../controllers/notificationController');
 const {getPostCommentsHandler,createCommentHandler,updateCommentHandler,deleteCommentHandler}=require('../controllers/commentController');
-const followHndler=require('../controllers/followController');
+const { followHandler } = require('../controllers/followController');
 const {getAllProfilesHandler, getProfileHandler, meHandler, createProfileHandler, updateProfileHandler} = require('../controllers/profileController');
 const {getAllPostsHandler, getSinglePostsHandler, createPostsHandler, updatePostsHandler, deletePostsHandler} = require('../controllers/postControllers');
 const bearer = require('../auth/middleware/bearer');
-const {commentCheck,messageCheck}=require('../auth/middleware/acl');
+const {commentCheck,messageCheck, postCheck, notificationCheck}=require('../auth/middleware/acl');
 const {fileUploadHandler} = require('../controllers/fileControllers');
 
-// router.use(bearer)
-//make bearer global middelware
 
-router.post('/messages', createMessageHandler);
-router.get('/messages', getMessageHandler);
+router.use(bearer);
+
+router.post('/messages', messageCheck, createMessageHandler);
+router.get('/messages', messageCheck, getMessageHandler);
 router.delete('/messages/:id',messageCheck, deleteMessageHandler);
 router.put('/messages/:id',messageCheck, updateMessageHandler);
 
-router.post('/notifications', createNotificationHandler);
-router.get('/notifications', getNotificationHandler);
-router.put('/notifications/:id', updateNotificationHandler);
+router.post('/notifications', notificationCheck, createNotificationHandler);
+router.get('/notifications', notificationCheck, getNotificationHandler);
+router.put('/notifications/:id',notificationCheck, updateNotificationHandler);
 
-router.get('/comment/:postId',getPostCommentsHandler);
-router.post('/comment',bearer,createCommentHandler);
-router.put('/comment/:id',bearer,commentCheck,updateCommentHandler);
-router.delete('/comment/:id',bearer,commentCheck,deleteCommentHandler);
+router.get('/comment/:postId', commentCheck, getPostCommentsHandler);
+router.post('/comment', commentCheck, createCommentHandler);
+router.put('/comment/:id',commentCheck,updateCommentHandler);
+router.delete('/comment/:id',commentCheck,deleteCommentHandler);
 
-router.post('/follow',followHndler);
+router.post('/follow',followHandler);
 
 router.get('/profile', getAllProfilesHandler);
 router.get('/profile/:id', getProfileHandler);
-router.get('/me-profile/', meHandler);
-router.post('/profile/', createProfileHandler);
-router.put('/profile/:id', updateProfileHandler);
+router.get('/me-profile', meHandler);
+router.post('/profile', createProfileHandler);
+router.put('/profile/', updateProfileHandler);
 
-router.get('/posts', getAllPostsHandler);
-router.get('/posts/:id', getSinglePostsHandler);
-router.post('/posts', uploadS3.array('image'), createPostsHandler);
-router.put('/posts/:id', updatePostsHandler);
-router.delete('/posts/:id', deletePostsHandler);
+router.get('/posts', postCheck, getAllPostsHandler);
+router.get('/posts/:id', postCheck, getSinglePostsHandler);
+router.post('/posts', postCheck, uploadS3.array('image'), createPostsHandler);
+router.put('/posts/:id', postCheck, uploadS3.array('image'), updatePostsHandler);
+router.delete('/posts/:id', postCheck, deletePostsHandler);
 
 router.post('/file-upload', uploadS3.array('file'), fileUploadHandler);
 

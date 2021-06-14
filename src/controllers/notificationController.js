@@ -16,17 +16,20 @@ let getNotificationHandler = async (req,res,next)=>{
   try {
     const page = req.query.page || '1';
 
-    let result = await getNotification(req.body.receiver_id, page);
+    let result = await getNotification(req.user.profile_id, page);
     res.status(200).json(result);
-  } catch (error) {
-    next(error);
+  } catch (e) {
+    next(e);
   }
 };
 
 let updateNotificationHandler = async (req,res,next) =>{
   try {
     await updateNotification(req.params.id);
-    res.status(200).json({status:'successful'});
+    res.status(200).json({
+      status: 200,
+      message: 'Successfully updated',
+    });
   } catch (error) {
     next(error);
   }
