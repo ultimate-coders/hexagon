@@ -5,10 +5,11 @@ const Client = require('../../models/db');
 
 async function commentCheck(req,res,next){
   try {
+    // select user_id from profile where id in (select profile_id from comment
     let SQL=`select user_id from profile where id in (select profile_id from comment where id =$1) ;`;
     let safeValue=[req.params.id];
     let query = await Client.query(SQL, safeValue);
-    if(req.user.profile_id === query.rows[0].user_id) next();
+    if(req.user.profile_id === query.rows[0].profile_id) next();
   } catch (error) {
     throw new Error(error);
   }

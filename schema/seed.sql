@@ -18,11 +18,11 @@ INSERT INTO user_file(file) VALUES ('../img/male.jpg');
 INSERT INTO user_file(file) VALUES ('../img/male.jpg');
 INSERT INTO user_file(file) VALUES ('../img/female.jpg');
 
-INSERT INTO profile(user_id,first_name,last_name,caption,profile_picture) VALUES ('1','tamara','al-rashed','artist',1);
-INSERT INTO profile(user_id,first_name,last_name,caption,profile_picture) VALUES ('2','wesam','al-masri','artist',2);
-INSERT INTO profile(user_id,first_name,last_name,caption,profile_picture) VALUES ('3','amjad','mesmar','desighner',2);
-INSERT INTO profile(user_id,first_name,last_name,caption,profile_picture) VALUES ('4','emran','aloul','engneer',2);
-INSERT INTO profile(user_id,first_name,last_name,caption,profile_picture) VALUES ('5','anwar','isleet',null,1);
+INSERT INTO profile(user_id,first_name,last_name,caption,profile_picture) VALUES (4,'emran','aloul','engneer',2);
+INSERT INTO profile(user_id,first_name,last_name,caption,profile_picture) VALUES (2,'wesam','al-masri','artist',2);
+INSERT INTO profile(user_id,first_name,last_name,caption,profile_picture) VALUES (5,'anwar','isleet',null,1);
+INSERT INTO profile(user_id,first_name,last_name,caption,profile_picture) VALUES (1,'tamara','al-rashed','artist',1);
+INSERT INTO profile(user_id,first_name,last_name,caption,profile_picture) VALUES (3,'amjad','mesmar','desighner',2);
 
 INSERT INTO follow(follower,following) VALUES (1,2);
 INSERT INTO follow(follower,following) VALUES (1,4);

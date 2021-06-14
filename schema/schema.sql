@@ -117,6 +117,13 @@ CREATE TABLE notification(
 DROP TABLE IF EXISTS interaction;
 CREATE TABLE interaction( 
     id SERIAL PRIMARY KEY,   
+    profile_id int UNIQUE,
     post_id int NOT NULL,
-    profile_id int UNIQUE
+    interaction_type VARCHAR(20) DEFAULT 'like'
     );
+
+-- idea : add count interaction to post tabel
+-- TD:fix seed and add inserts for new tabels
+-- TD:add end point for interaction with its handler   *** do it like follow
+-- TD:interaction tabel 
+-- idea: add acl on verefy :check if the client is vrified and give him the access depend on it
