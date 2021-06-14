@@ -120,9 +120,9 @@ CREATE TABLE interaction(
 
 -- idea : add count interaction to post tabel
 -- TD:fix seed and add inserts for interaction table done
--- TD: update endpoint.md
--- TD:add end point for interaction with its handler   *** do it like follow
--- TD:interaction tabel 
--- TD:fix insert password and insert a real hash password
+-- TD: update endpoint.md done
+-- TD:add end point for interaction with its handler   *** do it like follow done
+-- TD:interaction tabel done
+-- TD:fix insert password and insert a real hash password not yet
 -- idea: add acl on verefy :check if the client is vrified and give him the access depend on it
--- delete test folder
+-- delete test folder?!

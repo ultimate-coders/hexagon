@@ -11,7 +11,7 @@ const {getAllPostsHandler, getSinglePostsHandler, createPostsHandler, updatePost
 const bearer = require('../auth/middleware/bearer');
 const {commentCheck,messageCheck}=require('../auth/middleware/acl');
 const {fileUploadHandler} = require('../controllers/fileControllers');
-const {interactionHndler,getInteractionHndler}= require('../controllers/interactionControllers');
+const {interactionHndler}= require('../controllers/interactionControllers');
 
 // router.use(bearer)
 //make bearer global middelware
@@ -46,8 +46,7 @@ router.delete('/posts/:id', deletePostsHandler);
 
 router.post('/file-upload', uploadS3.array('file'), fileUploadHandler);
 
-router.post('/interaction',interactionHndler);
-router.get('/interaction',getInteractionHndler);
+router.post('/interaction',bearer,interactionHndler);
 
 router.get('/test', (req,res)=>{
   res.send('working well');
