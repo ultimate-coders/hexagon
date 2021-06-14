@@ -6,7 +6,6 @@ const sendEmail = require('../../utils/mailer');
 const usersVerifications = {}; // {userId: {exp; '342343232', code: '6654654sdfds64'}, ...}
 
 const verifyUserHandler = async (req, res, next) => {
-  console.log(usersVerifications);
   try {
     const code = req.body.code;
     if (!code) {
@@ -75,7 +74,7 @@ const sendVerificationCodeHandler = async (req, res, next) => {
         exp: Date.now() + 60 * 10, // 10 min
       };
       await sendEmail(
-        getVerificationEmailTemplate(req.user.email, req.user.first_name, code)
+        getVerificationEmailTemplate(req.user.email, req.user.username, code)
       );
       // Remove the code after 10 min
       setTimeout(() => {
@@ -93,11 +92,11 @@ const sendVerificationCodeHandler = async (req, res, next) => {
   }
 };
 
-const getVerificationEmailTemplate = (to, first_name, code) => {
+const getVerificationEmailTemplate = (to, name, code) => {
   const subject = 'Verification Code for the account';
   const text = '';
   const html = `
-    Hello <b>${first_name}</b>, you are trying to verify your account, just copy the code and past it in the appropriate field</b>
+    Hello <b>${name || 'there'}</b>, you are trying to verify your account, just copy the code and past it in the appropriate field</b>
     <h3>Code</h3>: <h3>${code}</h3> 
     `;
 
