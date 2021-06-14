@@ -24,7 +24,7 @@ async function authenticateBasic (email, password) {
 async function authenticateWithToken (token) {
 
   try {
-  
+    console.log('in authe function');
     const parsedToken = jwt.verify(token, process.env.SECRET);  //verify token
     const user = await getUserById(parsedToken.userId);   // get user data from user table
 

@@ -100,11 +100,8 @@ CREATE TABLE attachment(
 CREATE TABLE comment(
     id SERIAL PRIMARY KEY,
     comment text NOT NULL,
-    rate int,
-    number_like int,
-    post_id int NOT NULL
-
-    -- FOREIGN KEY (post_id) REFERENCES post(id)
+    post_id int NOT NULL,
+    profile_id int NOT NULL
 );
 
 CREATE TABLE notification(
@@ -116,3 +113,10 @@ CREATE TABLE notification(
 
   FOREIGN KEY (receiver_id) REFERENCES profile(id)
 );
+
+DROP TABLE IF EXISTS interaction;
+CREATE TABLE interaction( 
+    id SERIAL PRIMARY KEY,   
+    post_id int NOT NULL,
+    profile_id int UNIQUE
+    );

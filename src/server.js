@@ -37,8 +37,6 @@ events.on('message', (payload) => {
 const errorHandler = require('./error-handlers/500.js');
 const notFound = require('./error-handlers/404.js');
 const v1Router = require('./routes/v1');
-// const v2Router = require('./routes/v2');
-
 const authRouter = require('./auth/routes');
 
 
@@ -68,7 +66,6 @@ app.get('/test', (req, res) => {
 });
 app.use('/auth',authRouter);
 app.use('/api/v1',v1Router);
-// app.use('/api/v2',v2Router);
 
 // Catchalls
 app.use(notFound);
