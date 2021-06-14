@@ -15,8 +15,8 @@ const {fileUploadHandler} = require('../controllers/fileControllers');
 
 router.use(bearer);
 
-router.post('/messages', createMessageHandler);
-router.get('/messages', getMessageHandler);
+router.post('/messages', messageCheck, createMessageHandler);
+router.get('/messages', messageCheck, getMessageHandler);
 router.delete('/messages/:id',messageCheck, deleteMessageHandler);
 router.put('/messages/:id',messageCheck, updateMessageHandler);
 
@@ -24,8 +24,8 @@ router.post('/notifications', createNotificationHandler);
 router.get('/notifications', getNotificationHandler);
 router.put('/notifications/:id', updateNotificationHandler);
 
-router.get('/comment/:postId',getPostCommentsHandler);
-router.post('/comment',createCommentHandler);
+router.get('/comment/:postId', commentCheck, getPostCommentsHandler);
+router.post('/comment', commentCheck, createCommentHandler);
 router.put('/comment/:id',commentCheck,updateCommentHandler);
 router.delete('/comment/:id',commentCheck,deleteCommentHandler);
 
@@ -35,7 +35,7 @@ router.get('/profile', getAllProfilesHandler);
 router.get('/profile/:id', getProfileHandler);
 router.get('/me-profile', meHandler);
 router.post('/profile', createProfileHandler);
-router.put('/profile', updateProfileHandler);
+router.put('/profile/:id', updateProfileHandler);
 
 router.get('/posts', getAllPostsHandler);
 router.get('/posts/:id', getSinglePostsHandler);

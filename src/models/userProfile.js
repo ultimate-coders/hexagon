@@ -36,7 +36,7 @@ async function getAllProfiles(keyword = '', pageNumber = 1) {
     let sqlQuery = `
     SELECT profile.id AS profile_id, client.id AS user_id, user_file.id as file_id, first_name, last_name, caption, file as profile_picture, user_name, email FROM profile JOIN client ON profile.user_id = client.id LEFT JOIN user_file ON profile.profile_picture = user_file.id ORDER BY profile.id DESC LIMIT $1 OFFSET $2;
     `;
-    let startFrom = (pageNumber - 1) * PAGE_SIZE;
+    let startFrom = (parseInt(pageNumber) - 1) * PAGE_SIZE;
     let safeValues = [PAGE_SIZE + 1, startFrom];
     // Filtering
     if(keyword && keyword !== ''){
@@ -52,7 +52,7 @@ async function getAllProfiles(keyword = '', pageNumber = 1) {
     let results = profilesData.rows.map(profile => new Profile(profile));
     if(hasNext)  results = results.slice(0, -1);
     const response = {
-      count: profilesData.rowCount - 1,
+      count: results.length,
       hasNext: hasNext,
       results: results,
     };

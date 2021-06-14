@@ -1,9 +1,16 @@
 'use strict';
-const { getPostComments, createComment, updateComment, deleteComment } = require('../models/comment');
+const {
+  getPostComments,
+  createComment,
+  updateComment,
+  deleteComment,
+} = require('../models/comment');
 
 async function getPostCommentsHandler(req, res, next) {
   try {
-    let result = await getPostComments(req.params.postId);
+    const page = req.query.page || '1';
+
+    let result = await getPostComments(req.params.postId, page);
     res.status(201).json(result);
   } catch (error) {
     next(error);
@@ -12,9 +19,9 @@ async function getPostCommentsHandler(req, res, next) {
 
 async function createCommentHandler(req, res, next) {
   try {
-    let done = await createComment(req);
-    console.log('done -----------',done);
-    res.status(201).json({ done });
+    req.body.profile_id = req.user.profile_id;
+    let result = await createComment(req);
+    res.status(201).json(result);
   } catch (error) {
     next(error);
   }
@@ -22,11 +29,9 @@ async function createCommentHandler(req, res, next) {
 
 async function updateCommentHandler(req, res, next) {
   try {
-    console.log('update');
     let result = await updateComment(req);
-    console.log('done -----------',result);
 
-    res.status(201).json(result.rows);
+    res.status(201).json(result);
   } catch (error) {
     next(error);
   }
@@ -35,10 +40,18 @@ async function updateCommentHandler(req, res, next) {
 async function deleteCommentHandler(req, res, next) {
   try {
     let result = await deleteComment(req.params.id);
-    res.status(201).json(result);
+    res.status(200).json({
+      status: 200,
+      message: 'Successfully deleted',
+    });
   } catch (error) {
     next(error);
   }
 }
 
-module.exports = { getPostCommentsHandler, createCommentHandler, updateCommentHandler, deleteCommentHandler };
+module.exports = {
+  getPostCommentsHandler,
+  createCommentHandler,
+  updateCommentHandler,
+  deleteCommentHandler,
+};
