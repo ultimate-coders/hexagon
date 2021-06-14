@@ -8,24 +8,29 @@ const {getPostCommentsHandler,createCommentHandler,updateCommentHandler,deleteCo
 const followHndler=require('../controllers/followController');
 const {getAllProfilesHandler, getProfileHandler, meHandler, createProfileHandler, updateProfileHandler} = require('../controllers/profileController');
 const {getAllPostsHandler, getSinglePostsHandler, createPostsHandler, updatePostsHandler, deletePostsHandler} = require('../controllers/postControllers');
+const bearer = require('../auth/middleware/bearer');
+const {commentCheck,messageCheck}=require('../auth/middleware/acl');
 const {fileUploadHandler} = require('../controllers/fileControllers');
 
+// router.use(bearer)
+//make bearer global middelware
 
 router.post('/messages', createMessageHandler);
 router.get('/messages', getMessageHandler);
-router.delete('/messages/:id', deleteMessageHandler);
-router.put('/messages/:id', updateMessageHandler);
+router.delete('/messages/:id',messageCheck, deleteMessageHandler);
+router.put('/messages/:id',messageCheck, updateMessageHandler);
 
 router.post('/notifications', createNotificationHandler);
 router.get('/notifications', getNotificationHandler);
 router.put('/notifications/:id', updateNotificationHandler);
 
 router.get('/comment/:postId',getPostCommentsHandler);
-router.post('/comment',createCommentHandler);
-router.put('/comment',updateCommentHandler);
-router.delete('/comment/:id',deleteCommentHandler);
+router.post('/comment',bearer,createCommentHandler);
+router.put('/comment/:id',bearer,commentCheck,updateCommentHandler);
+router.delete('/comment/:id',bearer,commentCheck,deleteCommentHandler);
 
 router.post('/follow',followHndler);
+
 router.get('/profile', getAllProfilesHandler);
 router.get('/profile/:id', getProfileHandler);
 router.get('/me-profile/', meHandler);
