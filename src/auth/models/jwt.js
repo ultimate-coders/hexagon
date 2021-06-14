@@ -4,6 +4,7 @@
 const client = require('../../models/db');
 const { getToken } = require('../models/helpers');
 
+
 async function createToken(user_id) {
   try {
     const accessToken = getToken(user_id);

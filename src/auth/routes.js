@@ -18,6 +18,7 @@ authRouter.get('/logout',authenticateBearer, logoutHandler);
 authRouter.get('/refresh', refreshHandler);
 authRouter.put('/user/password',authenticateBearer, updateUserPasswordHandler);
 
+
 authRouter.post('/user/verify',authenticateBearer, verifyUserHandler);
 authRouter.post('/user/verification',authenticateBearer, sendVerificationCodeHandler);
 

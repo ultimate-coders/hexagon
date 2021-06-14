@@ -20,6 +20,7 @@ module.exports = async (req, res, next) => {
 
     req.user = validUser;
     req.user.profile_id = userProfile.id;
+
     next();
   } catch (e) {
     _authError();

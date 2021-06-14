@@ -26,6 +26,7 @@ async function authenticateWithToken(token, type = 'access') {
 
     if (parsedToken.token_type !== type) throw new Error('Invalid Token');
 
+
     const user = await getUserById(parsedToken.userId); // get user data from user table
 
     if (user) {
