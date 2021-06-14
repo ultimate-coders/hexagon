@@ -18,11 +18,11 @@ INSERT INTO user_file(file) VALUES ('../img/male.jpg');
 INSERT INTO user_file(file) VALUES ('../img/male.jpg');
 INSERT INTO user_file(file) VALUES ('../img/female.jpg');
 
-INSERT INTO profile(user_id,first_name,last_name,caption,profile_picture) VALUES ('1','tamara','al-rashed','artist',1);
-INSERT INTO profile(user_id,first_name,last_name,caption,profile_picture) VALUES ('2','wesam','al-masri','artist',2);
-INSERT INTO profile(user_id,first_name,last_name,caption,profile_picture) VALUES ('3','amjad','mesmar','desighner',2);
-INSERT INTO profile(user_id,first_name,last_name,caption,profile_picture) VALUES ('4','emran','aloul','engneer',2);
-INSERT INTO profile(user_id,first_name,last_name,caption,profile_picture) VALUES ('5','anwar','isleet',null,1);
+INSERT INTO profile(user_id,first_name,last_name,caption,profile_picture) VALUES (4,'emran','aloul','engneer',2);
+INSERT INTO profile(user_id,first_name,last_name,caption,profile_picture) VALUES (2,'wesam','al-masri','artist',2);
+INSERT INTO profile(user_id,first_name,last_name,caption,profile_picture) VALUES (5,'anwar','isleet',null,1);
+INSERT INTO profile(user_id,first_name,last_name,caption,profile_picture) VALUES (1,'tamara','al-rashed','artist',1);
+INSERT INTO profile(user_id,first_name,last_name,caption,profile_picture) VALUES (3,'amjad','mesmar','desighner',2);
 
 INSERT INTO follow(follower,following) VALUES (1,2);
 INSERT INTO follow(follower,following) VALUES (1,4);
@@ -76,3 +76,11 @@ INSERT INTO notification (receiver_id,message,post_id,seen) VALUES (5,'wessam li
 INSERT INTO notification (receiver_id,message,post_id,seen) VALUES (2,'wessam commented on your post',4,false);
 INSERT INTO notification (receiver_id,message,post_id,seen) VALUES (4,'amjad like your post',5,false);
 INSERT INTO notification (receiver_id,message,post_id,seen) VALUES (4,'wessam like your post',5,false);
+
+INSERT INTO interaction (profile_id,post_id) VALUES (5,1);
+INSERT INTO interaction (profile_id,post_id) VALUES (3,4);
+INSERT INTO interaction (profile_id,post_id) VALUES (2,5);
+INSERT INTO interaction (profile_id,interaction_type,post_id) VALUES (4,'love',2);
+INSERT INTO interaction (profile_id,interaction_type,post_id) VALUES (1,'angry',3);
+INSERT INTO interaction (profile_id,interaction_type,post_id) VALUES (3,'love',1);
+INSERT INTO interaction (profile_id,interaction_type,post_id) VALUES (2,'laugh',5);

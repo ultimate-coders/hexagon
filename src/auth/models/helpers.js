@@ -44,10 +44,10 @@ function getToken(userId, tokenType = 'access') {
       userId,
       token_type: tokenType,
     };
-    let expireDate = 300; // five minutes in seconds
+    let expireDate = 300 * 20; // five minutes in seconds
 
     if (tokenType === 'refresh') {
-      expireDate = 60 * 15; // one day in seconds
+      expireDate = 86400; // one day in seconds
     }
 
     return jwt.sign(payload, process.env.SECRET, { expiresIn: expireDate });

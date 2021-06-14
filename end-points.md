@@ -76,3 +76,9 @@
 | Get    | `/Messages`     | Get all Messages informations for logged in user |
 | DELETE | `/Messages/:id` | Delete Messages (change to seen)                 |
 | PUT    | `/Messages/:id` | Update Messages (change to seen)                 |
+
+## interaction
+| Method | Endpint         | Description                                      |
+| ------ | --------------- | ------------------------------------------------ |
+| Get    | `/interaction` | Get all interaction |
+| post   | `/interaction` | Delete or INSERT interaction |

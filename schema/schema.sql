@@ -35,7 +35,6 @@ CREATE TABLE jwt(
 
 CREATE TABLE user_file(
   id SERIAL PRIMARY KEY,
-  profile_id int, -- not required
   file text NOT NULL,
   created_at date not null default current_timestamp
 );
@@ -92,9 +91,6 @@ CREATE TABLE attachment(
   id SERIAL PRIMARY KEY,
   post_id int NOT NULL,
   file_id int NOT NULL
-
-  -- FOREIGN KEY (post_id) REFERENCES post(id),
-  -- FOREIGN KEY (file_id) REFERENCES user_file(id)
 );
 
 CREATE TABLE comment(
@@ -117,6 +113,16 @@ CREATE TABLE notification(
 DROP TABLE IF EXISTS interaction;
 CREATE TABLE interaction( 
     id SERIAL PRIMARY KEY,   
+    profile_id int ,
     post_id int NOT NULL,
-    profile_id int UNIQUE
-    );
+    interaction_type VARCHAR(20) DEFAULT 'like'
+);
+
+-- idea : add count interaction to post tabel
+-- TD:fix seed and add inserts for interaction table done
+-- TD: update endpoint.md done
+-- TD:add end point for interaction with its handler   *** do it like follow done
+-- TD:interaction tabel done
+-- TD:fix insert password and insert a real hash password not yet
+-- idea: add acl on verefy :check if the client is vrified and give him the access depend on it
+-- delete test folder?!

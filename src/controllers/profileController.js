@@ -17,7 +17,7 @@ const getAllProfilesHandler = async (req, res, next) => {
 const getProfileHandler = async (req, res, next) => {
   try {
     const id = req.params.id;
-    const response = await getSingleProfile(id);
+    const response = await getSingleProfile(id, req.user.profile_id);
     res.status(200).json(response);
   } catch (e) {
     next(e);
@@ -36,6 +36,7 @@ const meHandler = async (req, res, next) => {
 
 const createProfileHandler = async (req, res, next) => {
   try {
+    req.body['user_id'] = req.user.id;
     const response = await createProfile(req.body);
     res.status(201).json(response);
   } catch (e) {
@@ -45,8 +46,8 @@ const createProfileHandler = async (req, res, next) => {
 
 const updateProfileHandler = async (req, res, next) => {
   try {
-    const id = req.params.id;
-    const response = await updateProfile(id, req.body);
+    const profile_id = req.user.id;
+    const response = await updateProfile(profile_id, req.body);
     res.status(200).json(response);
   } catch (e) {
     next(e);
