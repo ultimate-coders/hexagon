@@ -1,64 +1,70 @@
-'use stirct';
+'use strict';
 
 const passport = require('passport');
-const {createUser,getEmail, getUserById} = require ('../models/user');
-const {createToken,updateToken} = require ('../models/jwt');
-
+const { createUser, getUserByEmail, getUserById } = require('../models/user');
+const { createToken, deleteToken } = require('../models/jwt');
+const { createProfile } = require('../../models/userProfile');
 
 var GoogleStrategy = require('passport-google-oauth20').Strategy;
 
-passport.serializeUser(function(user, done) {
+passport.serializeUser(function (user, done) {
   done(null, user);
 });
 
-passport.deserializeUser(function(user, done) {
+passport.deserializeUser(function (user, done) {
   done(null, user);
 });
 
-passport.use(new GoogleStrategy({
-  clientID: process.env.GOOGLE_ID,
-  clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-  callbackURL: `/auth/google/callback`,
-},
-async function(accessToken, refreshToken, profile, cb) {
+passport.use(
+  new GoogleStrategy(
+    {
+      clientID: process.env.GOOGLE_ID,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+      callbackURL: `/auth/google/callback`,
+    },
+    async function (accessToken, refreshToken, profile, cb) {
+      try {
+        let googleId = profile.id;
+        let googleEmail = profile._json.email;
 
-  let googleId = profile.id;
-  // let googleUser = profile.name.givenName;
-  let googleEmail = profile._json.email;
-
-  let user = await getUserById(googleId,'google');
-  let email = await getEmail(googleEmail);
-
-  // console.log(profile);
-  // console.log('user email ',googleEmail);
-  // console.log('user ',googleUser);
-  // console.log('user id ',googleId);
-
-  if(!user && !email) {
-    console.log('sign up ');
-    user = await createUser(profile);
-    let userTokens = await createToken(user.id);
-    return cb(null,userTokens);
-  }
-  else if (email)
-  {
-    console.log('sign in ');
-    let userTokens = await updateToken(user.id);
-    return cb(null,userTokens);
-
-  }
-  else
-  {
-    console.log('bad request');
-    return cb('Sorry, either username or email or both are already in use!');
-  }
-
-},
-));
+        let user = await getUserById(googleId, 'google');
+        let email = await getUserByEmail(googleEmail);
+        if (!user && !email) {
+          user = await createUser(profile);
+          // Create user profile
+          let profileObj = {
+            user_id: user.id,
+            first_name: profile.name.givenName,
+            last_name: profile.name.familyName,
+            caption: '',
+          };
+          await createProfile(profileObj);
+          let userTokens = await createToken(user.id);
+          delete user.hashed_password;
+          delete userTokens.user_id;
+          return cb(null, { user, userTokens });
+        } else if (user) {
+          await deleteToken(user.id);
+          let userTokens = await createToken(user.id);
+          delete user.hashed_password;
+          delete userTokens.user_id;
+          return cb(null, { user, userTokens });
+        } else {
+          return cb(
+            'Sorry, either username or email or both are already in use!'
+          );
+        }
+      } catch (e) {
+        cb(e);
+      }
+    }
+  )
+);
 passport.serializeUser((user, cb) => {
   cb(null, user);
-});passport.deserializeUser((obj, cb) => {
+});
+passport.deserializeUser((obj, cb) => {
   cb(null, obj);
-}); 
+});
 
-module.exports= passport;
+module.exports = passport;
