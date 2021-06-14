@@ -9,10 +9,9 @@ googleOauth.use(passportSetup.initialize());
 
 googleOauth.get('/google',googleAuthCall);
 googleOauth.get('/failed',googleFailed);
-// googleOauth.get('/google/callback',googleCallBack);
 
 googleOauth.get('/google/callback', 
-  passportSetup.authenticate('google', { failureRedirect: '/login' }),
+  passportSetup.authenticate('google', { failureRedirect: '/auth/login' }),
   function(req, res) {
     let user = req.user;
     res.json(user);

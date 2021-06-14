@@ -10,7 +10,9 @@ const fileUploadHandler = async (req, res, next) => {
     let response = await saveFile(req.files);
     res.status(200).json(response);
   } catch (e) {
+    console.log(e);
     next(e);
+    
   }
 };
 
