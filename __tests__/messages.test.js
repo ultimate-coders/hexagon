@@ -44,7 +44,7 @@ describe('messages tests', ()=>{
   it('should update the message', async ()=>{
     let obj = {
       message: 'are you good?',
-      id: 18,
+      id: 3,
     };
 
     let res = await request.put(`/api/v1/messages/${obj.id}`).send(obj);
@@ -56,7 +56,7 @@ describe('messages tests', ()=>{
   it('should delete the message', async ()=>{
     let obj = {
       message: 'are you good?',
-      id: 18,
+      id: 3,
     };
 
     let res = await request.delete(`/api/v1/messages/${obj.id}`).send(obj);
