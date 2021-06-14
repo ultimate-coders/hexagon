@@ -5,7 +5,7 @@ const client = require('../../models/db');
 const {getToken} = require ('../models/helpers');
 
 async function createToken (user_id){
-// console.log('user_id', user_id)
+
   try{
 
     const accessToken = getToken(user_id);
@@ -14,7 +14,6 @@ async function createToken (user_id){
     let tokenValues = [accessToken,refreshToken,user_id];
     let tokenQuery = await client.query(SQL,tokenValues);
     return {accessToken,refreshToken};
-  
   }
   catch(e){
     throw new Error (e);
