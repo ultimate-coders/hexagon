@@ -6,6 +6,7 @@ const {PAGE_SIZE} = require('../configurations');
 function PostComment(commentObj) {
   this.id = commentObj.comment_id;
   this.comment = commentObj.comment;
+  this.post_owner = commentObj.post_owner || null;
   this.profile = {
     id: commentObj.profile_id,
     first_name: commentObj.first_name,
@@ -45,7 +46,7 @@ async function createComment(data) {
     ];
     let result = await client.query(SQL, safeValues);
     
-    SQL = `select comment.id AS comment_id, comment, comment.profile_id, first_name, last_name, file AS profile_picture  from comment join profile on comment.profile_id = profile.id left join user_file on profile.profile_picture = user_file.id where comment.id = $1 ;`;
+    SQL = `select comment.id AS comment_id, comment, comment.profile_id, first_name, last_name, file AS profile_picture, post.profile_id AS post_owner from comment join profile on comment.profile_id = profile.id join post on comment.post_id = post.id left join user_file on profile.profile_picture = user_file.id where comment.id = $1 ;`;
     let query = await client.query(SQL, [result.rows[0].id]);
 
     return new PostComment(query.rows[0]);

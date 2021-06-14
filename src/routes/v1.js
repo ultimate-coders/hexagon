@@ -35,10 +35,10 @@ router.get('/profile', getAllProfilesHandler);
 router.get('/profile/:id', getProfileHandler);
 router.get('/me-profile', meHandler);
 router.post('/profile', createProfileHandler);
-router.put('/profile/:id', updateProfileHandler);
+router.put('/profile/', updateProfileHandler);
 
-router.get('/posts', getAllPostsHandler);
-router.get('/posts/:id', getSinglePostsHandler);
+router.get('/posts', postCheck, getAllPostsHandler);
+router.get('/posts/:id', postCheck, getSinglePostsHandler);
 router.post('/posts', postCheck, uploadS3.array('image'), createPostsHandler);
 router.put('/posts/:id', postCheck, uploadS3.array('image'), updatePostsHandler);
 router.delete('/posts/:id', postCheck, deletePostsHandler);

@@ -6,6 +6,8 @@ const {
   deleteComment,
 } = require('../models/comment');
 
+const { sendNotification } = require('../utils/helpers');
+
 async function getPostCommentsHandler(req, res, next) {
   try {
     const page = req.query.page || '1';
@@ -21,6 +23,9 @@ async function createCommentHandler(req, res, next) {
   try {
     req.body.profile_id = req.user.profile_id;
     let result = await createComment(req);
+    if(req.body.profile_id !== result.profile.id){
+      await sendNotification(`${result.profile.first_name} commented on you post`, result.post_owner, req.body.post_id);
+    }
     res.status(201).json(result);
   } catch (error) {
     next(error);

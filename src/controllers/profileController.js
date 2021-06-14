@@ -46,7 +46,7 @@ const createProfileHandler = async (req, res, next) => {
 
 const updateProfileHandler = async (req, res, next) => {
   try {
-    const profile_id = req.params.id;
+    const profile_id = req.user.id;
     const response = await updateProfile(profile_id, req.body);
     res.status(200).json(response);
   } catch (e) {

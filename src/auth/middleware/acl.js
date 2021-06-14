@@ -13,7 +13,6 @@ async function commentCheck(req, res, next) {
     let SQL = `select comment.profile_id AS comment_owner, post.profile_id AS post_owner from comment JOIN post ON comment.post_id = post.id where comment.id =$1 ;`;
     let safeValue = [req.params.id];
     let query = await client.query(SQL, safeValue);
-    console.log(safeValue, query.rows)
     if (req.user.profile_id === query.rows[0].comment_owner) {
       next();
     } else if (req.user.profile_id === query.rows[0].post_owner && req.method.toLowerCase() === 'delete') {
@@ -33,8 +32,8 @@ async function messageCheck(req, res, next) {
       return;
     }
 
-    let SQL = `select sender_id from message where id =$1) ;`;
-    let safeValue = [req.body.id];
+    let SQL = `select sender_id from message where id =$1;`;
+    let safeValue = [req.params.id];
     let query = await client.query(SQL, safeValue);
     if (req.user.profile_id === query.rows[0].sender_id) {
       next();
