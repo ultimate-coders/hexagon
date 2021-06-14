@@ -38,9 +38,13 @@ async function profileCheck(req, res, next) {
     let SQL = `select user_id from profile where id = $1;`;
     let safeValue = [req.body.id];
     let query = await client.query(SQL, safeValue);
-    if (req.user.profile_id === query.rows[0].user_id) next();
-  } catch (error) {
-    throw new Error(error);
+    if (req.user.id === query.rows[0].user_id){
+      next();
+    } else {
+      throw new Error('Unauthorized!');
+    }
+  } catch (e) {
+    next(e);
   }
 }
 
@@ -81,4 +85,4 @@ async function interactionCheck(req, res, next) {
   }
 }
 
-module.exports = { commentCheck, messageCheck, postCheck };
+module.exports = { commentCheck, messageCheck, postCheck, profileCheck };

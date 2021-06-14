@@ -12,8 +12,7 @@ const bearer = require('../auth/middleware/bearer');
 const {commentCheck,messageCheck, postCheck}=require('../auth/middleware/acl');
 const {fileUploadHandler} = require('../controllers/fileControllers');
 
-// router.use(bearer)
-//make bearer global middelware
+
 router.use(bearer);
 
 router.post('/messages', createMessageHandler);
@@ -34,9 +33,9 @@ router.post('/follow',followHndler);
 
 router.get('/profile', getAllProfilesHandler);
 router.get('/profile/:id', getProfileHandler);
-router.get('/me-profile/', meHandler);
-router.post('/profile/', createProfileHandler);
-router.put('/profile/:id', updateProfileHandler);
+router.get('/me-profile', meHandler);
+router.post('/profile', createProfileHandler);
+router.put('/profile', updateProfileHandler);
 
 router.get('/posts', getAllPostsHandler);
 router.get('/posts/:id', getSinglePostsHandler);

@@ -36,6 +36,7 @@ const meHandler = async (req, res, next) => {
 
 const createProfileHandler = async (req, res, next) => {
   try {
+    req.body['user_id'] = req.user.id;
     const response = await createProfile(req.body);
     res.status(201).json(response);
   } catch (e) {
@@ -45,8 +46,7 @@ const createProfileHandler = async (req, res, next) => {
 
 const updateProfileHandler = async (req, res, next) => {
   try {
-    const id = req.params.id;
-    const response = await updateProfile(id, req.body);
+    const response = await updateProfile(req.user.profile_id, req.body);
     res.status(200).json(response);
   } catch (e) {
     next(e);

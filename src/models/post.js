@@ -162,8 +162,7 @@ async function updatePost(id, postObj) {
     }
     const result = await getSinglePost(postsData.rows[0].id);
     return result;    
-    // we raised attachmentData and return statement to make the code working
-    // console.log(postsData,'postsData222');
+
   } catch (e) {
     throw new Error(e);
   }
