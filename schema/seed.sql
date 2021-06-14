@@ -76,3 +76,11 @@ INSERT INTO notification (receiver_id,message,post_id,seen) VALUES (5,'wessam li
 INSERT INTO notification (receiver_id,message,post_id,seen) VALUES (2,'wessam commented on your post',4,false);
 INSERT INTO notification (receiver_id,message,post_id,seen) VALUES (4,'amjad like your post',5,false);
 INSERT INTO notification (receiver_id,message,post_id,seen) VALUES (4,'wessam like your post',5,false);
+
+INSERT INTO interaction (profile_id,post_id) VALUES (5,1);
+INSERT INTO interaction (profile_id,post_id) VALUES (3,4);
+INSERT INTO interaction (profile_id,post_id) VALUES (2,5);
+INSERT INTO interaction (profile_id,interaction_type,post_id) VALUES (4,'love',2);
+INSERT INTO interaction (profile_id,interaction_type,post_id) VALUES (1,'angry',3);
+INSERT INTO interaction (profile_id,interaction_type,post_id) VALUES (3,'love',1);
+INSERT INTO interaction (profile_id,interaction_type,post_id) VALUES (2,'laugh',5);
