@@ -6,7 +6,6 @@ process.env.TEST_MODE = true;
 const  client  = require('../src/models/db');
 const {createToken,getTokenByUserId} = require('../src/auth/models/jwt');
 const middleware = require('../src/auth/middleware/bearer');
-const {meHandler} = require('../src/controllers/profileController');
 (async ()=>{
   await client.connect();
 })();
