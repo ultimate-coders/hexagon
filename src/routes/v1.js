@@ -33,7 +33,7 @@ router.post('/follow',followHndler);
 
 router.get('/profile', getAllProfilesHandler);
 router.get('/profile/:id', getProfileHandler);
-router.get('/me-profile/', meHandler);
+router.get('/me-profile/',bearer,meHandler);
 router.post('/profile/', createProfileHandler);
 router.put('/profile/:id', updateProfileHandler);
 
