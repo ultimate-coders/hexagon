@@ -20,7 +20,7 @@ describe('upload test', ()=>{
 
   it('should upload an image', async()=>{
     let res = await chai.request(app).post('/api/v1/file-upload')
-      .set('content-type', 'multipart/form-data')
+      .set('content-type', 'multipart/form-data');
       // .attach('file', fs.readFileSync(`img/female.jpg`));
     // console.log(res)
       
