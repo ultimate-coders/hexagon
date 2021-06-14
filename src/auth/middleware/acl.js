@@ -81,6 +81,26 @@ async function followCheck(req, res, next) {
   }
 }
 
+async function notificationCheck(req, res, next) {
+  try {
+    if(req.method.toLowerCase() === 'get' || req.method.toLowerCase() === 'post') {
+      next();
+      return;
+    }
+
+    let SQL = `select receiver_id from notification where id = $1;`;
+    let safeValue = [req.user.profile_id];
+    let query = await client.query(SQL, safeValue);
+    if (req.user.profile_id === query.rows[0].receiver_id) {
+      next();
+    } else {
+      throw new Error('Unauthorized!');
+    }
+  } catch (e) {
+    next(e);
+  }
+}
+
 async function postCheck(req, res, next) {
   try {
     if(req.method.toLowerCase() === 'get' || req.method.toLowerCase() === 'post') {
@@ -117,4 +137,4 @@ async function interactionCheck(req, res, next) {
   }
 }
 
-module.exports = { commentCheck, messageCheck, postCheck, profileCheck };
+module.exports = { commentCheck, messageCheck, postCheck, profileCheck, notificationCheck };

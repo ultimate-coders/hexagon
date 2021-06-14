@@ -5,11 +5,11 @@ const uploadS3 = require('../middleware/uploader');
 const {createMessageHandler, getMessageHandler, deleteMessageHandler,updateMessageHandler} = require('../controllers/messageControllers');
 const {createNotificationHandler, getNotificationHandler, updateNotificationHandler} = require('../controllers/notificationController');
 const {getPostCommentsHandler,createCommentHandler,updateCommentHandler,deleteCommentHandler}=require('../controllers/commentController');
-const followHndler=require('../controllers/followController');
+const { followHandler } = require('../controllers/followController');
 const {getAllProfilesHandler, getProfileHandler, meHandler, createProfileHandler, updateProfileHandler} = require('../controllers/profileController');
 const {getAllPostsHandler, getSinglePostsHandler, createPostsHandler, updatePostsHandler, deletePostsHandler} = require('../controllers/postControllers');
 const bearer = require('../auth/middleware/bearer');
-const {commentCheck,messageCheck, postCheck}=require('../auth/middleware/acl');
+const {commentCheck,messageCheck, postCheck, notificationCheck}=require('../auth/middleware/acl');
 const {fileUploadHandler} = require('../controllers/fileControllers');
 
 
@@ -20,16 +20,16 @@ router.get('/messages', messageCheck, getMessageHandler);
 router.delete('/messages/:id',messageCheck, deleteMessageHandler);
 router.put('/messages/:id',messageCheck, updateMessageHandler);
 
-router.post('/notifications', createNotificationHandler);
-router.get('/notifications', getNotificationHandler);
-router.put('/notifications/:id', updateNotificationHandler);
+router.post('/notifications', notificationCheck, createNotificationHandler);
+router.get('/notifications', notificationCheck, getNotificationHandler);
+router.put('/notifications/:id',notificationCheck, updateNotificationHandler);
 
 router.get('/comment/:postId', commentCheck, getPostCommentsHandler);
 router.post('/comment', commentCheck, createCommentHandler);
 router.put('/comment/:id',commentCheck,updateCommentHandler);
 router.delete('/comment/:id',commentCheck,deleteCommentHandler);
 
-router.post('/follow',followHndler);
+router.post('/follow',followHandler);
 
 router.get('/profile', getAllProfilesHandler);
 router.get('/profile/:id', getProfileHandler);
