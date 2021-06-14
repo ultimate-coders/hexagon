@@ -9,11 +9,12 @@ const followHndler=require('../controllers/followController');
 const {getAllProfilesHandler, getProfileHandler, meHandler, createProfileHandler, updateProfileHandler} = require('../controllers/profileController');
 const {getAllPostsHandler, getSinglePostsHandler, createPostsHandler, updatePostsHandler, deletePostsHandler} = require('../controllers/postControllers');
 const bearer = require('../auth/middleware/bearer');
-const {commentCheck,messageCheck}=require('../auth/middleware/acl');
+const {commentCheck,messageCheck, postCheck}=require('../auth/middleware/acl');
 const {fileUploadHandler} = require('../controllers/fileControllers');
 
 // router.use(bearer)
 //make bearer global middelware
+router.use(bearer);
 
 router.post('/messages', createMessageHandler);
 router.get('/messages', getMessageHandler);
@@ -25,9 +26,9 @@ router.get('/notifications', getNotificationHandler);
 router.put('/notifications/:id', updateNotificationHandler);
 
 router.get('/comment/:postId',getPostCommentsHandler);
-router.post('/comment',bearer,createCommentHandler);
-router.put('/comment/:id',bearer,commentCheck,updateCommentHandler);
-router.delete('/comment/:id',bearer,commentCheck,deleteCommentHandler);
+router.post('/comment',createCommentHandler);
+router.put('/comment/:id',commentCheck,updateCommentHandler);
+router.delete('/comment/:id',commentCheck,deleteCommentHandler);
 
 router.post('/follow',followHndler);
 
@@ -39,9 +40,9 @@ router.put('/profile/:id', updateProfileHandler);
 
 router.get('/posts', getAllPostsHandler);
 router.get('/posts/:id', getSinglePostsHandler);
-router.post('/posts', uploadS3.array('image'), createPostsHandler);
-router.put('/posts/:id', updatePostsHandler);
-router.delete('/posts/:id', deletePostsHandler);
+router.post('/posts', postCheck, uploadS3.array('image'), createPostsHandler);
+router.put('/posts/:id', postCheck, uploadS3.array('image'), updatePostsHandler);
+router.delete('/posts/:id', postCheck, deletePostsHandler);
 
 router.post('/file-upload', uploadS3.array('file'), fileUploadHandler);
 
