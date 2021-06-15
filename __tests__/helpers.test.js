@@ -10,13 +10,14 @@ const {createToken,getTokenByUserId} = require('../src/auth/models/jwt');
 const {authenticateWithToken,authenticateBasic,getToken} = require('../src/auth/models/helpers');
 const {getUserById} = require('../src/auth/models/user');
 
+const server = require('../src/server');
+const superTest = require ('supertest');
+const serverRequest = superTest(server.app);
+
 (async ()=>{
   await client.connect();
 })();
 
-const server = require('../src/server');
-const superTest = require ('supertest');
-const serverRequest = superTest(server.app);
 
 describe('Auth Middleware', () => {
 
