@@ -6,7 +6,7 @@ const {PAGE_SIZE} = require('../configurations');
 function PostComment(commentObj) {
   this.id = commentObj.comment_id;
   this.comment = commentObj.comment;
-  this.post_owner = commentObj.post_owner || null;
+  this.post_owner = commentObj.post_owner;
   this.profile = {
     id: commentObj.profile_id,
     first_name: commentObj.first_name,

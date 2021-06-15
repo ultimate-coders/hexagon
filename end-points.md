@@ -21,14 +21,13 @@
 | GET    | `/profile`     | Get all users' profiles information        |
 | GET    | `/profile/:id` | Get user' profiles information             |
 | POST   | `/profile`     | Create user's profile                      |
-| PUT    | `/profile/:id` | Update user' profiles information          |
+| PUT    | `/profile`     | Update user' profiles information          |
 
 ## Follow
 
-| Method | Endpint              | Description   |
-| ------ | -------------------- | ------------- |
-| POST   | `/follow/:profileId` | Follow user   |
-| DELETE | `/follow/:profileId` | Unfollow user |
+| Method | Endpint   | Description           |
+| ------ | --------- | --------------------- |
+| POST   | `/follow` | Follow/Unfollow  user |
 
 ## File
 
@@ -44,41 +43,40 @@
 
 ## POST
 
-| Method | Endpint      | Description                |
-| ------ | ------------ | -------------------------- |
-| Get    | `/posts`     | Get all posts informations |
-| Get    | `/posts/:id` | Get post informations      |
-| POST   | `/posts`     | Create post                |
-| PUT    | `/posts/:id` | Update post                |
-| DELETE | `/posts/:id` | Delete post                |
+| Method | Endpint      | Description               |
+| ------ | ------------ | ------------------------- |
+| Get    | `/posts`     | Get all posts information |
+| Get    | `/posts/:id` | Get post information      |
+| POST   | `/posts`     | Create post               |
+| PUT    | `/posts/:id` | Update post               |
+| DELETE | `/posts/:id` | Delete post               |
 
 ## Comment
 
-| Method | Endpint        | Description                   |
-| ------ | -------------- | ----------------------------- |
-| Get    | `/comment`     | Get all comments informations |
-| Get    | `/comment/:id` | Get post informations         |
-| POST   | `/comment`     | Create comment                |
-| PUT    | `/comment/:id` | Update comment                |
-| DELETE | `/comment/:id` | Delete *comment               |
+| Method | Endpint            | Description                                    |
+| ------ | ------------------ | ---------------------------------------------- |
+| Get    | `/comment/:postId` | Get all comments information for specific post |
+| POST   | `/comment`         | Create comment                                 |
+| PUT    | `/comment/:id`     | Update comment                                 |
+| DELETE | `/comment/:id`     | Delete *comment                                |
 
 ## Notifications
 
 | Method | Endpint          | Description                                           |
 | ------ | ---------------- | ----------------------------------------------------- |
-| Get    | `/Notifications` | Get all Notifications informations for logged in user |
+| Get    | `/Notifications` | Get all Notifications information for logged in user |
 | PUT    | `/Notifications` | Update notifications (change to seen)                 |
 
 ## Messages
 
 | Method | Endpint         | Description                                      |
 | ------ | --------------- | ------------------------------------------------ |
-| Get    | `/Messages`     | Get all Messages informations for logged in user |
+| Get    | `/Messages`     | Get all Messages information for logged in user |
 | DELETE | `/Messages/:id` | Delete Messages (change to seen)                 |
 | PUT    | `/Messages/:id` | Update Messages (change to seen)                 |
 
 ## interaction
-| Method | Endpint         | Description                                      |
-| ------ | --------------- | ------------------------------------------------ |
-| Get    | `/interaction` | Get all interaction |
+| Method | Endpint        | Description                  |
+| ------ | -------------- | ---------------------------- |
+| Get    | `/interaction` | Get all interaction          |
 | post   | `/interaction` | Delete or INSERT interaction |

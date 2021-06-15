@@ -15,7 +15,7 @@ authRouter.use(googleAuth); // calling google oauth
 authRouter.post('/signup', signUpHandler);
 authRouter.post('/signin', authenticateBasic, signInHandler);
 authRouter.get('/logout',authenticateBearer, logoutHandler);
-authRouter.get('/refresh', refreshHandler);
+authRouter.post('/refresh', refreshHandler);
 authRouter.put('/user/password',authenticateBearer, updateUserPasswordHandler);
 
 
