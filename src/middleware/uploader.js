@@ -9,7 +9,7 @@ const s3 = new aws.S3();
 aws.config.update({
   secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
   accessKeyId: process.env.AWS_ACCESS_KEY_ID,
-  region: process.env.S3_BUCKET_REGION,
+  region: process.env.AWS_REGION,
 });
 
 // Filter the uploaded files to be just images and the size should not exceed 500 KB
