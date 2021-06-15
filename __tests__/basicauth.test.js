@@ -2,16 +2,13 @@
 require('dotenv').config();
 process.env.TEST_MODE = true;
 const  client  = require('../src/models/db');
-(async ()=>{
-  await client.connect();
-})();
+// (async ()=>{
+// })();
 const { app } = require('../src/server');
 const superTest = require('supertest');
 // const { expect } = require('chai');
 const request = superTest(app);
-
 const middleware = require('../src/auth/middleware/basic');
-jest.setTimeout(10000);
 
 let users = {
   admin: { user_name: 'admin', email: 'admin@yahoo.com',  password: 'Password1@' },
@@ -22,24 +19,29 @@ let signIn = { email: 'admin@yahoo.com',  password: 'Password1@'};
 
 describe('Auth Middleware', () => {
   beforeAll( async () => {
+    await jest.setTimeout(4000);
+
+    await client.connect();
   
     await client.query(`DROP TABLE IF EXISTS follow;
-      DROP TABLE IF EXISTS jwt;
-      
-      DROP TABLE IF EXISTS message;
-      
-      DROP TABLE IF EXISTS comment;
-      DROP TABLE IF EXISTS attachment;
-      
-      DROP TABLE IF EXISTS post;
-      DROP TABLE IF EXISTS notification;
-      DROP TABLE IF EXISTS profile;
-      
-      DROP TABLE IF EXISTS user_file;
-      DROP TABLE IF EXISTS category;
-      
-      
-      DROP TABLE IF EXISTS client;
+    DROP TABLE IF EXISTS jwt;
+    
+    DROP TABLE IF EXISTS message;
+    
+    DROP TABLE IF EXISTS comment;
+    DROP TABLE IF EXISTS attachment;
+    
+    DROP TABLE IF EXISTS post;
+    DROP TABLE IF EXISTS notification;
+    DROP TABLE IF EXISTS profile;
+    
+    DROP TABLE IF EXISTS user_file;
+    DROP TABLE IF EXISTS category;
+    
+    
+    DROP TABLE IF EXISTS client;
+    
+    DROP TABLE IF EXISTS interaction;
       
       CREATE TABLE client(
         id SERIAL PRIMARY KEY,
