@@ -11,6 +11,7 @@ const superTest = require('supertest');
 const request = superTest(app);
 
 const middleware = require('../src/auth/middleware/basic');
+jest.setTimeout(10000);
 
 let users = {
   admin: { user_name: 'admin', email: 'admin@yahoo.com',  password: 'Password1@' },
@@ -22,7 +23,7 @@ let signIn = { email: 'admin@yahoo.com',  password: 'Password1@'};
 describe('Auth Middleware', () => {
   beforeAll( async () => {
   
-    client.query(`DROP TABLE IF EXISTS follow;
+    await client.query(`DROP TABLE IF EXISTS follow;
       DROP TABLE IF EXISTS jwt;
       
       DROP TABLE IF EXISTS message;
@@ -145,8 +146,8 @@ describe('Auth Middleware', () => {
     let res = await request.post('/auth/signup').send(users.admin);
     
   });
-  afterAll(()=>{
-    client.end();
+  afterAll (async()=>{
+    await client.end();
   });
   // admin:password: YWRtaW46cGFzc3dvcmQ=
   // admin:foo: YWRtaW46Zm9v

@@ -15,13 +15,15 @@ let users = {
   second: { user_name: 'writer', email: 'writer@yahoo.com',  password: 'Password1@' },
 };
 
+jest.setTimeout(10000);
+
 describe('messages tests', ()=>{
   let id1;
   let id2;
   let accessToken;
   beforeAll( async () => {
   
-    client.query(`DROP TABLE IF EXISTS follow;
+    await client.query(`DROP TABLE IF EXISTS follow;
       DROP TABLE IF EXISTS jwt;
       
       DROP TABLE IF EXISTS message;
@@ -155,8 +157,8 @@ describe('messages tests', ()=>{
     accessToken = result2.body.access_token;
     
   });
-  afterAll(()=>{
-    client.end();
+  afterAll (async()=>{
+    await client.end();
   });
   it('should create message', async ()=>{
     

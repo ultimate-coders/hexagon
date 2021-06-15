@@ -11,7 +11,6 @@ module.exports = async (req, res, next) => {
     if (!req.headers.authorization) {
       _authError();
     }
-    console.log('hello');
     const token = req.headers.authorization.split(' ').pop();
    
     const tokenRecord = await getTokenRecord(token, 'access');

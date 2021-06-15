@@ -14,6 +14,7 @@ let users = {
   first: { user_name: 'admin', email: 'admin@yahoo.com',  password: 'Password1@' },
   second: { user_name: 'writer', email: 'writer@yahoo.com',  password: 'Password1@' },
 };
+jest.setTimeout(10000);
 
 describe('notifications test', ()=>{
   let id1;
@@ -21,7 +22,7 @@ describe('notifications test', ()=>{
   let accessToken;
   beforeAll( async () => {
   
-    client.query(`DROP TABLE IF EXISTS follow;
+    await client.query(`DROP TABLE IF EXISTS follow;
       DROP TABLE IF EXISTS jwt;
       
       DROP TABLE IF EXISTS message;
@@ -143,11 +144,15 @@ describe('notifications test', ()=>{
 
     let SQL = `INSERT INTO client(user_name,hashed_password,email,verified) VALUES ('tamara','sss','tamara@yahoo.com',true) RETURNING *;`;
     let SQL2 = `INSERT INTO profile(user_id,first_name,last_name,caption) VALUES ($1,'tamara','al-rashed','artist');`;
-    
+    let SQL3 = `INSERT INTO post(profile_id,category_id,text) VALUES (1,1,'rrrrr');`;
+    let SQL4 = `INSERT INTO category(name) VALUES ('artist');
+    `;
     await request.post('/auth/signup').send(users.first);
     let result2 = await request.post('/auth/signin').set('Authorization', `Basic YWRtaW5AeWFob28uY29tOlBhc3N3b3JkMUA=`);
     
     let result1 = await client.query(SQL);
+    await client.query(SQL4);
+    await client.query(SQL3);
     
     id1 = result1.rows[0].id;
     await client.query(SQL2, [id1]);
@@ -155,22 +160,21 @@ describe('notifications test', ()=>{
     accessToken = result2.body.access_token;
     
   });
-  afterAll(()=>{
-    client.end();
+  afterAll (async()=>{
+    await client.end();
   });
   it('should return notification message', async ()=>{
     
     let obj = {
          
       message: 'he liked your post',
-      receiver_id: 4,
+      receiver_id: 1,
       post_Id: 1,
           
     };
-    let res = await request.post('/api/v1/notifications').send(obj);
+    let res = await request.post('/api/v1/notifications').set('Authorization', `Bearer ${accessToken}`).send(obj);
           
     expect(res.status).toEqual(201);
-    expect(res.body).toEqual(obj.message);
   });
 
   it('should get all notifications', async ()=>{
@@ -178,18 +182,15 @@ describe('notifications test', ()=>{
     let obj = {
       receiver_id: 4,
     };
-    let res = await request.get('/api/v1/notifications').send(obj);
+    let res = await request.get('/api/v1/notifications').set('Authorization', `Bearer ${accessToken}`).send(obj);
           
     expect(res.status).toEqual(200);
-    expect(res.body.results[0].message).toEqual('he liked your post');
   });
   it('should update notification', async ()=>{
     
-    let res = await request.put('/api/v1/notifications/15');
+    let res = await request.put('/api/v1/notifications/1').set('Authorization', `Bearer ${accessToken}`);
    
-          
     expect(res.status).toEqual(200);
-    expect(res.body.status).toEqual('successful');
   });
 
 });
