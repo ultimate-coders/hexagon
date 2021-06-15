@@ -2,6 +2,7 @@
 
 const client = require('./db');
 const { PAGE_SIZE } = require('../configurations');
+const { uuid } = require('uuid').v4;
 
 // Constructors (data formatters)
 // For creating a profile record
@@ -51,14 +52,14 @@ function Post(post,likes) {
 async function getAllPosts(categoryName, pageNumber = 1) {
   try {
     let sqlQuery = `
-    SELECT post.id AS post_id, profile.id AS profile_id, profile_image.id AS file_id, profile_image.file AS profile_picture, client.id AS user_id, category.id AS category_id, name AS category_name, text, first_name, last_name, caption, user_name, email, post_image.id AS image_id, post_image.file AS image_link ,likes FROM post JOIN profile ON post.profile_id = profile.id JOIN client ON client.id = profile.user_id JOIN category ON post.category_id = category.id LEFT JOIN user_file AS profile_image ON profile.profile_picture = profile_image.id LEFT JOIN attachment ON attachment.post_id = post.id LEFT JOIN user_file AS post_image ON attachment.file_id = post_image.id left join (select post_id, count(*) from interaction  group by post_id) as likes on likes.post_id = post.id ORDER BY post.id DESC LIMIT $1 OFFSET $2;
+    SELECT post.id AS post_id, profile.id AS profile_id, profile_image.id AS file_id, profile_image.file AS profile_picture, client.id AS user_id, category.id AS category_id, name AS category_name, text, first_name, last_name, caption, user_name, email, post_image.id AS image_id, post_image.file AS image_link ,likes FROM post JOIN profile ON post.profile_id = profile.id JOIN client ON client.id = profile.user_id JOIN category ON post.category_id = category.id LEFT JOIN user_file AS profile_image ON profile.profile_picture = profile_image.id LEFT JOIN attachment ON attachment.post_id = post.id LEFT JOIN user_file AS post_image ON attachment.file_id = post_image.id left join (select post_id, count(*) from interaction  group by post_id) as likes on likes.post_id = post.id ORDER BY post.created_at DESC LIMIT $1 OFFSET $2;
     `;
     let startFrom = (pageNumber - 1) * PAGE_SIZE;
     let safeValues = [PAGE_SIZE + 1, startFrom];
     // Filtering
     if(categoryName && categoryName !== ''){
       sqlQuery = `
-      SELECT post.id AS post_id, profile.id AS profile_id, profile_image.id AS file_id, profile_image.file AS profile_picture, client.id AS user_id, category.id AS category_id, name AS category_name, text, first_name, last_name, caption, user_name, email, post_image.id AS image_id, post_image.file AS image_link ,likes FROM post JOIN profile ON post.profile_id = profile.id JOIN client ON client.id = profile.user_id JOIN category ON post.category_id = category.id LEFT JOIN user_file AS profile_image ON profile.profile_picture = profile_image.id LEFT JOIN attachment ON attachment.post_id = post.id LEFT JOIN user_file AS post_image ON attachment.file_id = post_image.id left join (select post_id, count(*) from interaction  group by post_id) as likes on likes.post_id = post.id WHERE category.name = $1 ORDER BY post.id DESC LIMIT $2 OFFSET $3;
+      SELECT post.id AS post_id, profile.id AS profile_id, profile_image.id AS file_id, profile_image.file AS profile_picture, client.id AS user_id, category.id AS category_id, name AS category_name, text, first_name, last_name, caption, user_name, email, post_image.id AS image_id, post_image.file AS image_link ,likes FROM post JOIN profile ON post.profile_id = profile.id JOIN client ON client.id = profile.user_id JOIN category ON post.category_id = category.id LEFT JOIN user_file AS profile_image ON profile.profile_picture = profile_image.id LEFT JOIN attachment ON attachment.post_id = post.id LEFT JOIN user_file AS post_image ON attachment.file_id = post_image.id left join (select post_id, count(*) from interaction  group by post_id) as likes on likes.post_id = post.id WHERE category.name = $1 ORDER BY post.created_at DESC LIMIT $2 OFFSET $3;
       `;
       startFrom = (pageNumber - 1) * PAGE_SIZE;
       safeValues = [categoryName, PAGE_SIZE + 1, startFrom];
@@ -114,26 +115,35 @@ async function getSinglePost(id) {
 // Create post
 async function createPost(postObj) {
   try {
+    
     let sqlQuery = `
-    INSERT INTO post (profile_id, text, category_id) VALUES ($1, $2, $3) RETURNING *;
+    INSERT INTO post (id,profile_id, text, category_id) VALUES ($1, $2, $3) RETURNING *;
     `;
+    let id = uuid();
     let post = new UserPost(postObj);
-    let safeValues = [post.profile_id, post.text, post.category_id];
+    let safeValues = [id,post.profile_id, post.text, post.category_id];
     // Query the database
     const postsData = await client.query(sqlQuery, safeValues);
-    let attachmentsSqlQuery = 'INSERT INTO attachment (post_id, file_id) VALUES ';
+
+    
+    let attachmentsSqlQuery = 'INSERT INTO attachment (post_id, id,file_id) VALUES ';
     safeValues = [postsData.rows[0].id];
     let attachmentData;
 
     if(postObj.images && postObj.images.length > 0){
+      let c=2;
       postObj.images.forEach((image_id, i) => {
         if(i > 0) attachmentsSqlQuery += ',';
-        attachmentsSqlQuery += `($1, $${i+2}) `;
+        let idAttach = uuid();
+        attachmentsSqlQuery += `($1, $${c},$${c+1}) `;
+        c+2;
+        safeValues.push(idAttach);
         safeValues.push(image_id);
       });
       attachmentsSqlQuery += 'RETURNING post_id;';
       attachmentData = await client.query(attachmentsSqlQuery, safeValues);
     }
+    
     const result = await getSinglePost(postsData.rows[0].id);
     return result;   
   } catch (e) {

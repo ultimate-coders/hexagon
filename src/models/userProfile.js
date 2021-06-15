@@ -2,6 +2,7 @@
 
 const client = require('./db');
 const { PAGE_SIZE } = require('../configurations');
+const  uuid  = require('uuid').v4;
 
 // Constructors (data formatters)
 // For creating a profile record
@@ -35,7 +36,7 @@ function Profile(profile) {
 async function getAllProfiles(keyword = '', pageNumber = 1) {
   try {
     let sqlQuery = `
-    SELECT profile.id AS profile_id, client.id AS user_id, user_file.id as file_id, first_name, last_name, caption, file as profile_picture, user_name, email FROM profile JOIN client ON profile.user_id = client.id LEFT JOIN user_file ON profile.profile_picture = user_file.id ORDER BY profile.id DESC LIMIT $1 OFFSET $2;
+    SELECT profile.id AS profile_id, client.id AS user_id, user_file.id as file_id, first_name, last_name, caption, file as profile_picture, user_name, email FROM profile JOIN client ON profile.user_id = client.id LEFT JOIN user_file ON profile.profile_picture = user_file.id ORDER BY profile.created_at DESC LIMIT $1 OFFSET $2;
     `;
     let startFrom = (parseInt(pageNumber) - 1) * PAGE_SIZE;
     let safeValues = [PAGE_SIZE + 1, startFrom];
@@ -43,7 +44,7 @@ async function getAllProfiles(keyword = '', pageNumber = 1) {
     if(keyword && keyword !== ''){
       keyword = `%${keyword}%`;
       sqlQuery = `
-      SELECT profile.id AS profile_id, client.id AS user_id, user_file.id as file_id, first_name, last_name, caption, file as profile_picture, user_name, email FROM profile JOIN client ON profile.user_id = client.id LEFT JOIN user_file ON profile.profile_picture = user_file.id WHERE UPPER(first_name) LIKE UPPER($1) OR UPPER(last_name) LIKE UPPER($1) OR UPPER(user_name) LIKE UPPER($1) OR UPPER(email) LIKE UPPER($1) ORDER BY profile.id DESC LIMIT $2 OFFSET $3;
+      SELECT profile.id AS profile_id, client.id AS user_id, user_file.id as file_id, first_name, last_name, caption, file as profile_picture, user_name, email FROM profile JOIN client ON profile.user_id = client.id LEFT JOIN user_file ON profile.profile_picture = user_file.id WHERE UPPER(first_name) LIKE UPPER($1) OR UPPER(last_name) LIKE UPPER($1) OR UPPER(user_name) LIKE UPPER($1) OR UPPER(email) LIKE UPPER($1) ORDER BY profile.created_at DESC LIMIT $2 OFFSET $3;
       `;
       safeValues = [keyword, PAGE_SIZE + 1, startFrom];
     }
@@ -116,9 +117,11 @@ async function getProfileByUserId(id) {
 // Create user profile (Need to be enhanced the response like the get all)
 async function createProfile(profileObj) {
   try {
-    let sqlQuery = 'INSERT INTO profile (user_id, first_name, last_name, caption, profile_picture) VALUES ($1, $2, $3, $4 , $5) RETURNING *;';
+    let id = uuid();
+    console.log(typeof(id));
+    let sqlQuery = 'INSERT INTO profile (id,user_id, first_name, last_name, caption, profile_picture) VALUES ($1, $2, $3, $4 , $5,$6) RETURNING *;';
     let profile = new UserProfile(profileObj);
-    let safeValues = [profile.user_id, profile.first_name, profile.last_name, profile.caption, profile.profile_picture];
+    let safeValues = [id,profile.user_id, profile.first_name, profile.last_name, profile.caption, profile.profile_picture];
     // Query the database
     let profileData = await client.query(sqlQuery, safeValues);
     if(profileData.rowCount>0){

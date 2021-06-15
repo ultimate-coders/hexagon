@@ -1,5 +1,5 @@
 'use strict';
-
+const { uuid } = require('uuid').v4;
 const client = require('./db');
 const {PAGE_SIZE} = require('../configurations');
 
@@ -17,7 +17,7 @@ function PostComment(commentObj) {
 
 async function getPostComments(postId, pageNumber = 1) {
   try {
-    let SQL = `select comment.id AS comment_id, comment, comment.profile_id, first_name, last_name, file AS profile_picture  from comment join profile on comment.profile_id = profile.id left join user_file on profile.profile_picture = user_file.id where post_id = $1 ORDER BY comment.id DESC LIMIT $2 OFFSET $3 ;`;
+    let SQL = `select comment.id AS comment_id, comment, comment.profile_id, first_name, last_name, file AS profile_picture  from comment join profile on comment.profile_id = profile.id left join user_file on profile.profile_picture = user_file.id where post_id = $1 ORDER BY comment.created_at DESC LIMIT $2 OFFSET $3 ;`;
     let startFrom = (parseInt(pageNumber) - 1) * PAGE_SIZE;
     let safeValue = [postId, PAGE_SIZE + 1, startFrom];
 
@@ -38,8 +38,10 @@ async function getPostComments(postId, pageNumber = 1) {
 
 async function createComment(data) {
   try {
-    let SQL = `INSERT INTO comment (comment,profile_id,post_id) VALUES ($1,$2,$3) returning id;`;
+    let id = uuid();
+    let SQL = `INSERT INTO comment (id,comment,profile_id,post_id) VALUES ($1,$2,$3) returning id;`;
     let safeValues = [
+      id,
       data.body.comment,
       data.user.profile_id,
       data.body.post_id,
