@@ -98,9 +98,7 @@ describe('post tests', ()=>{
       .set('content-type', 'multipart/form-data')
       .field('category_id', 1)
       .field('text', 'ok')
-      .field('profile_id', 1)
-      .attach('image', fs.readFileSync(`img/female.jpg`));
-      console.log('res.files', res.files)
+      .field('profile_id', 1);
     expect(res.status).toEqual(201);
   });
   it('should update a post', async ()=>{
