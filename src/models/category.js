@@ -6,7 +6,7 @@ async function getCategories() {
   try {
     let sqlQuery = 'SELECT * FROM category;';
     let categoriesData = await client.query(sqlQuery);
-    return categoriesData;
+    return categoriesData.rows;
   } catch (e) {
     throw new Error(e);
   }

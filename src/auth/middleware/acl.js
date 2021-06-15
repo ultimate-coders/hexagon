@@ -11,7 +11,7 @@ async function commentCheck(req, res, next) {
       return;
     }
 
-    let SQL = `select comment.profile_id AS comment_owner, post.profile_id AS post_owner from comment JOIN post ON comment.post_id = post.id where comment.id =$1 ;`;
+    let SQL = `select comment.profile_id AS comment_owner, post.profile_id AS post_owner from comment LEFT JOIN post ON comment.post_id = post.id where comment.id =$1 ;`;
     let safeValue = [req.params.id];
     let query = await client.query(SQL, safeValue);
     if (req.user.profile_id === query.rows[0].comment_owner) {
@@ -122,20 +122,33 @@ async function postCheck(req, res, next) {
   }
 }
 
-async function interactionCheck(req, res, next) {
-  try {
-    if(req.method.toLowerCase() === 'get' || req.method.toLowerCase() === 'post') {
-      next();
-      return;
-    }
+// async function interactionCheck(req, res, next) {
+//   try {
+//     if(req.method.toLowerCase() === 'get' || req.method.toLowerCase() === 'post') {
+//       next();
+//       return;
+//     }
 
-    let SQL = `select user_id from profile where id in (select profile_id from notification where id =$1) ;`;
-    let safeValue = [req.body.id];
-    let query = await client.query(SQL, safeValue);
-    if (req.user.profile_id === query.rows[0].user_id) next();
-  } catch (error) {
-    throw new Error(error);
+//     let SQL = `select id from profile where id in (select profile_id from notification where id =$1) ;`;
+//     let safeValue = [req.body.post_id];
+//     let query = await client.query(SQL, safeValue);
+//     if (req.user.profile_id === query.rows[0].id) {
+//       next();
+//     } else {
+//       throw new Error('Unauthorized!');
+//     }
+//   } catch (e) {
+//     throw new Error(e);
+//   }
+// }
+
+
+function verifyCheck(req, res, next) {
+  if(req.user.verified){
+    next();
+  } else {
+    next('Account not verified!');
   }
 }
 
-module.exports = { commentCheck, messageCheck, postCheck, profileCheck, notificationCheck };
+module.exports = { commentCheck, messageCheck, postCheck, profileCheck, notificationCheck, verifyCheck };
