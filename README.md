@@ -173,5 +173,6 @@ Hexagon is a social media for creative people such as artists, that will allow t
 
 #### Resources
 
+- [Deployed Web App](https://hexagon-sm.herokuapp.com/)
 - [Repository](https://github.com/ultimate-coders/hexagon)
 - [Trello Board](https://trello.com/b/cVb7ED1u/hexagon)
