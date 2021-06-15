@@ -17,7 +17,7 @@ function PostComment(commentObj) {
 
 async function getPostComments(postId, pageNumber = 1) {
   try {
-    let SQL = `select comment.id AS comment_id, comment, comment.profile_id, first_name, last_name, file AS profile_picture  from comment join profile on comment.profile_id = profile.id left join user_file on profile.profile_picture = user_file.id where post_id = $1 ORDER BY comment.id DESC LIMIT $2 OFFSET $3 ;`;
+    let SQL = `select comment.id AS comment_id, comment, comment.profile_id, first_name, last_name, file AS profile_picture  from comment join profile on comment.profile_id = profile.id left join user_file on profile.profile_picture = user_file.id where post_id = $1 ORDER BY comment.created_at DESC LIMIT $2 OFFSET $3 ;`;
     let startFrom = (parseInt(pageNumber) - 1) * PAGE_SIZE;
     let safeValue = [postId, PAGE_SIZE + 1, startFrom];
 

@@ -35,7 +35,7 @@ function Profile(profile) {
 async function getAllProfiles(keyword = '', pageNumber = 1) {
   try {
     let sqlQuery = `
-    SELECT profile.id AS profile_id, client.id AS user_id, user_file.id as file_id, first_name, last_name, caption, file as profile_picture, user_name, email FROM profile JOIN client ON profile.user_id = client.id LEFT JOIN user_file ON profile.profile_picture = user_file.id ORDER BY profile.id DESC LIMIT $1 OFFSET $2;
+    SELECT profile.id AS profile_id, client.id AS user_id, user_file.id as file_id, first_name, last_name, caption, file as profile_picture, user_name, email FROM profile JOIN client ON profile.user_id = client.id LEFT JOIN user_file ON profile.profile_picture = user_file.id ORDER BY profile.created_at DESC LIMIT $1 OFFSET $2;
     `;
     let startFrom = (parseInt(pageNumber) - 1) * PAGE_SIZE;
     let safeValues = [PAGE_SIZE + 1, startFrom];
@@ -43,7 +43,7 @@ async function getAllProfiles(keyword = '', pageNumber = 1) {
     if(keyword && keyword !== ''){
       keyword = `%${keyword}%`;
       sqlQuery = `
-      SELECT profile.id AS profile_id, client.id AS user_id, user_file.id as file_id, first_name, last_name, caption, file as profile_picture, user_name, email FROM profile JOIN client ON profile.user_id = client.id LEFT JOIN user_file ON profile.profile_picture = user_file.id WHERE UPPER(first_name) LIKE UPPER($1) OR UPPER(last_name) LIKE UPPER($1) OR UPPER(user_name) LIKE UPPER($1) OR UPPER(email) LIKE UPPER($1) ORDER BY profile.id DESC LIMIT $2 OFFSET $3;
+      SELECT profile.id AS profile_id, client.id AS user_id, user_file.id as file_id, first_name, last_name, caption, file as profile_picture, user_name, email FROM profile JOIN client ON profile.user_id = client.id LEFT JOIN user_file ON profile.profile_picture = user_file.id WHERE UPPER(first_name) LIKE UPPER($1) OR UPPER(last_name) LIKE UPPER($1) OR UPPER(user_name) LIKE UPPER($1) OR UPPER(email) LIKE UPPER($1) ORDER BY profile.created_at DESC LIMIT $2 OFFSET $3;
       `;
       safeValues = [keyword, PAGE_SIZE + 1, startFrom];
     }
