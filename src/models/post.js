@@ -2,7 +2,6 @@
 
 const client = require('./db');
 const { PAGE_SIZE } = require('../configurations');
-const { uuid } = require('uuid').v4;
 
 // Constructors (data formatters)
 // For creating a profile record
@@ -115,35 +114,26 @@ async function getSinglePost(id) {
 // Create post
 async function createPost(postObj) {
   try {
-    
     let sqlQuery = `
-    INSERT INTO post (id,profile_id, text, category_id) VALUES ($1, $2, $3) RETURNING *;
+    INSERT INTO post (profile_id, text, category_id) VALUES ($1, $2, $3) RETURNING *;
     `;
-    let id = uuid();
     let post = new UserPost(postObj);
-    let safeValues = [id,post.profile_id, post.text, post.category_id];
+    let safeValues = [post.profile_id, post.text, post.category_id];
     // Query the database
     const postsData = await client.query(sqlQuery, safeValues);
-
-    
-    let attachmentsSqlQuery = 'INSERT INTO attachment (post_id, id,file_id) VALUES ';
+    let attachmentsSqlQuery = 'INSERT INTO attachment (post_id, file_id) VALUES ';
     safeValues = [postsData.rows[0].id];
     let attachmentData;
 
     if(postObj.images && postObj.images.length > 0){
-      let c=2;
       postObj.images.forEach((image_id, i) => {
         if(i > 0) attachmentsSqlQuery += ',';
-        let idAttach = uuid();
-        attachmentsSqlQuery += `($1, $${c},$${c+1}) `;
-        c+2;
-        safeValues.push(idAttach);
+        attachmentsSqlQuery += `($1, $${i+2}) `;
         safeValues.push(image_id);
       });
       attachmentsSqlQuery += 'RETURNING post_id;';
       attachmentData = await client.query(attachmentsSqlQuery, safeValues);
     }
-    
     const result = await getSinglePost(postsData.rows[0].id);
     return result;   
   } catch (e) {

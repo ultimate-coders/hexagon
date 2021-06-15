@@ -1,13 +1,10 @@
 const client = require('./db');
 const { PAGE_SIZE } = require('../configurations');
-const { uuid } = require('uuid').v4;
 
 let createNotification = async (message, receiverId, postId )=>{
   try {
-    let id = uuid();
-
-    let SQL = `INSERT INTO notification (id,message, receiver_id, post_id) VALUES ($1,$2,$3) RETURNING *;`;
-    let safeValues = [id,message, receiverId, postId];
+    let SQL = `INSERT INTO notification (message, receiver_id, post_id) VALUES ($1,$2,$3) RETURNING *;`;
+    let safeValues = [message, receiverId, postId];
     let result = await client.query(SQL, safeValues);
     return result.rows[0];
   } catch (error) {

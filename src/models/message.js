@@ -1,14 +1,11 @@
 const client = require('./db');
 
 const { PAGE_SIZE } = require('../configurations');
-const { uuid } = require('uuid').v4;
 
 
 let createMessage = async (message , senderId, receiverId)=>{
-  let id = uuid();
-
-  let SQL = `INSERT INTO message (id,message,sender_id,receiver_id) VALUES ($1,$2,$3) RETURNING *;`;
-  let safeValues = [id,message,senderId,receiverId];
+  let SQL = `INSERT INTO message (message,sender_id,receiver_id) VALUES ($1,$2,$3) RETURNING *;`;
+  let safeValues = [message,senderId,receiverId];
   let result = await client.query(SQL, safeValues);
   return result;
 };

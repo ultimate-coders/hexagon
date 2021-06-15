@@ -1,5 +1,5 @@
 'use strict';
-const { uuid } = require('uuid').v4;
+
 const client = require('./db');
 const {PAGE_SIZE} = require('../configurations');
 
@@ -38,10 +38,8 @@ async function getPostComments(postId, pageNumber = 1) {
 
 async function createComment(data) {
   try {
-    let id = uuid();
-    let SQL = `INSERT INTO comment (id,comment,profile_id,post_id) VALUES ($1,$2,$3) returning id;`;
+    let SQL = `INSERT INTO comment (comment,profile_id,post_id) VALUES ($1,$2,$3) returning id;`;
     let safeValues = [
-      id,
       data.body.comment,
       data.user.profile_id,
       data.body.post_id,

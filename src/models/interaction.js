@@ -1,6 +1,5 @@
 'use strict';
 const Client = require('./db');
-const { uuid } = require('uuid').v4;
 
 async function addORdeleteInteraction(data){
   try{
@@ -8,16 +7,14 @@ async function addORdeleteInteraction(data){
     let safeValues=[data.user.profile_id,data.body.post_id];
     let query= await Client.query(SQL, safeValues);
     if(query.rows.length===0) {
-      let id = uuid();
-
       if(data.body.type){
-        let SQL=`INSERT INTO interaction (id,profile_id,post_id) VALUES ($1,$2) returning * ;`;
-        let safeValues=[id,data.user.profile_id,data.body.post_id];
+        let SQL=`INSERT INTO interaction (profile_id,post_id) VALUES ($1,$2) returning * ;`;
+        let safeValues=[data.user.profile_id,data.body.post_id];
         let result = await Client.query(SQL, safeValues);
         return result.rows;}
       else{
-        let SQL=`INSERT INTO interaction (id,profile_id,post_id,interaction_type) VALUES ($1,$2,$3) returning * ;`;
-        let safeValues=[id,data.user.profile_id,data.body.post_id,data.body.type];
+        let SQL=`INSERT INTO interaction (profile_id,post_id,interaction_type) VALUES ($1,$2,$3) returning * ;`;
+        let safeValues=[data.user.profile_id,data.body.post_id,data.body.type];
         let result = await Client.query(SQL, safeValues);
         return result.rows;
       }

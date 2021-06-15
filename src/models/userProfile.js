@@ -2,7 +2,6 @@
 
 const client = require('./db');
 const { PAGE_SIZE } = require('../configurations');
-const  uuid  = require('uuid').v4;
 
 // Constructors (data formatters)
 // For creating a profile record
@@ -117,11 +116,9 @@ async function getProfileByUserId(id) {
 // Create user profile (Need to be enhanced the response like the get all)
 async function createProfile(profileObj) {
   try {
-    let id = uuid();
-    console.log(typeof(id));
-    let sqlQuery = 'INSERT INTO profile (id,user_id, first_name, last_name, caption, profile_picture) VALUES ($1, $2, $3, $4 , $5,$6) RETURNING *;';
+    let sqlQuery = 'INSERT INTO profile (user_id, first_name, last_name, caption, profile_picture) VALUES ($1, $2, $3, $4 , $5) RETURNING *;';
     let profile = new UserProfile(profileObj);
-    let safeValues = [id,profile.user_id, profile.first_name, profile.last_name, profile.caption, profile.profile_picture];
+    let safeValues = [profile.user_id, profile.first_name, profile.last_name, profile.caption, profile.profile_picture];
     // Query the database
     let profileData = await client.query(sqlQuery, safeValues);
     if(profileData.rowCount>0){
