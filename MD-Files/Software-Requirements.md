@@ -56,7 +56,7 @@ Hexagon allows the users to expand their audience and fanbase through their crea
 
 ### Data Flow
 
-![DFD](../Hexagon-DFD.png)
+![DFD](./../Wireframe-and-designs/Hexagon-DFD.png)
 
 ## Non-Functional Requirements
 
