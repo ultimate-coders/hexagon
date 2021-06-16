@@ -54,11 +54,11 @@ describe('Auth Middleware', () => {
     });
 
     afterAll(async()=>{
-      await client.query(`DELETE FROM PROFILE WHERE first_name='melon';`);
-      let safeValues = [idValue];
-      let SQL = (`DELETE FROM JWT WHERE id=$1;`);
-      await client.query(SQL,safeValues);
-      await client.query(`DELETE FROM CLIENT WHERE user_name='melon';`);
+      await client.query(`
+      DELETE FROM FOLLOW;
+      DELETE FROM PROFILE;
+      DELETE FROM JWT;
+      DELETE FROM CLIENT;`);
       client.end();
     });
 
