@@ -1,11 +1,12 @@
 require('dotenv').config();
 process.env.TEST_MODE = true;
-const  client  = require('../src/models/db');
+process.env.DATABASE_URL_TEST='postgresql://emranaloul:12345@localhost:5432/test2';
+const  client  = require('../../src/models/db');
 (async ()=>{
   await client.connect();
 })();
 
-const {getCategories} = require('../src/models/category.js');
+const {getCategories} = require('../../src/models/category.js');
 
 
 
@@ -16,6 +17,6 @@ describe('category test', ()=>{
   it('should return all catagories', async ()=>{
     let results = await getCategories();
     let expected = [{'id': 1, 'name': 'artist'}, {'id': 2, 'name': 'engneer'}, {'id': 3, 'name': 'desighner'}];
-    expect( results.rows).toEqual(expected);
+    expect( results).toEqual(expected);
   }); 
 });

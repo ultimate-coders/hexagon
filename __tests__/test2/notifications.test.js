@@ -2,9 +2,10 @@
 
 require('dotenv').config();
 process.env.TEST_MODE = true;
-const  client  = require('../src/models/db');
+process.env.DATABASE_URL_TEST='postgresql://emranaloul:12345@localhost:5432/test2';
+const  client  = require('../../src/models/db');
 
-const { app } = require('../src/server');
+const { app } = require('../../src/server');
 const superTest = require('supertest');
 const request = superTest(app);
 
