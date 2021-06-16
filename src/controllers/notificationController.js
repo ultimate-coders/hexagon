@@ -6,7 +6,7 @@ let createNotificationHandler = async (req,res,next) =>{
 
     let {message, receiver_id, post_id} = req.body;
     let result = await createNotification(message, receiver_id, post_id);
-    res.status(201).json(result.message);
+    res.status(201).json(result);
   } catch (error) {
     next(error);
   }

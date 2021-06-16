@@ -9,10 +9,15 @@ let createMessageHandler = async (req, res, next) => {
   try {
     let { message, receiver_id } = req.body;
     const result = await sendMessage(message, req.user.profile_id, receiver_id);
-    res.status(201).json({
+    // console.log("🚀 ~ file: messageControllers.js ~ line 12 ~ createMessageHandler ~ result", result)
+    let obj = {
+      id: result[0].id,
       status: 201,
       message: 'message successfully sent',
-    });
+    };
+    // console.log("🚀 ~ file: messageControllers.js ~ line 17 ~ createMessageHandler ~ obj", obj)
+    
+    res.status(201).json(obj);
   } catch (error) {
     next(error);
   }
