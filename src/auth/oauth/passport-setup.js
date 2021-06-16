@@ -20,7 +20,7 @@ passport.use(
     {
       clientID: process.env.GOOGLE_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-      callbackURL: process.env.DEV_MOD ? `/auth/google/callback`: `https://hexagon-sm.herokuapp.com/auth/google`,
+      callbackURL: process.env.DEV_MOD ? `/auth/google/callback`: `https://hexagon-sm.herokuapp.com/auth/google/callback`,
     },
     async function (accessToken, refreshToken, profile, cb) {
       try {
