@@ -61,7 +61,7 @@ describe('Auth Middleware', () => {
 
       // Change the request to match this test case
       req.headers = {
-        authorization: 'Basic ZW1haWxAZW1haWwuY29tOlF3ZXJ0MUA=',
+        authorization: 'Basic YWRtaW5AeWFob28uY29tOlBhc3N3b3JkMUA=',
       };
 
       return middleware(req, res, next)
