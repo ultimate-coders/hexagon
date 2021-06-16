@@ -18,21 +18,6 @@ const serverRequest = superTest(server.app);
 
 describe('user profile endpints',()=> {
 
-  // beforeEach(function (done) {
-  //   setTimeout(function(){
-  //     done();
-  //   }, 500);
-  // });
-
-  // jest.useFakeTimers();
-
-
-  // afterEach(function (done) {
-  //   setTimeout(function(){
-  //     done();
-  //   }, 500);
-  // });
-
   let idValue;
   let profileID;
   let acToken;
@@ -67,8 +52,21 @@ describe('user profile endpints',()=> {
     expect(response.body.hasNext).toEqual(false);
     expect(response.body.results[0].first_name).toEqual('melon');
     expect(response.body.results[0].last_name).toEqual('watermelon');
+    expect(response.body.results[0].caption).toEqual('artist');
+    expect(typeof (response.body.results[0].profile_picture)).toEqual('object');
+    expect(typeof (response.body.results[0].user)).toEqual('object');
 
   });
+
+  it('will give an error when the token is incorrect', async ()=> {
+
+    let response = await serverRequest.get('/api/v1/profile').set(`Authorization`, `Bearer ${'badToken'}`);
+
+    expect(response.status).toEqual(500);
+    expect(response.body.message).toEqual('Invalid Login');
+
+  });
+  
 
   it('will get profile information using id', async ()=> {
  
@@ -81,6 +79,18 @@ describe('user profile endpints',()=> {
     expect(response.body.last_name).toEqual('watermelon');
 
   });
+
+  
+  it('will give return when given wrong id', async ()=> {
+ 
+    let response = await serverRequest.get(`/api/v1/profile/${'badId'}`).set(`Authorization`, `Bearer ${acToken}`);
+
+    expect(response.status).toEqual(500);
+    expect(response.body.message).toEqual('error: invalid input syntax for type uuid: "badId"');
+
+
+  });
+
   it('will edit a profile using bearer authentication', async ()=> {
 
     let test = {
