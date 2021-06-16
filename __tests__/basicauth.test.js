@@ -50,7 +50,7 @@ describe('Auth Middleware', () => {
 
       return middleware(req, res, next)
         .then(() => {
-      console.log("🚀 ~ file: basicauth.test.js ~ line 53 ~ it ~ res", res.status)
+          console.log('🚀 ~ file: basicauth.test.js ~ line 53 ~ it ~ res', res.status);
           expect(next).not.toHaveBeenCalled();
           expect(res.status).toHaveBeenCalledWith(403);
         });

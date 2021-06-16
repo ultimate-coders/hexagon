@@ -89,7 +89,7 @@ async function notificationCheck(req, res, next) {
       return;
     }
 
-    let SQL = `select receiver_id from notification where id = $1;`;
+    let SQL = `select * from notification where receiver_id = $1;`;
     let safeValue = [req.user.profile_id];
     let query = await client.query(SQL, safeValue);
     if (req.user.profile_id === query.rows[0].receiver_id) {
