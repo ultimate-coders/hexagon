@@ -1,6 +1,6 @@
 require('dotenv').config();
 process.env.TEST_MODE = true;
-process.env.DATABASE_URL_TEST='postgresql://emranaloul:12345@localhost:5432/test2';
+process.env.DATABASE_URL_TEST = process.env.DATABASE_URL_TEST2;
 const  client  = require('../../src/models/db');
 (async ()=>{
   await client.connect();

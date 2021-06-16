@@ -9,7 +9,6 @@ module.exports = async (req, res, next) => {
   }
   
   let basic = req.headers.authorization.split(' ').pop();
-  console.log("🚀 ~ file: basic.js ~ line 12 ~ module.exports= ~ basic", basic)
   let [email, password] = base64.decode(basic).split(':');
 
   try {
