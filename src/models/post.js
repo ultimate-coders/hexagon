@@ -74,7 +74,7 @@ async function getAllPosts(categoryName, pageNumber = 1) {
     console.log('results',results);
     if(hasNext)  results = results.slice(0, -1);
     const response = {
-      count: results.length,
+      page: pageNumber,
       hasNext: hasNext,
       results: results,
     };

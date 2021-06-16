@@ -26,7 +26,7 @@ async function getPostComments(postId, pageNumber = 1) {
     let results = query.rows.map(comment => new PostComment(comment));
     if(hasNext) results = results.slice(0, -1);
     const response = {
-      count: results.length,
+      page: pageNumber,
       hasNext: hasNext,
       results: results,
     };

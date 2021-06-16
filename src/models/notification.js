@@ -22,7 +22,7 @@ let getNotification = async (receiverId, pageNumber = 1)=>{
     const hasNext = notificationsData.rowCount > PAGE_SIZE;
     if(hasNext)  results = results.slice(0, -1);
     const response = {
-      count: results.length,
+      page: pageNumber,
       hasNext: hasNext,
       results: results,
     };
