@@ -64,7 +64,6 @@ describe('user profile endpints',()=> {
     let response = await serverRequest.get('/api/v1/profile').set(`Authorization`, `Bearer ${acToken}`);
 
     expect(response.status).toEqual(200);
-    expect(response.body.count).toEqual(1);
     expect(response.body.hasNext).toEqual(false);
     expect(response.body.results[0].first_name).toEqual('melon');
     expect(response.body.results[0].last_name).toEqual('watermelon');
