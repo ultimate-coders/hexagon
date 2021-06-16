@@ -7,7 +7,7 @@ process.env.TEST_MODE = true;
 const  client  = require('../src/models/db');
 const {createToken,getTokenByUserId} = require('../src/auth/models/jwt');
 const bearerMiddleware = require('../src/auth/middleware/bearer');
-const {authenticateWithToken} = require('../src/auth/models/helpers');
+
 (async ()=>{
   await client.connect();
 })();
@@ -40,11 +40,11 @@ describe('Auth Middleware', () => {
     });
 
     afterAll(async()=>{
-      await client.query(`DELETE FROM PROFILE WHERE first_name='melon';`);
-      let safeValues = [idValue];
-      let SQL = (`DELETE FROM JWT WHERE id=$1;`);
-      await client.query(SQL,safeValues);
-      await client.query(`DELETE FROM CLIENT WHERE user_name='melon';`);
+      await client.query(`
+      DELETE FROM FOLLOW;
+      DELETE FROM PROFILE;
+      DELETE FROM JWT;
+      DELETE FROM CLIENT;`);
       client.end();
     });
 
@@ -73,18 +73,6 @@ describe('Auth Middleware', () => {
         .then(() => {
           expect(next).toHaveBeenCalledWith('Invalid Login');
         });
-    });
-    it('It will allow access using bearer authentication', async ()=> {
-      const testFun = jest.fn(authenticateWithToken);
-      let testToken = 'badToken';
-      let testValue = await testFun(acToken);
-      //   let testFailValue = await testFun(acToken,'refresh');
-
-        
-      //   expect(() => testFailValue).toThrow('Invalid Token');
-        
-      expect(testValue.id).toEqual(idValue);
-    //   expect(testFun(acToken,'refresh')).toMatch('error');
     });
 
   });
