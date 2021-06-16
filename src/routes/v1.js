@@ -2,7 +2,7 @@
 
 const express = require('express');
 const router = express.Router();
-const uploadS3 = require('../middleware/uploader');
+const {uploadS3} = require('../middleware/uploader');
 
 const {createMessageHandler, getMessageHandler, deleteMessageHandler,updateMessageHandler} = require('../controllers/messageControllers');
 const {createNotificationHandler, getNotificationHandler, updateNotificationHandler} = require('../controllers/notificationController');

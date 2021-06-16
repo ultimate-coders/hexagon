@@ -42,6 +42,7 @@ const signUpHandler = async (req, res, next) => {
       let userTokens = await createToken(userId);
       delete userTokens.id;
       delete userTokens.user_id;
+      delete userTokens.created_at;
       res.status(200).json(userTokens);
     } else {
       res.status(403).json({ message: 'User already exist!' });
@@ -86,6 +87,7 @@ const updateUserPasswordHandler = async (req, res, next) => {
 
 const signInHandler = async (req, res, next) => {
   try {
+    delete req.tokens.created_at;
     res.status(200).json(req.tokens);
   } catch (e) {
     next(e);

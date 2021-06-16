@@ -53,7 +53,7 @@ async function getAllProfiles(keyword = '', pageNumber = 1) {
     let results = profilesData.rows.map(profile => new Profile(profile));
     if(hasNext)  results = results.slice(0, -1);
     const response = {
-      count: results.length,
+      page: pageNumber,
       hasNext: hasNext,
       results: results,
     };
