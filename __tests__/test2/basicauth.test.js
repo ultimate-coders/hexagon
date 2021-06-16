@@ -1,16 +1,17 @@
 'use strict';
 require('dotenv').config();
 process.env.TEST_MODE = true;
-const  client  = require('../src/models/db');
+process.env.DATABASE_URL_TEST = process.env.DATABASE_URL_TEST2;
+const  client  = require('../../src/models/db');
 (async ()=>{
   await client.connect();
 })();
-const { app } = require('../src/server');
+const { app } = require('../../src/server');
 const superTest = require('supertest');
 // const { expect } = require('chai');
 const request = superTest(app);
 
-const middleware = require('../src/auth/middleware/basic');
+const middleware = require('../../src/auth/middleware/basic');
 
 let users = {
   admin: { user_name: 'admin', email: 'admin@yahoo.com',  password: 'Password1@' },
@@ -20,7 +21,7 @@ console.log('🚀 ~ file: basicauth.test.js ~ line 18 ~ users', users.admin);
 // Pre-load our database with fake users
 beforeAll( async () => {
   let res = await request.post('/auth/signup').send(users.admin);
-  console.log('🚀 ~ file: basicauth.test.js ~ line 22 ~ beforeAll ~ res', res.error);
+  // console.log('🚀 ~ file: basicauth.test.js ~ line 22 ~ beforeAll ~ res', res.error);
  
 });
 
@@ -50,7 +51,7 @@ describe('Auth Middleware', () => {
 
       return middleware(req, res, next)
         .then(() => {
-      console.log("🚀 ~ file: basicauth.test.js ~ line 53 ~ it ~ res", res.status)
+          console.log('🚀 ~ file: basicauth.test.js ~ line 53 ~ it ~ res', res.status);
           expect(next).not.toHaveBeenCalled();
           expect(res.status).toHaveBeenCalledWith(403);
         });
@@ -61,7 +62,7 @@ describe('Auth Middleware', () => {
 
       // Change the request to match this test case
       req.headers = {
-        authorization: 'Basic ZW1haWxAZW1haWwuY29tOlF3ZXJ0MUA=',
+        authorization: 'Basic YWRtaW5AeWFob28uY29tOlBhc3N3b3JkMUA=',
       };
 
       return middleware(req, res, next)

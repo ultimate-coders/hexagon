@@ -74,7 +74,7 @@ const sendVerificationCodeHandler = async (req, res, next) => {
         exp: Date.now() + 60 * 10, // 10 min
       };
       await sendEmail(
-        getVerificationEmailTemplate(req.user.email, req.user.username, code)
+        getVerificationEmailTemplate(req.user.email, req.user.user_name, code)
       );
       // Remove the code after 10 min
       setTimeout(() => {

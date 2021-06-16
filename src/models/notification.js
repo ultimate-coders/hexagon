@@ -15,14 +15,14 @@ let createNotification = async (message, receiverId, postId )=>{
 let getNotification = async (receiverId, pageNumber = 1)=>{
   try {
     let startFrom = (pageNumber - 1) * PAGE_SIZE;
-    let SQL = `SELECT * FROM notification WHERE receiver_id=$1 ORDER BY id DESC LIMIT $2 OFFSET $3 ;`;
+    let SQL = `SELECT * FROM notification WHERE receiver_id=$1 ORDER BY created_at DESC LIMIT $2 OFFSET $3 ;`;
     let safeValues = [receiverId, PAGE_SIZE + 1, startFrom];
     let notificationsData = await client.query(SQL, safeValues);
     let results = notificationsData.rows;
     const hasNext = notificationsData.rowCount > PAGE_SIZE;
     if(hasNext)  results = results.slice(0, -1);
     const response = {
-      count: results.length,
+      page: pageNumber,
       hasNext: hasNext,
       results: results,
     };

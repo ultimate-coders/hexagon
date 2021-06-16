@@ -5,147 +5,124 @@ require('dotenv').config();
 process.env.TEST_MODE = true;
 const  client  = require('../src/models/db');
 const {createToken,getTokenByUserId} = require('../src/auth/models/jwt');
-const middleware = require('../src/auth/middleware/bearer');
+
 (async ()=>{
   await client.connect();
 })();
+
 
 const server = require('../src/server');
 const superTest = require ('supertest');
 const serverRequest = superTest(server.app);
 
-describe('Auth Middleware', () => {
 
-  // Mock the express req/res/next that we need for each middleware call
-  const req = {};
-  const res = {
-    status: jest.fn(() => res),
-    send: jest.fn(() => res),
-  };
-  const next = jest.fn();
+describe('user profile endpints',()=> {
 
-  describe('user profile endpints',()=> {
+  let idValue;
+  let profileID;
+  let acToken;
 
-    let idValue;
-    let acToken;
+  beforeAll(async()=>{
 
-    beforeAll(async()=>{
-      let query = await client.query(`INSERT INTO client(user_name,hashed_password,email,verified) VALUES ('melon','mmm','watermelon@yahoo.com',true) RETURNING id;`);
-      idValue = query.rows[0].id;
-      await createToken(idValue);
-      let userTokens = await getTokenByUserId(idValue);
-      acToken = userTokens.access_token;
+    let query = await client.query(`INSERT INTO client(user_name,hashed_password,email,verified) VALUES ('melon','mmm','watermelon@yahoo.com',true) RETURNING id;`);
+    idValue = query.rows[0].id;
+    await createToken(idValue);
+    let userTokens = await getTokenByUserId(idValue);
+    acToken = userTokens.access_token;
+    let profileQuery = await client.query(`INSERT INTO profile(user_id,first_name,last_name,caption) VALUES ('${idValue}','melon','watermelon','artist') RETURNING id;`);
+    profileID = profileQuery.rows[0].id;
+  });
 
-      // let safeValues = [idValue];
-      // let SQL = (`select access_token from jwt where user_id=$1;`);
-      // let query2 = await client.query(SQL,safeValues);
-      // acToken = query2.rows[0].access_token;
-      console.log('🚀 ~ file: user-profile.test.js ~ line 30 ~ beforeAll ~ acToken', acToken);
+  afterAll(async()=>{
 
-    // console.log('idValue: ', idValue);
-    });
+    await client.query(`
+     DELETE FROM FOLLOW;
+     DELETE FROM PROFILE;
+     DELETE FROM JWT;
+     DELETE FROM CLIENT;`);
 
-    afterAll(async()=>{
-      await client.query(`DELETE FROM PROFILE WHERE first_name='melon';`);
-      let safeValues = [idValue];
-      let SQL = (`DELETE FROM JWT WHERE id=$1;`);
-      await client.query(SQL,safeValues);
-      await client.query(`DELETE FROM CLIENT WHERE user_name='melon';`);
-      // await client.query(`TRUNCATE CLIENT RESTART IDENTITY;`);
-      // await client.query(`TRUNCATE PROFILE RESTART IDENTITY;`);
-      client.end();
-    });
+    client.end();
+  });
 
-    it('will get all profiles', async ()=> {
+  it('will get all profiles', async ()=> {
 
-      let response = await serverRequest.get('/api/v1/profile');
+    let response = await serverRequest.get('/api/v1/profile').set(`Authorization`, `Bearer ${acToken}`);
 
-      expect(response.status).toEqual(200);
-      expect(response.body.count).toEqual(2);
-      expect(response.body.hasNext).toEqual(true);
-      expect(response.body.results[0].first_name).toEqual('anwar');
-      expect(response.body.results[0].last_name).toEqual('isleet');
+    expect(response.status).toEqual(200);
+    expect(response.body.hasNext).toEqual(false);
+    expect(response.body.results[0].first_name).toEqual('melon');
+    expect(response.body.results[0].last_name).toEqual('watermelon');
+    expect(response.body.results[0].caption).toEqual('artist');
+    expect(typeof (response.body.results[0].profile_picture)).toEqual('object');
+    expect(typeof (response.body.results[0].user)).toEqual('object');
 
-    });
+  });
 
-    it('will get profile information using id', async ()=> {
+  it('will give an error when the token is incorrect', async ()=> {
+
+    let response = await serverRequest.get('/api/v1/profile').set(`Authorization`, `Bearer ${'badToken'}`);
+
+    expect(response.status).toEqual(500);
+    expect(response.body.message).toEqual('Invalid Login');
+
+  });
+  
+
+  it('will get profile information using id', async ()=> {
  
-      let response = await serverRequest.get('/api/v1/profile/1');
+    let response = await serverRequest.get(`/api/v1/profile/${profileID}`).set(`Authorization`, `Bearer ${acToken}`);
 
-      expect(response.status).toEqual(200);
-      expect(response.body.caption).toEqual('artist');
-      expect(response.body.id).toEqual(1);
-      expect(response.body.first_name).toEqual('tamara');
-      expect(response.body.last_name).toEqual('al-rashed');
+    expect(response.status).toEqual(200);
+    expect(response.body.caption).toEqual('artist');
+    expect(response.body.id).toEqual(profileID);
+    expect(response.body.first_name).toEqual('melon');
+    expect(response.body.last_name).toEqual('watermelon');
 
-    });
+  });
 
-    it('will create a new profile', async ()=> {
-      let test = {
+  
+  it('will give return when given wrong id', async ()=> {
+ 
+    let response = await serverRequest.get(`/api/v1/profile/${'badId'}`).set(`Authorization`, `Bearer ${acToken}`);
 
-        user_id: idValue,
-        first_name: 'melon',
-        last_name: 'watermelon',
-        caption: 'artist',
-        profile_picture: 2,
-
-      };
-      let response = await serverRequest.post('/api/v1/profile/').send(test);
-      // console.log('response: ', response.body);
-      expect(response.status).toEqual(201);
-      expect(response.body.id).toEqual(idValue);
-      expect(response.body.caption).toEqual('artist');
-      expect(response.body.first_name).toEqual('melon');
-      expect(response.body.last_name).toEqual('watermelon');
-
-    });
-
-    it('will edit a profile using id', async ()=> {
-
-      let test = {
-    
-        first_name: 'melon',
-        last_name: 'watermelon',
-        caption: 'melon',
-        profile_picture: 2,
-
-      };
-    
-      let response = await serverRequest.put(`/api/v1/profile/${idValue}`).send(test);
-      expect(response.status).toEqual(200);
-      expect(response.body.id).toEqual(idValue);
-      expect(response.body.caption).toEqual('melon');
-      expect(response.body.first_name).toEqual('melon');
-      expect(response.body.last_name).toEqual('watermelon');
-
-    });
-
-    it('will get user profile information using bearer authentication', async ()=> {
-
-      req.headers = {
-        authorization: `Bearer ${acToken}`,
-      };
-
-      let response = await serverRequest.get('/api/v1/me-profile/');
-
-      // return middleware(req, res, next)
-      //   .then(() => {
-      //     expect(next).toHaveBeenCalledWith();
-      //   });
-
-      
-      // let response = await serverRequest.get('/api/v1/me-profile/').send(`${acToken}`);
-      // console.log('🚀 ~ file: user-profile.test.js ~ line 111 ~ it ~ response', response.body);
-
-      expect(response.status).toEqual(200);
-      // expect(response.body.caption).toEqual('melon');
-      // expect(response.body.id).toEqual(idValue);
-      // expect(response.body.first_name).toEqual('melon');
-      // expect(response.body.last_name).toEqual('watermelon');
-
-    });
+    expect(response.status).toEqual(500);
+    expect(response.body.message).toEqual('error: invalid input syntax for type uuid: "badId"');
 
 
   });
+
+  it('will edit a profile using bearer authentication', async ()=> {
+
+    let test = {
+    
+      first_name: 'melon',
+      last_name: 'watermelon',
+      caption: 'melon',
+
+    };
+    
+    let response = await serverRequest.put(`/api/v1/profile/`).set(`Authorization`, `Bearer ${acToken}`).send(test);
+    expect(response.status).toEqual(200);
+    expect(response.body.id).toEqual(profileID);
+    expect(response.body.caption).toEqual('melon');
+    expect(response.body.first_name).toEqual('melon');
+    expect(response.body.last_name).toEqual('watermelon');
+
+  });
+
+  it('will get user profile information using bearer authentication', async ()=> {
+
+
+    let response = await serverRequest.get('/api/v1/me-profile').set(`Authorization`, `Bearer ${acToken}`);
+
+      
+    expect(response.status).toEqual(200);
+    expect(response.body.caption).toEqual('melon');
+    expect(response.body.id).toEqual(profileID);
+    expect(response.body.first_name).toEqual('melon');
+    expect(response.body.last_name).toEqual('watermelon');
+
+  });
+
 
 });

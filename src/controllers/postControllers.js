@@ -11,6 +11,7 @@ const {
 const { sendNotification } = require('../utils/helpers');
 
 const { saveFile } = require('../models/file');
+const { deleteRemoteFile } = require('../middleware/uploader');
 
 const getAllPostsHandler = async (req, res, next) => {
   try {
@@ -62,6 +63,11 @@ const updatePostsHandler = async (req, res, next) => {
 const deletePostsHandler = async (req, res, next) => {
   try {
     const id = req.params.id;
+    const post = await getSinglePost(id);
+    post['images'].forEach(async image => {
+      await deleteRemoteFile(image.link);
+    });
+   
     const response = await deletePost(id);
     res.status(200).json({
       status: 200,

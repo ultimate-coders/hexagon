@@ -16,6 +16,7 @@ const sendMessage = async (message , sender_id, receiver_id) => {
   try {
     const result = await createMessage(message , sender_id, receiver_id);
     events.emit('message', {message , sender_id, receiver_id});
+    return result.rows;
   } catch (e) {
     throw new Error(e);
   }

@@ -1,5 +1,6 @@
 'use strict';
 const client = require('./db');
+
 // follow request
 //follower : the person who want to follow someone
 //following : the person that follower want to follow him

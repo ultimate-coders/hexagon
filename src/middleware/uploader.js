@@ -41,4 +41,19 @@ const uploadS3 = multer({
   }),
 });
 
-module.exports = uploadS3;
+async function deleteRemoteFile(fileUrl) {
+  try {
+    const key = fileUrl.split('/')[3];
+    await s3.deleteObject({
+      Bucket: process.env.S3_BUCKET_NAME,
+      Key: key,
+    }).promise();
+    return 'successfully deleted';
+  } catch (e) {
+    throw new Error(e);
+  }
+}
+module.exports = {
+  uploadS3,
+  deleteRemoteFile,
+};

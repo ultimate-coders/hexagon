@@ -7,7 +7,7 @@ async function addORdeleteInteraction(data){
     let safeValues=[data.user.profile_id,data.body.post_id];
     let query= await Client.query(SQL, safeValues);
     if(query.rows.length===0) {
-      if(data.body.type){
+      if(!data.body.type){
         let SQL=`INSERT INTO interaction (profile_id,post_id) VALUES ($1,$2) returning * ;`;
         let safeValues=[data.user.profile_id,data.body.post_id];
         let result = await Client.query(SQL, safeValues);
