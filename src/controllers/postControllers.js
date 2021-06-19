@@ -6,20 +6,43 @@ const {
   createPost,
   updatePost,
   deletePost,
+  getTimelinePosts,
+  getProfilePosts,
 } = require('../models/post');
 
-const { sendNotification } = require('../utils/helpers');
-
-const { saveFile } = require('../models/file');
+const { saveFile, deleteFile } = require('../models/file');
 const { deleteRemoteFile } = require('../middleware/uploader');
+
+const getTimelineHandler = async (req, res, next) => {
+  try {
+    const page = req.query.page || '1';
+
+    const response = await getTimelinePosts(req.user.profile_id, page);
+    res.status(200).json(response);
+  } catch (e) {
+    next(e);
+  }
+};
+
+const getProfilePostsHandler = async (req, res, next) => {
+  try {
+    const page = req.query.page || '1';
+    const profileId = req.params.id;
+
+    const response = await getProfilePosts(req.user.profile_id, profileId, page);
+    res.status(200).json(response);
+  } catch (e) {
+    next(e);
+  }
+};
 
 const getAllPostsHandler = async (req, res, next) => {
   try {
     
-    const keyword = req.query.category || '';
+    const category = req.params.category;
     const page = req.query.page || '1';
 
-    const response = await getAllPosts(keyword, page);
+    const response = await getAllPosts(req.user.profile_id, category, page);
     res.status(200).json(response);
   } catch (e) {
     next(e);
@@ -30,7 +53,7 @@ const getSinglePostsHandler = async (req, res, next) => {
   try {
     const id = req.params.id;
 
-    const response = await getSinglePost(id);
+    const response = await getSinglePost(req.user.profile_id, id);
     res.status(200).json(response);
   } catch (e) {
     next(e);
@@ -66,6 +89,7 @@ const deletePostsHandler = async (req, res, next) => {
     const post = await getSinglePost(id);
     post['images'].forEach(async image => {
       await deleteRemoteFile(image.link);
+      await deleteFile(image.link);
     });
    
     const response = await deletePost(id);
@@ -84,4 +108,6 @@ module.exports = {
   createPostsHandler,
   updatePostsHandler,
   deletePostsHandler,
+  getTimelineHandler,
+  getProfilePostsHandler,
 };

@@ -23,6 +23,7 @@ CREATE TABLE client(
   hashed_password VARCHAR(250) NOT NULL,
   email VARCHAR(150) NOT NULL UNIQUE,
   google_id VARCHAR(200) UNIQUE,
+  last_login VARCHAR(200),
   verified boolean DEFAULT false,
   created_at timestamp not null default current_timestamp
 );

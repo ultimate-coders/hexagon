@@ -8,8 +8,8 @@ const {createMessageHandler, getMessageHandler, deleteMessageHandler,updateMessa
 const {createNotificationHandler, getNotificationHandler, updateNotificationHandler} = require('../controllers/notificationController');
 const {getPostCommentsHandler,createCommentHandler,updateCommentHandler,deleteCommentHandler}=require('../controllers/commentController');
 const { followHandler } = require('../controllers/followController');
-const {getAllProfilesHandler, getProfileHandler, meHandler, createProfileHandler, updateProfileHandler} = require('../controllers/profileController');
-const {getAllPostsHandler, getSinglePostsHandler, createPostsHandler, updatePostsHandler, deletePostsHandler} = require('../controllers/postControllers');
+const {getAllProfilesHandler, getProfileHandler, meHandler, createProfileHandler, updateProfileHandler, getProfilesWithMessagesHandler} = require('../controllers/profileController');
+const {getAllPostsHandler, getSinglePostsHandler, createPostsHandler, updatePostsHandler, deletePostsHandler, getTimelineHandler, getProfilePostsHandler} = require('../controllers/postControllers');
 const bearer = require('../auth/middleware/bearer');
 const {commentCheck,messageCheck, postCheck, notificationCheck, verifyCheck}=require('../auth/middleware/acl');
 const {fileUploadHandler} = require('../controllers/fileControllers');
@@ -22,11 +22,12 @@ router.use(bearer);
 router.use(verifyCheck);
 
 // Profile routes
-router.get('/profile', getAllProfilesHandler);
-router.get('/profile/:id', getProfileHandler);
 router.get('/me-profile', meHandler);
+router.get('/me-profile/with-messages', getProfilesWithMessagesHandler);
+router.get('/profile', getAllProfilesHandler);
+router.get('/profile/:username', getProfileHandler);
 router.post('/profile', createProfileHandler);
-router.put('/profile/', updateProfileHandler);
+router.put('/profile', updateProfileHandler);
 
 // Following routes
 router.post('/follow',followHandler);
@@ -35,11 +36,13 @@ router.post('/follow',followHandler);
 router.get('/category', getCategoriesHandler);
 
 // Posts routes
-router.get('/posts', postCheck, getAllPostsHandler);
-router.get('/posts/:id', postCheck, getSinglePostsHandler);
-router.post('/posts', postCheck, uploadS3.array('image'), createPostsHandler);
-router.put('/posts/:id', postCheck, uploadS3.array('image'), updatePostsHandler);
-router.delete('/posts/:id', postCheck, deletePostsHandler);
+router.get('/posts/timeline', postCheck, getTimelineHandler);
+router.get('/posts/profile/:id', postCheck, getProfilePostsHandler);
+router.get('/posts/:category', postCheck, getAllPostsHandler);
+router.get('/posts/post/:id', postCheck, getSinglePostsHandler);
+router.post('/posts/post', postCheck, uploadS3.array('image'), createPostsHandler);
+router.put('/posts/post/:id', postCheck, uploadS3.array('image'), updatePostsHandler);
+router.delete('/posts/post/:id', postCheck, deletePostsHandler);
 
 // Comments routes
 router.get('/comment/:postId', commentCheck, getPostCommentsHandler);
