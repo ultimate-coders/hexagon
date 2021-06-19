@@ -72,7 +72,6 @@ const updateUserPasswordHandler = async (req, res, next) => {
 
     let user = await getUserById(req.user.id);
     const valid = await checkPassword(oldPassword, user.hashed_password);
-    console.log('valid pass : ', valid);
     if (valid) {
       user = await updateUserPassword(user.id, newPassword);
       const response = {

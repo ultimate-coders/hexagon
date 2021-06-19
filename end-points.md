@@ -2,16 +2,18 @@
 
 ## Auth
 
-| Method | Endpint                   | Description                                           |
-| ------ | ------------------------- | ----------------------------------------------------- |
-| POST   | `/auth/signup`            | Create a new user                                     |
-| POST   | `/auth/signuin`           | Login in with certian user using basic authentication |
-| GET    | `/auth/logout`            | Logout User                                           |
-| POST   | `/auth/refresh`           | Get new access token                                  |
-| PUT    | `/auth/user/password`     | Update user password                                  |
-| POST   | `/auth/user/verify`       | Verify user account                                   |
-| POST   | `/auth/user/verification` | Send verification code to the user                    |
-| GET    | `/auth/google`            | Sign in/up with google                                |
+| Method | Endpint                     | Description                                           |
+| ------ | --------------------------- | ----------------------------------------------------- |
+| POST   | `/auth/signup`              | Create a new user                                     |
+| POST   | `/auth/signuin`             | Login in with certain user using basic authentication |
+| GET    | `/auth/logout`              | Logout User                                           |
+| POST   | `/auth/refresh`             | Get new access token                                  |
+| PUT    | `/auth/user/password`       | Update user password                                  |
+| PUT    | `/auth/user/password/code`  | Require code to reset the password                    |
+| POST   | `/auth/user/password/reset` | Verify the code and reset the password                |
+| PUT    | `/auth/user/password`       | Update user password                                  |
+| POST   | `/auth/user/verify`         | Verify user account                                   |
+| GET    | `/auth/google`              | Sign in/up with google                                |
 
 ## User Profile
 
