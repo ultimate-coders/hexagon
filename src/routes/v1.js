@@ -8,7 +8,7 @@ const {createMessageHandler, getMessageHandler, deleteMessageHandler,updateMessa
 const {createNotificationHandler, getNotificationHandler, updateNotificationHandler} = require('../controllers/notificationController');
 const {getPostCommentsHandler,createCommentHandler,updateCommentHandler,deleteCommentHandler}=require('../controllers/commentController');
 const { followHandler } = require('../controllers/followController');
-const {getAllProfilesHandler, getProfileHandler, meHandler, createProfileHandler, updateProfileHandler} = require('../controllers/profileController');
+const {getAllProfilesHandler, getProfileHandler, meHandler, createProfileHandler, updateProfileHandler, getProfilesWithMessagesHandler} = require('../controllers/profileController');
 const {getAllPostsHandler, getSinglePostsHandler, createPostsHandler, updatePostsHandler, deletePostsHandler, getTimelineHandler, getProfilePostsHandler} = require('../controllers/postControllers');
 const bearer = require('../auth/middleware/bearer');
 const {commentCheck,messageCheck, postCheck, notificationCheck, verifyCheck}=require('../auth/middleware/acl');
@@ -22,11 +22,12 @@ router.use(bearer);
 // router.use(verifyCheck);
 
 // Profile routes
+router.get('/me-profile', meHandler);
+router.get('/me-profile/with-messages', getProfilesWithMessagesHandler);
 router.get('/profile', getAllProfilesHandler);
 router.get('/profile/:username', getProfileHandler);
-router.get('/me-profile', meHandler);
 router.post('/profile', createProfileHandler);
-router.put('/profile/', updateProfileHandler);
+router.put('/profile', updateProfileHandler);
 
 // Following routes
 router.post('/follow',followHandler);

@@ -63,6 +63,38 @@ async function getAllProfiles(keyword = '', pageNumber = 1) {
   }
 }
 
+// Get all profiles
+async function getProfilesWithMessages(loggedInProfileId, keyword = '', pageNumber = 1) {
+  try {
+    let sqlQuery = `
+    SELECT profile.id AS profile_id, client.id AS user_id, user_file.id as file_id, first_name, last_name, caption, file as profile_picture, user_name, email FROM profile JOIN client ON profile.user_id = client.id LEFT JOIN user_file ON profile.profile_picture = user_file.id WHERE profile.id in (SELECT DISTINCT receiver_id FROM message WHERE sender_id = $1) OR profile.id in (SELECT DISTINCT sender_id FROM message WHERE receiver_id = $1) ORDER BY profile.created_at DESC LIMIT $2 OFFSET $3;
+    `;
+    let startFrom = (parseInt(pageNumber) - 1) * PAGE_SIZE;
+    let safeValues = [loggedInProfileId, PAGE_SIZE + 1, startFrom];
+    // Filtering
+    if(keyword && keyword !== ''){
+      keyword = `%${keyword}%`;
+      sqlQuery = `
+      SELECT profile.id AS profile_id, client.id AS user_id, user_file.id as file_id, first_name, last_name, caption, file as profile_picture, user_name, email FROM profile JOIN client ON profile.user_id = client.id LEFT JOIN user_file ON profile.profile_picture = user_file.id WHERE (UPPER(first_name) LIKE UPPER($1) OR UPPER(last_name) LIKE UPPER($1) OR UPPER(user_name) LIKE UPPER($1) OR UPPER(email) LIKE UPPER($1)) AND (profile.id in (SELECT DISTINCT receiver_id FROM message WHERE sender_id = $2) OR profile.id in (SELECT DISTINCT sender_id FROM message WHERE receiver_id = $2)) ORDER BY profile.created_at DESC LIMIT $3 OFFSET $4;
+      `;
+      safeValues = [keyword, loggedInProfileId, PAGE_SIZE + 1, startFrom];
+    }
+    // Query the database
+    const profilesData = await client.query(sqlQuery, safeValues);
+    const hasNext = profilesData.rowCount > PAGE_SIZE;
+    let results = profilesData.rows.map(profile => new Profile(profile));
+    if(hasNext)  results = results.slice(0, -1);
+    const response = {
+      page: pageNumber,
+      hasNext: hasNext,
+      results: results,
+    };
+    return response;   
+  } catch (e) {
+    throw new Error(e);
+  }
+}
+
 // Get one profile
 async function getSingleProfile(userName, requester) {
   try {
@@ -165,4 +197,5 @@ module.exports = {
   getProfileByUserId,
   createProfile,
   updateProfile,
+  getProfilesWithMessages,
 };

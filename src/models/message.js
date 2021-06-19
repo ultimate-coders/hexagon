@@ -14,7 +14,7 @@ let getMessage = async (senderId , receiverId, pageNumber = 1) =>{
   try {
     let startFrom = (pageNumber - 1) * PAGE_SIZE;
     let SQL = `SELECT DISTINCT * FROM message WHERE (sender_id=$1 AND receiver_id=$2) OR (sender_id=$2 AND receiver_id=$1) ORDER BY created_at DESC LIMIT $3 OFFSET $4;`;
-    let safeValues = [ senderId,receiverId, PAGE_SIZE, startFrom];
+    let safeValues = [ senderId,receiverId, PAGE_SIZE + 1, startFrom];
     let messagesData = await client.query(SQL, safeValues);
     let results = messagesData.rows;
     const hasNext = messagesData.rowCount > PAGE_SIZE;

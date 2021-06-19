@@ -15,13 +15,14 @@
 
 ## User Profile
 
-| Method | Endpint              | Description                                 |
-| ------ | -------------------- | ------------------------------------------- |
-| GET    | `/me-profile`        | Get profile information for logged in user  |
-| GET    | `/profile`           | Get all users' profiles information         |
-| GET    | `/profile/:username` | Get user' profiles' information by username |
-| POST   | `/profile`           | Create user's profile                       |
-| PUT    | `/profile`           | Update user' profiles information           |
+| Method | Endpint                     | Description                                                                 |
+| ------ | --------------------------- | --------------------------------------------------------------------------- |
+| GET    | `/me-profile`               | Get profile information for logged in user                                  |
+| GET    | `/me-profile/with-messages` | Get profiles information that the logged in user has previous messages with |
+| GET    | `/profile`                  | Get all users' profiles information                                         |
+| GET    | `/profile/:username`        | Get user' profiles' information by username                                 |
+| POST   | `/profile`                  | Create user's profile                                                       |
+| PUT    | `/profile`                  | Update user' profiles information                                           |
 
 ## Follow
 
