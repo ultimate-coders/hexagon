@@ -29,7 +29,7 @@ const getProfilePostsHandler = async (req, res, next) => {
     const page = req.query.page || '1';
     const profileId = req.params.id;
 
-    const response = await getProfilePosts(profileId, page);
+    const response = await getProfilePosts(req.user.profile_id, profileId, page);
     res.status(200).json(response);
   } catch (e) {
     next(e);
@@ -42,7 +42,7 @@ const getAllPostsHandler = async (req, res, next) => {
     const category = req.params.category;
     const page = req.query.page || '1';
 
-    const response = await getAllPosts(category, page);
+    const response = await getAllPosts(req.user.profile_id, category, page);
     res.status(200).json(response);
   } catch (e) {
     next(e);
@@ -53,7 +53,7 @@ const getSinglePostsHandler = async (req, res, next) => {
   try {
     const id = req.params.id;
 
-    const response = await getSinglePost(id);
+    const response = await getSinglePost(req.user.profile_id, id);
     res.status(200).json(response);
   } catch (e) {
     next(e);
