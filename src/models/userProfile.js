@@ -27,6 +27,7 @@ function Profile(profile) {
     id: profile.user_id,
     username : profile.user_name,
     email: profile.email,
+    last_login: profile.last_login,
   };
   this.following = profile.following;
 }
@@ -35,7 +36,7 @@ function Profile(profile) {
 async function getAllProfiles(keyword = '', pageNumber = 1) {
   try {
     let sqlQuery = `
-    SELECT profile.id AS profile_id, client.id AS user_id, user_file.id as file_id, first_name, last_name, caption, file as profile_picture, user_name, email FROM profile JOIN client ON profile.user_id = client.id LEFT JOIN user_file ON profile.profile_picture = user_file.id ORDER BY profile.created_at DESC LIMIT $1 OFFSET $2;
+    SELECT profile.id AS profile_id, client.id AS user_id, client.last_login as last_login, user_file.id as file_id, first_name, last_name, caption, file as profile_picture, user_name, email FROM profile JOIN client ON profile.user_id = client.id LEFT JOIN user_file ON profile.profile_picture = user_file.id ORDER BY profile.created_at DESC LIMIT $1 OFFSET $2;
     `;
     let startFrom = (parseInt(pageNumber) - 1) * PAGE_SIZE;
     let safeValues = [PAGE_SIZE + 1, startFrom];
@@ -43,7 +44,7 @@ async function getAllProfiles(keyword = '', pageNumber = 1) {
     if(keyword && keyword !== ''){
       keyword = `%${keyword}%`;
       sqlQuery = `
-      SELECT profile.id AS profile_id, client.id AS user_id, user_file.id as file_id, first_name, last_name, caption, file as profile_picture, user_name, email FROM profile JOIN client ON profile.user_id = client.id LEFT JOIN user_file ON profile.profile_picture = user_file.id WHERE UPPER(first_name) LIKE UPPER($1) OR UPPER(last_name) LIKE UPPER($1) OR UPPER(user_name) LIKE UPPER($1) OR UPPER(email) LIKE UPPER($1) ORDER BY profile.created_at DESC LIMIT $2 OFFSET $3;
+      SELECT profile.id AS profile_id, client.id AS user_id, client.last_login as last_login, user_file.id as file_id, first_name, last_name, caption, file as profile_picture, user_name, email FROM profile JOIN client ON profile.user_id = client.id LEFT JOIN user_file ON profile.profile_picture = user_file.id WHERE UPPER(first_name) LIKE UPPER($1) OR UPPER(last_name) LIKE UPPER($1) OR UPPER(user_name) LIKE UPPER($1) OR UPPER(email) LIKE UPPER($1) ORDER BY profile.created_at DESC LIMIT $2 OFFSET $3;
       `;
       safeValues = [keyword, PAGE_SIZE + 1, startFrom];
     }
@@ -67,7 +68,7 @@ async function getAllProfiles(keyword = '', pageNumber = 1) {
 async function getProfilesWithMessages(loggedInProfileId, keyword = '', pageNumber = 1) {
   try {
     let sqlQuery = `
-    SELECT profile.id AS profile_id, client.id AS user_id, user_file.id as file_id, first_name, last_name, caption, file as profile_picture, user_name, email FROM profile JOIN client ON profile.user_id = client.id LEFT JOIN user_file ON profile.profile_picture = user_file.id WHERE profile.id in (SELECT DISTINCT receiver_id FROM message WHERE sender_id = $1) OR profile.id in (SELECT DISTINCT sender_id FROM message WHERE receiver_id = $1) ORDER BY profile.created_at DESC LIMIT $2 OFFSET $3;
+    SELECT profile.id AS profile_id, client.id AS user_id, client.last_login as last_login, user_file.id as file_id, first_name, last_name, caption, file as profile_picture, user_name, email FROM profile JOIN client ON profile.user_id = client.id LEFT JOIN user_file ON profile.profile_picture = user_file.id WHERE profile.id in (SELECT DISTINCT receiver_id FROM message WHERE sender_id = $1) OR profile.id in (SELECT DISTINCT sender_id FROM message WHERE receiver_id = $1) ORDER BY profile.created_at DESC LIMIT $2 OFFSET $3;
     `;
     let startFrom = (parseInt(pageNumber) - 1) * PAGE_SIZE;
     let safeValues = [loggedInProfileId, PAGE_SIZE + 1, startFrom];
@@ -75,7 +76,7 @@ async function getProfilesWithMessages(loggedInProfileId, keyword = '', pageNumb
     if(keyword && keyword !== ''){
       keyword = `%${keyword}%`;
       sqlQuery = `
-      SELECT profile.id AS profile_id, client.id AS user_id, user_file.id as file_id, first_name, last_name, caption, file as profile_picture, user_name, email FROM profile JOIN client ON profile.user_id = client.id LEFT JOIN user_file ON profile.profile_picture = user_file.id WHERE (UPPER(first_name) LIKE UPPER($1) OR UPPER(last_name) LIKE UPPER($1) OR UPPER(user_name) LIKE UPPER($1) OR UPPER(email) LIKE UPPER($1)) AND (profile.id in (SELECT DISTINCT receiver_id FROM message WHERE sender_id = $2) OR profile.id in (SELECT DISTINCT sender_id FROM message WHERE receiver_id = $2)) ORDER BY profile.created_at DESC LIMIT $3 OFFSET $4;
+      SELECT profile.id AS profile_id, client.id AS user_id, client.last_login as last_login, user_file.id as file_id, first_name, last_name, caption, file as profile_picture, user_name, email FROM profile JOIN client ON profile.user_id = client.id LEFT JOIN user_file ON profile.profile_picture = user_file.id WHERE (UPPER(first_name) LIKE UPPER($1) OR UPPER(last_name) LIKE UPPER($1) OR UPPER(user_name) LIKE UPPER($1) OR UPPER(email) LIKE UPPER($1)) AND (profile.id in (SELECT DISTINCT receiver_id FROM message WHERE sender_id = $2) OR profile.id in (SELECT DISTINCT sender_id FROM message WHERE receiver_id = $2)) ORDER BY profile.created_at DESC LIMIT $3 OFFSET $4;
       `;
       safeValues = [keyword, loggedInProfileId, PAGE_SIZE + 1, startFrom];
     }
@@ -99,7 +100,7 @@ async function getProfilesWithMessages(loggedInProfileId, keyword = '', pageNumb
 async function getSingleProfile(userName, requester) {
   try {
     let sqlQuery = `
-    SELECT profile.id AS profile_id, client.id AS user_id, user_file.id as file_id, first_name, last_name, caption, file as profile_picture, user_name, email FROM profile JOIN client ON profile.user_id = client.id LEFT JOIN user_file ON profile.profile_picture = user_file.id WHERE client.user_name = $1;
+    SELECT profile.id AS profile_id, client.id AS user_id, client.last_login as last_login, user_file.id as file_id, first_name, last_name, caption, file as profile_picture, user_name, email FROM profile JOIN client ON profile.user_id = client.id LEFT JOIN user_file ON profile.profile_picture = user_file.id WHERE client.user_name = $1;
     `;
     let safeValues = [userName];
     // Query the database
@@ -125,7 +126,7 @@ async function getSingleProfile(userName, requester) {
 async function getProfileByUserId(id) {
   try {
     let sqlQuery = `
-    SELECT profile.id AS profile_id, client.id AS user_id, user_file.id as file_id, first_name, last_name, caption, file as profile_picture, user_name, email FROM profile JOIN client ON profile.user_id = client.id LEFT JOIN user_file ON profile.profile_picture = user_file.id WHERE client.id = $1;
+    SELECT profile.id AS profile_id, client.id AS user_id, client.last_login as last_login, user_file.id as file_id, first_name, last_name, caption, file as profile_picture, user_name, email FROM profile JOIN client ON profile.user_id = client.id LEFT JOIN user_file ON profile.profile_picture = user_file.id WHERE client.id = $1;
     `;
     let safeValues = [id];
     // Query the database
@@ -155,7 +156,7 @@ async function createProfile(profileObj) {
     let profileData = await client.query(sqlQuery, safeValues);
     if(profileData.rowCount>0){
       sqlQuery = `
-      SELECT profile.id AS profile_id, client.id AS user_id, user_file.id as file_id, first_name, last_name, caption, file as profile_picture, user_name, email FROM profile JOIN client ON profile.user_id = client.id LEFT JOIN user_file ON profile.profile_picture = user_file.id WHERE profile.id = $1;
+      SELECT profile.id AS profile_id, client.id AS user_id, client.last_login as last_login, user_file.id as file_id, first_name, last_name, caption, file as profile_picture, user_name, email FROM profile JOIN client ON profile.user_id = client.id LEFT JOIN user_file ON profile.profile_picture = user_file.id WHERE profile.id = $1;
       `;
       safeValues = [profileData.rows[0].id];
       profileData = await client.query(sqlQuery, safeValues);
@@ -178,7 +179,7 @@ async function updateProfile(id, profileObj) {
     let profileData = await client.query(sqlQuery, safeValues);
     if(profileData.rowCount>0){
       sqlQuery = `
-      SELECT profile.id AS profile_id, client.id AS user_id, user_file.id as file_id, first_name, last_name, caption, file as profile_picture, user_name, email FROM profile JOIN client ON profile.user_id = client.id LEFT JOIN user_file ON profile.profile_picture = user_file.id WHERE profile.id = $1;
+      SELECT profile.id AS profile_id, client.id AS user_id, client.last_login as last_login, user_file.id as file_id, first_name, last_name, caption, file as profile_picture, user_name, email FROM profile JOIN client ON profile.user_id = client.id LEFT JOIN user_file ON profile.profile_picture = user_file.id WHERE profile.id = $1;
       `;
       safeValues = [profileData.rows[0].id];
       profileData = await client.query(sqlQuery, safeValues);

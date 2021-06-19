@@ -58,6 +58,18 @@ async function updateUserVerification(user_id) {
   }
 }
 
+async function updateUserLastLogin(user_id) {
+  try {
+    const SQL = `UPDATE client SET last_login = $1 WHERE id = $2 RETURNING *;`;
+
+    const safeValues = [new Date(), user_id];
+    const result = await client.query(SQL, safeValues);
+    return result.rows[0];
+  } catch (e) {
+    throw new Error(e.message);
+  }
+}
+
 async function getUser(username) {
   try {
     let SQL = `SELECT * FROM client WHERE user_name=$1`;
@@ -69,10 +81,14 @@ async function getUser(username) {
   }
 }
 
-async function getUserByEmail(email) {
+async function getUserByEmail(email, username='') {
   try {
     let SQL = `SELECT * FROM client WHERE email=$1;`;
     let emailCheck = [email];
+    if(username && username != ''){
+      SQL = `SELECT * FROM client WHERE email=$1 OR user_name=$2;`;
+      emailCheck = [email, username];
+    }
     let userEmailQuery = await client.query(SQL, emailCheck);
 
     return userEmailQuery.rows[0];
@@ -112,4 +128,4 @@ function randomGenerator(length) {
   return result;
 }
 
-module.exports = { createUser, getUser, getUserById, getUserByEmail, updateUserPassword, updateUserVerification, randomGenerator };
+module.exports = { createUser, getUser, getUserById, getUserByEmail, updateUserPassword, updateUserVerification, randomGenerator, updateUserLastLogin };

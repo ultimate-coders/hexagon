@@ -39,6 +39,7 @@ function Post(post,likes) {
       id: post.user_id,
       username: post.user_name,
       email: post.email,
+      last_login: post.last_login,
     },
   };
   this.likes =likes;
@@ -52,14 +53,14 @@ function Post(post,likes) {
 async function getAllPosts(categoryName, pageNumber = 1) {
   try {
     let sqlQuery = `
-    SELECT post.id AS post_id, post.created_at, profile.id AS profile_id, profile_image.id AS file_id, profile_image.file AS profile_picture, client.id AS user_id, category.id AS category_id, name AS category_name, text, first_name, last_name, caption, user_name, email, post_image.id AS image_id, post_image.file AS image_link ,likes FROM post JOIN profile ON post.profile_id = profile.id JOIN client ON client.id = profile.user_id JOIN category ON post.category_id = category.id LEFT JOIN user_file AS profile_image ON profile.profile_picture = profile_image.id LEFT JOIN attachment ON attachment.post_id = post.id LEFT JOIN user_file AS post_image ON attachment.file_id = post_image.id left join (select post_id, count(*) from interaction  group by post_id) as likes on likes.post_id = post.id ORDER BY post.created_at DESC LIMIT $1 OFFSET $2;
+    SELECT post.id AS post_id, post.created_at, profile.id AS profile_id, profile_image.id AS file_id, profile_image.file AS profile_picture, client.id AS user_id, client.last_login as last_login, category.id AS category_id, name AS category_name, text, first_name, last_name, caption, user_name, email, post_image.id AS image_id, post_image.file AS image_link ,likes FROM post JOIN profile ON post.profile_id = profile.id JOIN client ON client.id = profile.user_id JOIN category ON post.category_id = category.id LEFT JOIN user_file AS profile_image ON profile.profile_picture = profile_image.id LEFT JOIN attachment ON attachment.post_id = post.id LEFT JOIN user_file AS post_image ON attachment.file_id = post_image.id left join (select post_id, count(*) from interaction  group by post_id) as likes on likes.post_id = post.id ORDER BY post.created_at DESC LIMIT $1 OFFSET $2;
     `;
     let startFrom = (pageNumber - 1) * PAGE_SIZE;
     let safeValues = [PAGE_SIZE + 1, startFrom];
     // Filtering
     if(categoryName && categoryName !== ''){
       sqlQuery = `
-      SELECT post.id AS post_id, post.created_at, profile.id AS profile_id, profile_image.id AS file_id, profile_image.file AS profile_picture, client.id AS user_id, category.id AS category_id, name AS category_name, text, first_name, last_name, caption, user_name, email, post_image.id AS image_id, post_image.file AS image_link ,likes FROM post JOIN profile ON post.profile_id = profile.id JOIN client ON client.id = profile.user_id JOIN category ON post.category_id = category.id LEFT JOIN user_file AS profile_image ON profile.profile_picture = profile_image.id LEFT JOIN attachment ON attachment.post_id = post.id LEFT JOIN user_file AS post_image ON attachment.file_id = post_image.id left join (select post_id, count(*) from interaction  group by post_id) as likes on likes.post_id = post.id WHERE category.name = $1 ORDER BY post.created_at DESC LIMIT $2 OFFSET $3;
+      SELECT post.id AS post_id, post.created_at, profile.id AS profile_id, profile_image.id AS file_id, profile_image.file AS profile_picture, client.id AS user_id, client.last_login as last_login, category.id AS category_id, name AS category_name, text, first_name, last_name, caption, user_name, email, post_image.id AS image_id, post_image.file AS image_link ,likes FROM post JOIN profile ON post.profile_id = profile.id JOIN client ON client.id = profile.user_id JOIN category ON post.category_id = category.id LEFT JOIN user_file AS profile_image ON profile.profile_picture = profile_image.id LEFT JOIN attachment ON attachment.post_id = post.id LEFT JOIN user_file AS post_image ON attachment.file_id = post_image.id left join (select post_id, count(*) from interaction  group by post_id) as likes on likes.post_id = post.id WHERE category.name = $1 ORDER BY post.created_at DESC LIMIT $2 OFFSET $3;
       `;
       startFrom = (pageNumber - 1) * PAGE_SIZE;
       safeValues = [categoryName, PAGE_SIZE + 1, startFrom];
@@ -87,7 +88,7 @@ async function getAllPosts(categoryName, pageNumber = 1) {
 async function getTimelinePosts(loggedInUserProfileId, pageNumber = 1) {
   try {
     let sqlQuery = `
-    SELECT post.id AS post_id, post.created_at, profile.id AS profile_id, profile_image.id AS file_id, profile_image.file AS profile_picture, client.id AS user_id, category.id AS category_id, name AS category_name, text, first_name, last_name, caption, user_name, email, post_image.id AS image_id, post_image.file AS image_link ,likes FROM post JOIN profile ON post.profile_id = profile.id JOIN client ON client.id = profile.user_id JOIN category ON post.category_id = category.id LEFT JOIN user_file AS profile_image ON profile.profile_picture = profile_image.id LEFT JOIN attachment ON attachment.post_id = post.id LEFT JOIN user_file AS post_image ON attachment.file_id = post_image.id left join (select post_id, count(*) from interaction  group by post_id) as likes on likes.post_id = post.id WHERE post.profile_id in (SELECT following FROM follow WHERE follower = $1 OR following = $1) ORDER BY post.created_at DESC LIMIT $2 OFFSET $3;
+    SELECT post.id AS post_id, post.created_at, profile.id AS profile_id, profile_image.id AS file_id, profile_image.file AS profile_picture, client.id AS user_id, client.last_login as last_login, category.id AS category_id, name AS category_name, text, first_name, last_name, caption, user_name, email, post_image.id AS image_id, post_image.file AS image_link ,likes FROM post JOIN profile ON post.profile_id = profile.id JOIN client ON client.id = profile.user_id JOIN category ON post.category_id = category.id LEFT JOIN user_file AS profile_image ON profile.profile_picture = profile_image.id LEFT JOIN attachment ON attachment.post_id = post.id LEFT JOIN user_file AS post_image ON attachment.file_id = post_image.id left join (select post_id, count(*) from interaction  group by post_id) as likes on likes.post_id = post.id WHERE post.profile_id in (SELECT following FROM follow WHERE follower = $1 OR following = $1) ORDER BY post.created_at DESC LIMIT $2 OFFSET $3;
     `;
     let startFrom = (pageNumber - 1) * PAGE_SIZE;
     let safeValues = [loggedInUserProfileId, PAGE_SIZE + 1, startFrom];
@@ -115,7 +116,7 @@ async function getTimelinePosts(loggedInUserProfileId, pageNumber = 1) {
 async function getProfilePosts(profileId, pageNumber = 1) {
   try {
     let sqlQuery = `
-    SELECT post.id AS post_id, post.created_at, profile.id AS profile_id, profile_image.id AS file_id, profile_image.file AS profile_picture, client.id AS user_id, category.id AS category_id, name AS category_name, text, first_name, last_name, caption, user_name, email, post_image.id AS image_id, post_image.file AS image_link ,likes FROM post JOIN profile ON post.profile_id = profile.id JOIN client ON client.id = profile.user_id JOIN category ON post.category_id = category.id LEFT JOIN user_file AS profile_image ON profile.profile_picture = profile_image.id LEFT JOIN attachment ON attachment.post_id = post.id LEFT JOIN user_file AS post_image ON attachment.file_id = post_image.id left join (select post_id, count(*) from interaction  group by post_id) as likes on likes.post_id = post.id WHERE post.profile_id = $1  ORDER BY post.created_at DESC LIMIT $2 OFFSET $3;
+    SELECT post.id AS post_id, post.created_at, profile.id AS profile_id, profile_image.id AS file_id, profile_image.file AS profile_picture, client.id AS user_id, client.last_login as last_login, category.id AS category_id, name AS category_name, text, first_name, last_name, caption, user_name, email, post_image.id AS image_id, post_image.file AS image_link ,likes FROM post JOIN profile ON post.profile_id = profile.id JOIN client ON client.id = profile.user_id JOIN category ON post.category_id = category.id LEFT JOIN user_file AS profile_image ON profile.profile_picture = profile_image.id LEFT JOIN attachment ON attachment.post_id = post.id LEFT JOIN user_file AS post_image ON attachment.file_id = post_image.id left join (select post_id, count(*) from interaction  group by post_id) as likes on likes.post_id = post.id WHERE post.profile_id = $1  ORDER BY post.created_at DESC LIMIT $2 OFFSET $3;
     `;
     let startFrom = (pageNumber - 1) * PAGE_SIZE;
     let safeValues = [profileId, PAGE_SIZE + 1, startFrom];
@@ -143,7 +144,7 @@ async function getProfilePosts(profileId, pageNumber = 1) {
 async function getSinglePost(id) {
   try {
     let sqlQuery = `
-    SELECT post.id AS post_id, post.created_at, profile.id AS profile_id, user_file.id AS file_id, file AS profile_picture, client.id AS user_id, category.id AS category_id, name AS category_name, text, first_name, last_name, caption, file as profile_picture, user_name, email ,likes FROM (select count(*) from interaction where post_id=$1) as likes,post JOIN profile ON post.profile_id = profile.id JOIN client ON client.id = profile.user_id JOIN category ON post.category_id = category.id LEFT JOIN user_file ON profile.profile_picture = user_file.id WHERE post.id = $1;
+    SELECT post.id AS post_id, post.created_at, profile.id AS profile_id, user_file.id AS file_id, file AS profile_picture, client.id AS user_id, client.last_login as last_login, category.id AS category_id, name AS category_name, text, first_name, last_name, caption, file as profile_picture, user_name, email ,likes FROM (select count(*) from interaction where post_id=$1) as likes,post JOIN profile ON post.profile_id = profile.id JOIN client ON client.id = profile.user_id JOIN category ON post.category_id = category.id LEFT JOIN user_file ON profile.profile_picture = user_file.id WHERE post.id = $1;
     `;
     // Filtering
     let safeValues = [id];
