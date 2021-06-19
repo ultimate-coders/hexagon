@@ -8,9 +8,7 @@ const {
   deletePost,
 } = require('../models/post');
 
-const { sendNotification } = require('../utils/helpers');
-
-const { saveFile } = require('../models/file');
+const { saveFile, deleteFile } = require('../models/file');
 const { deleteRemoteFile } = require('../middleware/uploader');
 
 const getAllPostsHandler = async (req, res, next) => {
@@ -66,6 +64,7 @@ const deletePostsHandler = async (req, res, next) => {
     const post = await getSinglePost(id);
     post['images'].forEach(async image => {
       await deleteRemoteFile(image.link);
+      await deleteFile(image.link);
     });
    
     const response = await deletePost(id);

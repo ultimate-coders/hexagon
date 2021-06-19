@@ -64,12 +64,12 @@ async function getAllProfiles(keyword = '', pageNumber = 1) {
 }
 
 // Get one profile
-async function getSingleProfile(id, requester) {
+async function getSingleProfile(userName, requester) {
   try {
     let sqlQuery = `
-    SELECT profile.id AS profile_id, client.id AS user_id, user_file.id as file_id, first_name, last_name, caption, file as profile_picture, user_name, email FROM profile JOIN client ON profile.user_id = client.id LEFT JOIN user_file ON profile.profile_picture = user_file.id WHERE profile.id = $1;
+    SELECT profile.id AS profile_id, client.id AS user_id, user_file.id as file_id, first_name, last_name, caption, file as profile_picture, user_name, email FROM profile JOIN client ON profile.user_id = client.id LEFT JOIN user_file ON profile.profile_picture = user_file.id WHERE client.user_name = $1;
     `;
-    let safeValues = [id];
+    let safeValues = [userName];
     // Query the database
     const profileData = await client.query(sqlQuery, safeValues);
     const response = new Profile(profileData.rows[0]);
@@ -77,7 +77,7 @@ async function getSingleProfile(id, requester) {
     sqlQuery = `
     select followers, followings, am_follow from (select count(*) from follow where following = $1) as followers, (select count(*) from follow where follower = $1) as followings, (SELECT COUNT(*) FROM follow WHERE following = $1 AND follower = $2) as am_follow; 
     `;
-    safeValues = [id, requester];
+    safeValues = [response.id, requester];
     const followData = await client.query(sqlQuery, safeValues);
     response['followers'] = followData.rows[0].followers.split('(')[1].split(')')[0];
     response['followings'] = followData.rows[0].followings.split('(')[1].split(')')[0];

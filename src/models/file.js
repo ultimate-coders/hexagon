@@ -1,6 +1,6 @@
 'use strict';
 
-const Client = require('./db');
+const client = require('./db');
 
 function File(fileObj) {
   this.id = fileObj.id;
@@ -18,7 +18,7 @@ async function saveFile(files) {
         safeValues.push(file.location);
       });
       sqlQuery += ' RETURNING *;';
-      let fileData = await Client.query(sqlQuery, safeValues);
+      let fileData = await client.query(sqlQuery, safeValues);
       let results = fileData.rows.map((file) => new File(file));
       return results;
     } else {
@@ -29,6 +29,18 @@ async function saveFile(files) {
   }
 }
 
+async function deleteFile(fileUrl) {
+  try {
+    let sqlQuery = 'DELETE FROM user_file WHERE file=$1;';
+    let safeValues = [fileUrl];
+    let fileData = await client.query(sqlQuery, safeValues);
+    return fileData;
+  } catch (e) {
+    throw new Error(e);
+  }
+}
+
 module.exports = {
   saveFile,
+  deleteFile,
 };

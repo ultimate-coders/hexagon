@@ -16,8 +16,8 @@ const getAllProfilesHandler = async (req, res, next) => {
 
 const getProfileHandler = async (req, res, next) => {
   try {
-    const id = req.params.id;
-    const response = await getSingleProfile(id, req.user.profile_id);
+    const userName = req.params.username;
+    const response = await getSingleProfile(userName, req.user.profile_id);
     res.status(200).json(response);
   } catch (e) {
     next(e);

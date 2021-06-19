@@ -19,11 +19,11 @@ const {getCategoriesHandler} = require('../controllers/categoryControllers');
 
 // Global middleware
 router.use(bearer);
-router.use(verifyCheck);
+// router.use(verifyCheck);
 
 // Profile routes
 router.get('/profile', getAllProfilesHandler);
-router.get('/profile/:id', getProfileHandler);
+router.get('/profile/:username', getProfileHandler);
 router.get('/me-profile', meHandler);
 router.post('/profile', createProfileHandler);
 router.put('/profile/', updateProfileHandler);
