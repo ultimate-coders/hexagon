@@ -15,13 +15,13 @@
 
 ## User Profile
 
-| Method | Endpint        | Description                                |
-| ------ | -------------- | ------------------------------------------ |
-| GET    | `/me-profile`  | Get profile information for logged in user |
-| GET    | `/profile`     | Get all users' profiles information        |
-| GET    | `/profile/:id` | Get user' profiles information             |
-| POST   | `/profile`     | Create user's profile                      |
-| PUT    | `/profile`     | Update user' profiles information          |
+| Method | Endpint              | Description                                 |
+| ------ | -------------------- | ------------------------------------------- |
+| GET    | `/me-profile`        | Get profile information for logged in user  |
+| GET    | `/profile`           | Get all users' profiles information         |
+| GET    | `/profile/:username` | Get user' profiles' information by username |
+| POST   | `/profile`           | Create user's profile                       |
+| PUT    | `/profile`           | Update user' profiles information           |
 
 ## Follow
 
@@ -43,13 +43,15 @@
 
 ## POST
 
-| Method | Endpint      | Description               |
-| ------ | ------------ | ------------------------- |
-| Get    | `/posts`     | Get all posts information |
-| Get    | `/posts/:id` | Get post information      |
-| POST   | `/posts`     | Create post               |
-| PUT    | `/posts/:id` | Update post               |
-| DELETE | `/posts/:id` | Delete post               |
+| Method | Endpint             | Description                               |
+| ------ | ------------------- | ----------------------------------------- |
+| Get    | `/posts/timeline`   | Get all posts timeline for logged in user |
+| Get    | `/posts/profile/id` | Get all posts for a profile by profile id |
+| Get    | `/posts/category`   | Get all posts information on category     |
+| Get    | `/posts/post/:id`   | Get post information  by id               |
+| POST   | `/posts/post`       | Create post                               |
+| PUT    | `/posts/post/:id`   | Update post                               |
+| DELETE | `/posts/post/:id`   | Delete post                               |
 
 ## Comment
 
@@ -62,18 +64,18 @@
 
 ## Notifications
 
-| Method | Endpint          | Description                                           |
-| ------ | ---------------- | ----------------------------------------------------- |
+| Method | Endpint          | Description                                          |
+| ------ | ---------------- | ---------------------------------------------------- |
 | Get    | `/Notifications` | Get all Notifications information for logged in user |
-| PUT    | `/Notifications` | Update notifications (change to seen)                 |
+| PUT    | `/Notifications` | Update notifications (change to seen)                |
 
 ## Messages
 
-| Method | Endpint         | Description                                      |
-| ------ | --------------- | ------------------------------------------------ |
+| Method | Endpint         | Description                                     |
+| ------ | --------------- | ----------------------------------------------- |
 | Get    | `/Messages`     | Get all Messages information for logged in user |
-| DELETE | `/Messages/:id` | Delete Messages (change to seen)                 |
-| PUT    | `/Messages/:id` | Update Messages (change to seen)                 |
+| DELETE | `/Messages/:id` | Delete Messages (change to seen)                |
+| PUT    | `/Messages/:id` | Update Messages (change to seen)                |
 
 ## interaction
 | Method | Endpint        | Description                  |

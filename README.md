@@ -104,13 +104,13 @@ Hexagon is a social media for creative people such as artists, that will allow t
 
 ### User Profile
 
-| Method | Endpint        | Description                                |
-| ------ | -------------- | ------------------------------------------ |
-| GET    | `/me-profile`  | Get profile information for logged in user |
-| GET    | `/profile`     | Get all users' profiles information        |
-| GET    | `/profile/:id` | Get user' profiles information             |
-| POST   | `/profile`     | Create user's profile                      |
-| PUT    | `/profile`     | Update user' profiles information          |
+| Method | Endpint              | Description                                 |
+| ------ | -------------------- | ------------------------------------------- |
+| GET    | `/me-profile`        | Get profile information for logged in user  |
+| GET    | `/profile`           | Get all users' profiles information         |
+| GET    | `/profile/:username` | Get user' profiles' information by username |
+| POST   | `/profile`           | Create user's profile                       |
+| PUT    | `/profile`           | Update user' profiles information           |
 
 ### Follow
 
@@ -132,13 +132,15 @@ Hexagon is a social media for creative people such as artists, that will allow t
 
 ### POST
 
-| Method | Endpint      | Description               |
-| ------ | ------------ | ------------------------- |
-| Get    | `/posts`     | Get all posts information |
-| Get    | `/posts/:id` | Get post information      |
-| POST   | `/posts`     | Create post               |
-| PUT    | `/posts/:id` | Update post               |
-| DELETE | `/posts/:id` | Delete post               |
+| Method | Endpint             | Description                               |
+| ------ | ------------------- | ----------------------------------------- |
+| Get    | `/posts/timeline`   | Get all posts timeline for logged in user |
+| Get    | `/posts/profile/id` | Get all posts for a profile by profile id |
+| Get    | `/posts/category`   | Get all posts information on category     |
+| Get    | `/posts/post/:id`   | Get post information  by id               |
+| POST   | `/posts/post`       | Create post                               |
+| PUT    | `/posts/post/:id`   | Update post                               |
+| DELETE | `/posts/post/:id`   | Delete post                               |
 
 ### Comment
 

@@ -9,7 +9,7 @@ const {createNotificationHandler, getNotificationHandler, updateNotificationHand
 const {getPostCommentsHandler,createCommentHandler,updateCommentHandler,deleteCommentHandler}=require('../controllers/commentController');
 const { followHandler } = require('../controllers/followController');
 const {getAllProfilesHandler, getProfileHandler, meHandler, createProfileHandler, updateProfileHandler} = require('../controllers/profileController');
-const {getAllPostsHandler, getSinglePostsHandler, createPostsHandler, updatePostsHandler, deletePostsHandler} = require('../controllers/postControllers');
+const {getAllPostsHandler, getSinglePostsHandler, createPostsHandler, updatePostsHandler, deletePostsHandler, getTimelineHandler, getProfilePostsHandler} = require('../controllers/postControllers');
 const bearer = require('../auth/middleware/bearer');
 const {commentCheck,messageCheck, postCheck, notificationCheck, verifyCheck}=require('../auth/middleware/acl');
 const {fileUploadHandler} = require('../controllers/fileControllers');
@@ -35,11 +35,13 @@ router.post('/follow',followHandler);
 router.get('/category', getCategoriesHandler);
 
 // Posts routes
-router.get('/posts', postCheck, getAllPostsHandler);
-router.get('/posts/:id', postCheck, getSinglePostsHandler);
-router.post('/posts', postCheck, uploadS3.array('image'), createPostsHandler);
-router.put('/posts/:id', postCheck, uploadS3.array('image'), updatePostsHandler);
-router.delete('/posts/:id', postCheck, deletePostsHandler);
+router.get('/posts/timeline', postCheck, getTimelineHandler);
+router.get('/posts/profile/:id', postCheck, getProfilePostsHandler);
+router.get('/posts/:category', postCheck, getAllPostsHandler);
+router.get('/posts/post/:id', postCheck, getSinglePostsHandler);
+router.post('/posts/post', postCheck, uploadS3.array('image'), createPostsHandler);
+router.put('/posts/post/:id', postCheck, uploadS3.array('image'), updatePostsHandler);
+router.delete('/posts/post/:id', postCheck, deletePostsHandler);
 
 // Comments routes
 router.get('/comment/:postId', commentCheck, getPostCommentsHandler);

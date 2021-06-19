@@ -71,8 +71,62 @@ async function getAllPosts(categoryName, pageNumber = 1) {
       let likes=post.likes? post.likes.split(',')[1].split(')')[0]:0;
       return new Post(post,likes);
     });
-    console.log('sql.rows',postsData);
-    console.log('results',results);
+    if(hasNext)  results = results.slice(0, -1);
+    const response = {
+      page: pageNumber,
+      hasNext: hasNext,
+      results: results,
+    };
+    return response; 
+  } catch (e) {
+    throw new Error(e);
+  }
+}
+
+// Get all posts by profile
+async function getTimelinePosts(loggedInUserProfileId, pageNumber = 1) {
+  try {
+    let sqlQuery = `
+    SELECT post.id AS post_id, post.created_at, profile.id AS profile_id, profile_image.id AS file_id, profile_image.file AS profile_picture, client.id AS user_id, category.id AS category_id, name AS category_name, text, first_name, last_name, caption, user_name, email, post_image.id AS image_id, post_image.file AS image_link ,likes FROM post JOIN profile ON post.profile_id = profile.id JOIN client ON client.id = profile.user_id JOIN category ON post.category_id = category.id LEFT JOIN user_file AS profile_image ON profile.profile_picture = profile_image.id LEFT JOIN attachment ON attachment.post_id = post.id LEFT JOIN user_file AS post_image ON attachment.file_id = post_image.id left join (select post_id, count(*) from interaction  group by post_id) as likes on likes.post_id = post.id WHERE post.profile_id in (SELECT following FROM follow WHERE follower = $1 OR following = $1) ORDER BY post.created_at DESC LIMIT $2 OFFSET $3;
+    `;
+    let startFrom = (pageNumber - 1) * PAGE_SIZE;
+    let safeValues = [loggedInUserProfileId, PAGE_SIZE + 1, startFrom];
+    // Query the database
+    const postsData = await client.query(sqlQuery, safeValues);
+    const hasNext = postsData.rowCount > PAGE_SIZE;
+    let results = postsData.rows.map(post => {
+      let likes=post.likes? post.likes.split(',')[1].split(')')[0]:0;
+      return new Post(post,likes);
+    });
+
+    if(hasNext)  results = results.slice(0, -1);
+    const response = {
+      page: pageNumber,
+      hasNext: hasNext,
+      results: results,
+    };
+    return response; 
+  } catch (e) {
+    throw new Error(e);
+  }
+}
+
+// Get all posts for specific profile
+async function getProfilePosts(profileId, pageNumber = 1) {
+  try {
+    let sqlQuery = `
+    SELECT post.id AS post_id, post.created_at, profile.id AS profile_id, profile_image.id AS file_id, profile_image.file AS profile_picture, client.id AS user_id, category.id AS category_id, name AS category_name, text, first_name, last_name, caption, user_name, email, post_image.id AS image_id, post_image.file AS image_link ,likes FROM post JOIN profile ON post.profile_id = profile.id JOIN client ON client.id = profile.user_id JOIN category ON post.category_id = category.id LEFT JOIN user_file AS profile_image ON profile.profile_picture = profile_image.id LEFT JOIN attachment ON attachment.post_id = post.id LEFT JOIN user_file AS post_image ON attachment.file_id = post_image.id left join (select post_id, count(*) from interaction  group by post_id) as likes on likes.post_id = post.id WHERE post.profile_id = $1  ORDER BY post.created_at DESC LIMIT $2 OFFSET $3;
+    `;
+    let startFrom = (pageNumber - 1) * PAGE_SIZE;
+    let safeValues = [profileId, PAGE_SIZE + 1, startFrom];
+    // Query the database
+    const postsData = await client.query(sqlQuery, safeValues);
+    const hasNext = postsData.rowCount > PAGE_SIZE;
+    let results = postsData.rows.map(post => {
+      let likes=post.likes? post.likes.split(',')[1].split(')')[0]:0;
+      return new Post(post,likes);
+    });
+
     if(hasNext)  results = results.slice(0, -1);
     const response = {
       page: pageNumber,
@@ -95,7 +149,6 @@ async function getSinglePost(id) {
     let safeValues = [id];
     // Query the database
     const postsData = await client.query(sqlQuery, safeValues);
-    console.log('jjjjjjj',postsData.rows[0]);
 
     let likes=postsData.rows[0].likes? postsData.rows[0].likes.split('(')[1].split(')')[0]:0;
 
@@ -203,4 +256,6 @@ module.exports = {
   createPost,
   updatePost,
   deletePost,
+  getTimelinePosts,
+  getProfilePosts,
 };

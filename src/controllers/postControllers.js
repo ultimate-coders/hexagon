@@ -6,18 +6,43 @@ const {
   createPost,
   updatePost,
   deletePost,
+  getTimelinePosts,
+  getProfilePosts,
 } = require('../models/post');
 
 const { saveFile, deleteFile } = require('../models/file');
 const { deleteRemoteFile } = require('../middleware/uploader');
 
+const getTimelineHandler = async (req, res, next) => {
+  try {
+    const page = req.query.page || '1';
+
+    const response = await getTimelinePosts(req.user.profile_id, page);
+    res.status(200).json(response);
+  } catch (e) {
+    next(e);
+  }
+};
+
+const getProfilePostsHandler = async (req, res, next) => {
+  try {
+    const page = req.query.page || '1';
+    const profileId = req.params.id;
+
+    const response = await getProfilePosts(profileId, page);
+    res.status(200).json(response);
+  } catch (e) {
+    next(e);
+  }
+};
+
 const getAllPostsHandler = async (req, res, next) => {
   try {
     
-    const keyword = req.query.category || '';
+    const category = req.params.category;
     const page = req.query.page || '1';
 
-    const response = await getAllPosts(keyword, page);
+    const response = await getAllPosts(category, page);
     res.status(200).json(response);
   } catch (e) {
     next(e);
@@ -83,4 +108,6 @@ module.exports = {
   createPostsHandler,
   updatePostsHandler,
   deletePostsHandler,
+  getTimelineHandler,
+  getProfilePostsHandler,
 };
