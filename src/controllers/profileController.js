@@ -1,6 +1,6 @@
 'use strict';
 
-const { getAllProfiles, getSingleProfile, getProfileByUserId, createProfile, updateProfile } = require('../models/userProfile');
+const { getAllProfiles, getSingleProfile, getProfileByUserId, createProfile, updateProfile, getProfilesWithMessages } = require('../models/userProfile');
 
 const getAllProfilesHandler = async (req, res, next) => {
   try {
@@ -14,10 +14,22 @@ const getAllProfilesHandler = async (req, res, next) => {
   }
 };
 
+const getProfilesWithMessagesHandler = async (req, res, next) => {
+  try {
+    const keyword = req.query.keyword || '';
+    const page = req.query.page || '1';
+
+    const response = await getProfilesWithMessages(req.user.profile_id, keyword, page);
+    res.status(200).json(response);
+  } catch (e) {
+    next(e);
+  }
+};
+
 const getProfileHandler = async (req, res, next) => {
   try {
-    const id = req.params.id;
-    const response = await getSingleProfile(id, req.user.profile_id);
+    const userName = req.params.username;
+    const response = await getSingleProfile(userName, req.user.profile_id);
     res.status(200).json(response);
   } catch (e) {
     next(e);
@@ -60,4 +72,5 @@ module.exports = {
   meHandler,
   createProfileHandler,
   updateProfileHandler,
+  getProfilesWithMessagesHandler,
 };

@@ -14,7 +14,7 @@ let getMessage = async (senderId , receiverId, pageNumber = 1) =>{
   try {
     let startFrom = (pageNumber - 1) * PAGE_SIZE;
     let SQL = `SELECT DISTINCT * FROM message WHERE (sender_id=$1 AND receiver_id=$2) OR (sender_id=$2 AND receiver_id=$1) ORDER BY created_at DESC LIMIT $3 OFFSET $4;`;
-    let safeValues = [ senderId,receiverId, PAGE_SIZE, startFrom];
+    let safeValues = [ senderId,receiverId, PAGE_SIZE + 1, startFrom];
     let messagesData = await client.query(SQL, safeValues);
     let results = messagesData.rows;
     const hasNext = messagesData.rowCount > PAGE_SIZE;
@@ -44,10 +44,10 @@ let deleteMessage = async (id) =>{
 
 let updateMessage =  async (id) =>{
   try {
-    let SQL = `UPDATE message SET seen=true WHERE id=$1;`;
+    let SQL = `UPDATE message SET seen=true WHERE id=$1 RETURNING *;`;
     let safeValues = [id];
     let result = await client.query(SQL, safeValues);
-    return result;
+    return result.rows[0];
   } catch (e) {
     throw new Error(e);
   }  

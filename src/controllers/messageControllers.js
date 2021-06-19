@@ -3,19 +3,18 @@ const {
   deleteMessage,
   updateMessage,
 } = require('../models/message');
+const events = require('../socket/event');
 const { sendMessage } = require('../utils/helpers');
 
 let createMessageHandler = async (req, res, next) => {
   try {
     let { message, receiver_id } = req.body;
     const result = await sendMessage(message, req.user.profile_id, receiver_id);
-    // console.log("🚀 ~ file: messageControllers.js ~ line 12 ~ createMessageHandler ~ result", result)
     let obj = {
       id: result[0].id,
       status: 201,
       message: 'message successfully sent',
     };
-    // console.log("🚀 ~ file: messageControllers.js ~ line 17 ~ createMessageHandler ~ obj", obj)
     
     res.status(201).json(obj);
   } catch (error) {
@@ -49,7 +48,8 @@ let deleteMessageHandler = async (req, res, next) => {
 
 let updateMessageHandler = async (req, res, next) => {
   try {
-    await updateMessage(req.params.id);
+    const message = await updateMessage(req.params.id);
+    events.emit('message', message);
     res.status(200).json({
       status: 200,
       message: 'successfully updated',

@@ -15,6 +15,12 @@ const signUpHandler = async (req, res, next) => {
   try {
     let email = req.body.email;
     let password = req.body.password;
+    let username = req.body.user_name;
+
+    if(username.includes(' ')){
+      res.status(403).json({ message: 'Username should not have spaces' });
+      return;
+    }
 
     if (!validateEmail(email)) {
       res.status(403).json({ message: 'Please insert a valid email' });
@@ -26,7 +32,7 @@ const signUpHandler = async (req, res, next) => {
       return;
     }
 
-    let user = await getUserByEmail(req.body.email);
+    let user = await getUserByEmail(req.body.email, req.body.user_name);
 
     if (!user) {
       user = await createUser(req.body);
@@ -66,7 +72,6 @@ const updateUserPasswordHandler = async (req, res, next) => {
 
     let user = await getUserById(req.user.id);
     const valid = await checkPassword(oldPassword, user.hashed_password);
-    console.log('valid pass : ', valid);
     if (valid) {
       user = await updateUserPassword(user.id, newPassword);
       const response = {

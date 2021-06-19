@@ -91,26 +91,29 @@ Hexagon is a social media for creative people such as artists, that will allow t
 
 ### Auth
 
-| Method | Endpint                   | Description                                           |
-| ------ | ------------------------- | ----------------------------------------------------- |
-| POST   | `/auth/signup`            | Create a new user                                     |
-| POST   | `/auth/signuin`           | Login in with certian user using basic authentication |
-| GET    | `/auth/logout`            | Logout User                                           |
-| POST   | `/auth/refresh`           | Get new access token                                  |
-| PUT    | `/auth/user/password`     | Update user password                                  |
-| POST   | `/auth/user/verify`       | Verify user account                                   |
-| POST   | `/auth/user/verification` | Send verification code to the user                    |
-| GET    | `/auth/google`            | Sign in/up with google                                |
+| Method | Endpint                     | Description                                           |
+| ------ | --------------------------- | ----------------------------------------------------- |
+| POST   | `/auth/signup`              | Create a new user                                     |
+| POST   | `/auth/signuin`             | Login in with certain user using basic authentication |
+| GET    | `/auth/logout`              | Logout User                                           |
+| POST   | `/auth/refresh`             | Get new access token                                  |
+| PUT    | `/auth/user/password`       | Update user password                                  |
+| PUT    | `/auth/user/password/code`  | Require code to reset the password                    |
+| POST   | `/auth/user/password/reset` | Verify the code and reset the password                |
+| PUT    | `/auth/user/password`       | Update user password                                  |
+| POST   | `/auth/user/verify`         | Verify user account                                   |
+| GET    | `/auth/google`              | Sign in/up with google                                |
 
 ### User Profile
 
-| Method | Endpint        | Description                                |
-| ------ | -------------- | ------------------------------------------ |
-| GET    | `/me-profile`  | Get profile information for logged in user |
-| GET    | `/profile`     | Get all users' profiles information        |
-| GET    | `/profile/:id` | Get user' profiles information             |
-| POST   | `/profile`     | Create user's profile                      |
-| PUT    | `/profile`     | Update user' profiles information          |
+| Method | Endpint                     | Description                                                                 |
+| ------ | --------------------------- | --------------------------------------------------------------------------- |
+| GET    | `/me-profile`               | Get profile information for logged in user                                  |
+| GET    | `/me-profile/with-messages` | Get profiles information that the logged in user has previous messages with |
+| GET    | `/profile`                  | Get all users' profiles information                                         |
+| GET    | `/profile/:username`        | Get user' profiles' information by username                                 |
+| POST   | `/profile`                  | Create user's profile                                                       |
+| PUT    | `/profile`                  | Update user' profiles information                                           |
 
 ### Follow
 
@@ -132,13 +135,15 @@ Hexagon is a social media for creative people such as artists, that will allow t
 
 ### POST
 
-| Method | Endpint      | Description               |
-| ------ | ------------ | ------------------------- |
-| Get    | `/posts`     | Get all posts information |
-| Get    | `/posts/:id` | Get post information      |
-| POST   | `/posts`     | Create post               |
-| PUT    | `/posts/:id` | Update post               |
-| DELETE | `/posts/:id` | Delete post               |
+| Method | Endpint             | Description                               |
+| ------ | ------------------- | ----------------------------------------- |
+| Get    | `/posts/timeline`   | Get all posts timeline for logged in user |
+| Get    | `/posts/profile/id` | Get all posts for a profile by profile id |
+| Get    | `/posts/category`   | Get all posts information on category     |
+| Get    | `/posts/post/:id`   | Get post information  by id               |
+| POST   | `/posts/post`       | Create post                               |
+| PUT    | `/posts/post/:id`   | Update post                               |
+| DELETE | `/posts/post/:id`   | Delete post                               |
 
 ### Comment
 

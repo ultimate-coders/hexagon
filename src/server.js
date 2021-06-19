@@ -61,6 +61,7 @@ events.on('notification', (payload) => {
 events.on('message', (payload) => {
   console.log('Message has been triggered',payload);
   messages.to(payload.receiver_id, payload);
+  messages.to(payload.sender_id, payload);
 });
 
 // Use Routes
