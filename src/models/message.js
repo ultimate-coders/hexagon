@@ -44,10 +44,10 @@ let deleteMessage = async (id) =>{
 
 let updateMessage =  async (id) =>{
   try {
-    let SQL = `UPDATE message SET seen=true WHERE id=$1;`;
+    let SQL = `UPDATE message SET seen=true WHERE id=$1 RETURNING *;`;
     let safeValues = [id];
     let result = await client.query(SQL, safeValues);
-    return result;
+    return result.rows[0];
   } catch (e) {
     throw new Error(e);
   }  
