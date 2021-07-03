@@ -1,6 +1,6 @@
 'use strict';
 
-const { createToken, deleteToken, getTokenRecord } = require('../models/jwt');
+const { createToken, deleteToken } = require('../models/jwt');
 const {
   createUser,
   getUserByEmail,
@@ -16,20 +16,28 @@ const signUpHandler = async (req, res, next) => {
     let email = req.body.email;
     let password = req.body.password;
     let username = req.body.user_name;
+    if(!email || !password || ! username){
+      const error = new Error('Missing parameters, username, email or password!');
+      error.statusCode = 403;
+      throw error;
+    }
 
     if(username.includes(' ')){
-      res.status(403).json({ message: 'Username should not have spaces' });
-      return;
+      const error = new Error('Username should not have spaces');
+      error.statusCode = 403;
+      throw error;
     }
 
     if (!validateEmail(email)) {
-      res.status(403).json({ message: 'Please insert a valid email' });
-      return;
+      const error = new Error('The email is not valid');
+      error.statusCode = 403;
+      throw error;
     }
 
     if (!validatePassword(password)) {
-      res.status(403).json({ message: 'Please insert a valid password' });
-      return;
+      const error = new Error('The password is not valid');
+      error.statusCode = 403;
+      throw error;
     }
 
     let user = await getUserByEmail(req.body.email, req.body.user_name);
@@ -51,7 +59,9 @@ const signUpHandler = async (req, res, next) => {
       delete userTokens.created_at;
       res.status(200).json(userTokens);
     } else {
-      res.status(403).json({ message: 'User already exist!' });
+      const error = new Error('User already exist!');
+      error.statusCode = 403;
+      throw error;
     }
   } catch (e) {
     next(e);
@@ -62,12 +72,16 @@ const updateUserPasswordHandler = async (req, res, next) => {
   try {
     const oldPassword = req.body.old_password;
     const newPassword = req.body.new_password;
+    if(!oldPassword || !newPassword){
+      const error = new Error('Missing parameters, old_password or new_password');
+      error.statusCode = 403;
+      throw error;
+    }
+
     if (!validatePassword(newPassword)) {
-      res.status(403).json({
-        status: 403,
-        error: 'Please insert a valid password',
-      });
-      return;
+      const error = new Error('The password is not valid');
+      error.statusCode = 403;
+      throw error;
     }
 
     let user = await getUserById(req.user.id);
@@ -80,10 +94,9 @@ const updateUserPasswordHandler = async (req, res, next) => {
       };
       res.status(200).json(response);
     } else {
-      res.status(403).json({
-        status: 403,
-        message: 'Invalid password',
-      });
+      const error = new Error('Invalid password');
+      error.statusCode = 403;
+      throw error;
     }
   } catch (e) {
     next(e);
@@ -121,7 +134,9 @@ const refreshHandler = async (req, res, next) => {
       delete newTokens.user_id;
       res.status(200).json(newTokens);
     } else {
-      throw new Error('Invalid token');
+      const error = new Error('Invalid token');
+      error.statusCode = 403;
+      throw error;
     }
   } catch (e) {
     next(e);

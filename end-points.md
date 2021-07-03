@@ -17,7 +17,7 @@
 
 ## User Profile
 
-| Method | Endpint                     | Description                                                                 |
+| Method | Endpoint                     | Description                                                                 |
 | ------ | --------------------------- | --------------------------------------------------------------------------- |
 | GET    | `/me-profile`               | Get profile information for logged in user                                  |
 | GET    | `/me-profile/with-messages` | Get profiles information that the logged in user has previous messages with |
