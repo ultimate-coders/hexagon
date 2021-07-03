@@ -13,7 +13,9 @@ async function authenticateBasic(email, password) {
     if (valid) {
       return user;
     }
-    throw new Error('Invalid User');
+    const error = new Error('Invalid User');
+    error.statusCode = 403;
+    throw error;
   } catch (e) {
     throw new Error(e);
   }
@@ -26,13 +28,14 @@ async function authenticateWithToken(token, type = 'access') {
 
     if (parsedToken.token_type !== type) throw new Error('Invalid Token');
 
-
     const user = await getUserById(parsedToken.userId); // get user data from user table
 
     if (user) {
       return user;
     }
-    throw new Error('Invalid Token');
+    const error = new Error('Invalid Token');
+    error.statusCode = 403;
+    throw error;
   } catch (e) {
     throw new Error(e);
   }
@@ -52,7 +55,7 @@ function getToken(userId, tokenType = 'access') {
 
     return jwt.sign(payload, process.env.SECRET, { expiresIn: expireDate });
   } catch (e) {
-    throw new Error(e.message);
+    throw new Error(e);
   }
 }
 

@@ -5,8 +5,10 @@ const client = require('../../models/db');
 
 async function commentCheck(req, res, next) {
   try {
-
-    if(req.method.toLowerCase() === 'get' || req.method.toLowerCase() === 'post') {
+    if (
+      req.method.toLowerCase() === 'get' ||
+      req.method.toLowerCase() === 'post'
+    ) {
       next();
       return;
     }
@@ -16,10 +18,15 @@ async function commentCheck(req, res, next) {
     let query = await client.query(SQL, safeValue);
     if (req.user.profile_id === query.rows[0].comment_owner) {
       next();
-    } else if (req.user.profile_id === query.rows[0].post_owner && req.method.toLowerCase() === 'delete') {
+    } else if (
+      req.user.profile_id === query.rows[0].post_owner &&
+      req.method.toLowerCase() === 'delete'
+    ) {
       next();
     } else {
-      throw new Error('Unauthorized!');
+      const error = new Error('Unauthorized!');
+      error.statusCode = 403;
+      throw error;
     }
   } catch (e) {
     next(e);
@@ -28,7 +35,10 @@ async function commentCheck(req, res, next) {
 
 async function messageCheck(req, res, next) {
   try {
-    if(req.method.toLowerCase() === 'get' || req.method.toLowerCase() === 'post') {
+    if (
+      req.method.toLowerCase() === 'get' ||
+      req.method.toLowerCase() === 'post'
+    ) {
       next();
       return;
     }
@@ -39,7 +49,9 @@ async function messageCheck(req, res, next) {
     if (req.user.profile_id === query.rows[0].sender_id) {
       next();
     } else {
-      throw new Error('Unauthorized!');
+      const error = new Error('Unauthorized!');
+      error.statusCode = 403;
+      throw error;
     }
   } catch (e) {
     next(e);
@@ -48,7 +60,10 @@ async function messageCheck(req, res, next) {
 
 async function profileCheck(req, res, next) {
   try {
-    if(req.method.toLowerCase() === 'get' || req.method.toLowerCase() === 'post') {
+    if (
+      req.method.toLowerCase() === 'get' ||
+      req.method.toLowerCase() === 'post'
+    ) {
       next();
       return;
     }
@@ -56,10 +71,12 @@ async function profileCheck(req, res, next) {
     let SQL = `select user_id from profile where id = $1;`;
     let safeValue = [req.body.id];
     let query = await client.query(SQL, safeValue);
-    if (req.user.id === query.rows[0].user_id){
+    if (req.user.id === query.rows[0].user_id) {
       next();
     } else {
-      throw new Error('Unauthorized!');
+      const error = new Error('Unauthorized!');
+      error.statusCode = 403;
+      throw error;
     }
   } catch (e) {
     next(e);
@@ -68,7 +85,10 @@ async function profileCheck(req, res, next) {
 
 async function followCheck(req, res, next) {
   try {
-    if(req.method.toLowerCase() === 'get' || req.method.toLowerCase() === 'post') {
+    if (
+      req.method.toLowerCase() === 'get' ||
+      req.method.toLowerCase() === 'post'
+    ) {
       next();
       return;
     }
@@ -77,14 +97,19 @@ async function followCheck(req, res, next) {
     let safeValue = [req.body.id];
     let query = await client.query(SQL, safeValue);
     if (req.user.profile_id === query.rows[0].user_id) next();
-  } catch (error) {
-    throw new Error(error);
+  } catch (e) {
+    const error = new Error('Unauthorized!');
+    error.statusCode = 403;
+    throw error;
   }
 }
 
 async function notificationCheck(req, res, next) {
   try {
-    if(req.method.toLowerCase() === 'get' || req.method.toLowerCase() === 'post') {
+    if (
+      req.method.toLowerCase() === 'get' ||
+      req.method.toLowerCase() === 'post'
+    ) {
       next();
       return;
     }
@@ -95,7 +120,9 @@ async function notificationCheck(req, res, next) {
     if (req.user.profile_id === query.rows[0].receiver_id) {
       next();
     } else {
-      throw new Error('Unauthorized!');
+      const error = new Error('Unauthorized!');
+      error.statusCode = 403;
+      throw error;
     }
   } catch (e) {
     next(e);
@@ -104,7 +131,10 @@ async function notificationCheck(req, res, next) {
 
 async function postCheck(req, res, next) {
   try {
-    if(req.method.toLowerCase() === 'get' || req.method.toLowerCase() === 'post') {
+    if (
+      req.method.toLowerCase() === 'get' ||
+      req.method.toLowerCase() === 'post'
+    ) {
       next();
       return;
     }
@@ -115,7 +145,9 @@ async function postCheck(req, res, next) {
     if (req.user.profile_id === query.rows[0].id) {
       next();
     } else {
-      throw new Error('Unauthorized!');
+      const error = new Error('Unauthorized!');
+      error.statusCode = 403;
+      throw error;
     }
   } catch (e) {
     next(e);
@@ -142,13 +174,21 @@ async function postCheck(req, res, next) {
 //   }
 // }
 
-
 function verifyCheck(req, res, next) {
-  if(req.user.verified){
+  if (req.user.verified) {
     next();
   } else {
-    next('Account not verified!');
+    const error = new Error('Account not verified!');
+    error.statusCode = 403;
+    throw error;
   }
 }
 
-module.exports = { commentCheck, messageCheck, postCheck, profileCheck, notificationCheck, verifyCheck };
+module.exports = {
+  commentCheck,
+  messageCheck,
+  postCheck,
+  profileCheck,
+  notificationCheck,
+  verifyCheck,
+};

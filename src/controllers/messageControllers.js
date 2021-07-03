@@ -17,8 +17,8 @@ let createMessageHandler = async (req, res, next) => {
     };
     
     res.status(201).json(obj);
-  } catch (error) {
-    next(error);
+  } catch (e) {
+    next(e);
   }
 };
 
@@ -27,10 +27,15 @@ let getMessageHandler = async (req, res, next) => {
     const page = req.query.page || '1';
 
     let { receiver_id } = req.body;
+    if(!receiver_id){
+      const error = new Error('missing receiver_id!');
+      error.statusCode = 403;
+      throw error;
+    }
     let result = await getMessage(receiver_id, req.user.profile_id, page);
     res.status(200).json(result);
-  } catch (error) {
-    next(error);
+  } catch (e) {
+    next(e);
   }
 };
 
@@ -41,8 +46,8 @@ let deleteMessageHandler = async (req, res, next) => {
       status: 200,
       message: 'successfully deleted',
     });
-  } catch (error) {
-    next(error);
+  } catch (e) {
+    next(e);
   }
 };
 
@@ -54,8 +59,8 @@ let updateMessageHandler = async (req, res, next) => {
       status: 200,
       message: 'successfully updated',
     });
-  } catch (error) {
-    next(error);
+  } catch (e) {
+    next(e);
   }
 };
 

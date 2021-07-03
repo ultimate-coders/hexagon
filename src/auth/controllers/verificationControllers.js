@@ -9,11 +9,9 @@ const verifyUserHandler = async (req, res, next) => {
   try {
     const code = req.body.code;
     if (!code) {
-      res.status(403).json({
-        status: 403,
-        error: 'The code is required!',
-      });
-      return;
+      const error = new Error('The code is missed!');
+      error.statusCode = 403;
+      throw error;
     }
     // if account is already verified
     if (req.user.verified) {
@@ -46,10 +44,11 @@ const verifyUserHandler = async (req, res, next) => {
       delete usersVerifications[req.user.id];
     }
     // No verify request
-    res.status(403).json({
-      status: 403,
-      error: 'The verification code not correct or has expired!',
-    });
+    const error = new Error(
+      'The verification code not correct or has expired!'
+    );
+    error.statusCode = 403;
+    throw error;
   } catch (e) {
     next(e);
   }
@@ -96,7 +95,9 @@ const getVerificationEmailTemplate = (to, name, code) => {
   const subject = 'Verification Code for the account';
   const text = '';
   const html = `
-    Hello <b>${name || 'there'}</b>, you are trying to verify your account, just copy the code and past it in the appropriate field</b>
+    Hello <b>${
+      name || 'there'
+    }</b>, you are trying to verify your account, just copy the code and past it in the appropriate field</b>
     <h3>Code</h3>: <h3>${code}</h3> 
     `;
 

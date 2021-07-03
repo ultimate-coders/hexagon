@@ -4,12 +4,11 @@ const passportSetup = require('./passport-setup');
 
 let googleFailed = (req, res, next) => {
   try {
-    res.status(403).json({
-      status: 403,
-      error: 'Sorry, something went wrong.',
-    });
+    const error = new Error('Failed to login using google');
+    error.statusCode = 403;
+    throw error;
   } catch (e) {
-    throw new Error(e.message);
+    next(e);
   }
 };
 
