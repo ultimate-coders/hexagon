@@ -7,8 +7,8 @@ let createNotificationHandler = async (req,res,next) =>{
     let {message, receiver_id, post_id} = req.body;
     let result = await createNotification(message, receiver_id, post_id);
     res.status(201).json(result);
-  } catch (error) {
-    next(error);
+  } catch (e) {
+    next(e);
   }
 };
 
@@ -30,8 +30,8 @@ let updateNotificationHandler = async (req,res,next) =>{
       status: 200,
       message: 'Successfully updated',
     });
-  } catch (error) {
-    next(error);
+  } catch (e) {
+    next(e);
   }
 };
 

@@ -5,8 +5,8 @@ async function interactionHndler(req, res, next) {
   try {
     let result = await addORdeleteInteraction(req);
     res.status(201).json(result);
-  } catch (error) {
-    next(error);
+  } catch (e) {
+    next(e);
   }
 }
 

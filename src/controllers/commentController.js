@@ -14,8 +14,8 @@ async function getPostCommentsHandler(req, res, next) {
 
     let result = await getPostComments(req.params.postId, page);
     res.status(201).json(result);
-  } catch (error) {
-    next(error);
+  } catch (e) {
+    next(e);
   }
 }
 
@@ -27,8 +27,8 @@ async function createCommentHandler(req, res, next) {
       await sendNotification(`${result.profile.first_name} commented on you post`, result.post_owner, req.body.post_id);
     }
     res.status(201).json(result);
-  } catch (error) {
-    next(error);
+  } catch (e) {
+    next(e);
   }
 }
 
@@ -37,8 +37,8 @@ async function updateCommentHandler(req, res, next) {
     let result = await updateComment(req);
 
     res.status(201).json(result);
-  } catch (error) {
-    next(error);
+  } catch (e) {
+    next(e);
   }
 }
 
@@ -49,8 +49,8 @@ async function deleteCommentHandler(req, res, next) {
       status: 200,
       message: 'Successfully deleted',
     });
-  } catch (error) {
-    next(error);
+  } catch (e) {
+    next(e);
   }
 }
 

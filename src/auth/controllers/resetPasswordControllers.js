@@ -16,22 +16,18 @@ const resetPasswordHandler = async (req, res, next) => {
     const code = req.body.code;
     const password = req.body.password;
 
+    if (!email || !code || !password) {
+      const error = new Error('Missing parameters, email, code or password');
+      error.statusCode = 403;
+      throw error;
+    }
+
     if (!validatePassword(password)) {
-      res.status(403).json({
-        status: 403,
-        error: 'Please insert a valid password',
-      });
-      return;
+      const error = new Error('The password is not valid');
+      error.statusCode = 403;
+      throw error;
     }
     const user = await getUserByEmail(email);
-
-    if (!code) {
-      res.status(403).json({
-        status: 403,
-        error: 'The code is required!',
-      });
-      return;
-    }
 
     // Check if we have sent a code to the user
     if (
@@ -57,10 +53,9 @@ const resetPasswordHandler = async (req, res, next) => {
       delete usersPasswordVerification[user.id];
     }
     // No verify request
-    res.status(403).json({
-      status: 403,
-      error: 'The code is not correct or has expired!',
-    });
+    const error = new Error('The code is not correct or has expired');
+    error.statusCode = 403;
+    throw error;
   } catch (e) {
     next(e);
   }
@@ -69,6 +64,11 @@ const resetPasswordHandler = async (req, res, next) => {
 const sendPasswordCodeHandler = async (req, res, next) => {
   try {
     const email = req.body.email;
+    if(!email){
+      const error = new Error('The email is required');
+      error.statusCode = 403;
+      throw error;
+    }
     const user = await getUserByEmail(email);
     if (user) {
       // If we sent the code before, just delete it
