@@ -21,11 +21,13 @@ function Profile(profile) {
   this.caption = profile.caption || '';
   this.profile_picture = {
     id: profile.file_id || '',
-    link: profile.profile_picture || 'https://hexagon-sm.s3.eu-central-1.amazonaws.com/male.jpg',
+    link:
+      profile.profile_picture ||
+      'https://hexagon-sm.s3.eu-central-1.amazonaws.com/male.jpg',
   };
   this.user = {
     id: profile.user_id,
-    username : profile.user_name,
+    username: profile.user_name,
     email: profile.email,
     last_login: profile.last_login,
   };
@@ -41,7 +43,7 @@ async function getAllProfiles(keyword = '', pageNumber = 1) {
     let startFrom = (parseInt(pageNumber) - 1) * PAGE_SIZE;
     let safeValues = [PAGE_SIZE + 1, startFrom];
     // Filtering
-    if(keyword && keyword !== ''){
+    if (keyword && keyword !== '') {
       keyword = `%${keyword}%`;
       sqlQuery = `
       SELECT profile.id AS profile_id, client.id AS user_id, client.last_login as last_login, user_file.id as file_id, first_name, last_name, caption, file as profile_picture, user_name, email FROM profile JOIN client ON profile.user_id = client.id LEFT JOIN user_file ON profile.profile_picture = user_file.id WHERE UPPER(first_name) LIKE UPPER($1) OR UPPER(last_name) LIKE UPPER($1) OR UPPER(user_name) LIKE UPPER($1) OR UPPER(email) LIKE UPPER($1) ORDER BY profile.created_at DESC LIMIT $2 OFFSET $3;
@@ -51,21 +53,25 @@ async function getAllProfiles(keyword = '', pageNumber = 1) {
     // Query the database
     const profilesData = await client.query(sqlQuery, safeValues);
     const hasNext = profilesData.rowCount > PAGE_SIZE;
-    let results = profilesData.rows.map(profile => new Profile(profile));
-    if(hasNext)  results = results.slice(0, -1);
+    let results = profilesData.rows.map((profile) => new Profile(profile));
+    if (hasNext) results = results.slice(0, -1);
     const response = {
       page: pageNumber,
       hasNext: hasNext,
       results: results,
     };
-    return response;   
+    return response;
   } catch (e) {
     throw new Error(e);
   }
 }
 
 // Get all profiles
-async function getProfilesWithMessages(loggedInProfileId, keyword = '', pageNumber = 1) {
+async function getProfilesWithMessages(
+  loggedInProfileId,
+  keyword = '',
+  pageNumber = 1
+) {
   try {
     let sqlQuery = `
     SELECT profile.id AS profile_id, client.id AS user_id, client.last_login as last_login, user_file.id as file_id, first_name, last_name, caption, file as profile_picture, user_name, email FROM profile JOIN client ON profile.user_id = client.id LEFT JOIN user_file ON profile.profile_picture = user_file.id WHERE profile.id in (SELECT DISTINCT receiver_id FROM message WHERE sender_id = $1) OR profile.id in (SELECT DISTINCT sender_id FROM message WHERE receiver_id = $1) ORDER BY profile.created_at DESC LIMIT $2 OFFSET $3;
@@ -73,7 +79,7 @@ async function getProfilesWithMessages(loggedInProfileId, keyword = '', pageNumb
     let startFrom = (parseInt(pageNumber) - 1) * PAGE_SIZE;
     let safeValues = [loggedInProfileId, PAGE_SIZE + 1, startFrom];
     // Filtering
-    if(keyword && keyword !== ''){
+    if (keyword && keyword !== '') {
       keyword = `%${keyword}%`;
       sqlQuery = `
       SELECT profile.id AS profile_id, client.id AS user_id, client.last_login as last_login, user_file.id as file_id, first_name, last_name, caption, file as profile_picture, user_name, email FROM profile JOIN client ON profile.user_id = client.id LEFT JOIN user_file ON profile.profile_picture = user_file.id WHERE (UPPER(first_name) LIKE UPPER($1) OR UPPER(last_name) LIKE UPPER($1) OR UPPER(user_name) LIKE UPPER($1) OR UPPER(email) LIKE UPPER($1)) AND (profile.id in (SELECT DISTINCT receiver_id FROM message WHERE sender_id = $2) OR profile.id in (SELECT DISTINCT sender_id FROM message WHERE receiver_id = $2)) ORDER BY profile.created_at DESC LIMIT $3 OFFSET $4;
@@ -83,14 +89,34 @@ async function getProfilesWithMessages(loggedInProfileId, keyword = '', pageNumb
     // Query the database
     const profilesData = await client.query(sqlQuery, safeValues);
     const hasNext = profilesData.rowCount > PAGE_SIZE;
-    let results = profilesData.rows.map(profile => new Profile(profile));
-    if(hasNext)  results = results.slice(0, -1);
+    let results = profilesData.rows.map((profile) => new Profile(profile));
+    if (hasNext) results = results.slice(0, -1);
+
+    // Add the last message between logged in user and the other users
+    results = await Promise.all(results.map(async (profile) => {
+      sqlQuery = `select * from message where sender_id = $1 and receiver_id = $2 or receiver_id = $1 and sender_id = $2 order by created_at desc limit 1;`;
+      let lastMessage = await client.query(sqlQuery, [
+        loggedInProfileId,
+        profile.id,
+      ]);
+      lastMessage = lastMessage.rows[0];
+      return {
+        ...profile,
+        last_message: {
+          ...lastMessage,
+        },
+      };
+    }));
+
+    // sorted by the last message received or sent
+    results = results.sort((a, b) => a.last_message.created_at - b.last_message.created_at);
+
     const response = {
       page: pageNumber,
       hasNext: hasNext,
       results: results,
     };
-    return response;   
+    return response;
   } catch (e) {
     throw new Error(e);
   }
@@ -112,10 +138,17 @@ async function getSingleProfile(userName, requester) {
     `;
     safeValues = [response.id, requester];
     const followData = await client.query(sqlQuery, safeValues);
-    response['followers'] = followData.rows[0].followers.split('(')[1].split(')')[0];
-    response['followings'] = followData.rows[0].followings.split('(')[1].split(')')[0];
+    response['followers'] = followData.rows[0].followers
+      .split('(')[1]
+      .split(')')[0];
+    response['followings'] = followData.rows[0].followings
+      .split('(')[1]
+      .split(')')[0];
 
-    response['am_follow'] = parseInt(followData.rows[0].am_follow.split('(')[1].split(')')[0]) > 0 ? true : false;
+    response['am_follow'] =
+      parseInt(followData.rows[0].am_follow.split('(')[1].split(')')[0]) > 0
+        ? true
+        : false;
     return response;
   } catch (e) {
     throw new Error(e);
@@ -137,9 +170,13 @@ async function getProfileByUserId(id) {
     `;
     safeValues = [id];
     const followData = await client.query(sqlQuery, safeValues);
-    response['followers'] = followData.rows[0].followers.split('(')[1].split(')')[0];
-    response['followings'] = followData.rows[0].followings.split('(')[1].split(')')[0];
-    
+    response['followers'] = followData.rows[0].followers
+      .split('(')[1]
+      .split(')')[0];
+    response['followings'] = followData.rows[0].followings
+      .split('(')[1]
+      .split(')')[0];
+
     return response;
   } catch (e) {
     throw new Error(e);
@@ -149,12 +186,19 @@ async function getProfileByUserId(id) {
 // Create user profile (Need to be enhanced the response like the get all)
 async function createProfile(profileObj) {
   try {
-    let sqlQuery = 'INSERT INTO profile (user_id, first_name, last_name, caption, profile_picture) VALUES ($1, $2, $3, $4 , $5) RETURNING *;';
+    let sqlQuery =
+      'INSERT INTO profile (user_id, first_name, last_name, caption, profile_picture) VALUES ($1, $2, $3, $4 , $5) RETURNING *;';
     let profile = new UserProfile(profileObj);
-    let safeValues = [profile.user_id, profile.first_name, profile.last_name, profile.caption, profile.profile_picture];
+    let safeValues = [
+      profile.user_id,
+      profile.first_name,
+      profile.last_name,
+      profile.caption,
+      profile.profile_picture,
+    ];
     // Query the database
     let profileData = await client.query(sqlQuery, safeValues);
-    if(profileData.rowCount>0){
+    if (profileData.rowCount > 0) {
       sqlQuery = `
       SELECT profile.id AS profile_id, client.id AS user_id, client.last_login as last_login, user_file.id as file_id, first_name, last_name, caption, file as profile_picture, user_name, email FROM profile JOIN client ON profile.user_id = client.id LEFT JOIN user_file ON profile.profile_picture = user_file.id WHERE profile.id = $1;
       `;
@@ -172,12 +216,19 @@ async function createProfile(profileObj) {
 // Update user profile (Need to be enhanced the response like the get all)
 async function updateProfile(id, profileObj) {
   try {
-    let sqlQuery = 'UPDATE profile SET first_name = $1, last_name = $2, caption = $3, profile_picture = $4 WHERE id = $5 RETURNING *;';
+    let sqlQuery =
+      'UPDATE profile SET first_name = $1, last_name = $2, caption = $3, profile_picture = $4 WHERE id = $5 RETURNING *;';
     let profile = new UserProfile(profileObj);
-    let safeValues = [profile.first_name, profile.last_name, profile.caption, profile.profile_picture, id];
+    let safeValues = [
+      profile.first_name,
+      profile.last_name,
+      profile.caption,
+      profile.profile_picture,
+      id,
+    ];
     // Query the database
     let profileData = await client.query(sqlQuery, safeValues);
-    if(profileData.rowCount>0){
+    if (profileData.rowCount > 0) {
       sqlQuery = `
       SELECT profile.id AS profile_id, client.id AS user_id, client.last_login as last_login, user_file.id as file_id, first_name, last_name, caption, file as profile_picture, user_name, email FROM profile JOIN client ON profile.user_id = client.id LEFT JOIN user_file ON profile.profile_picture = user_file.id WHERE profile.id = $1;
       `;

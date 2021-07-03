@@ -27,6 +27,8 @@ let getMessageHandler = async (req, res, next) => {
     const page = req.query.page || '1';
 
     let { receiver_id } = req.body;
+    console.log(receiver_id);
+    if(!receiver_id) next('missing receiver_id!');
     let result = await getMessage(receiver_id, req.user.profile_id, page);
     res.status(200).json(result);
   } catch (error) {
