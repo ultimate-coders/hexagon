@@ -43,7 +43,7 @@ function Post(post,likes) {
       last_login: post.last_login,
     },
   };
-  this.likes =likes;
+  this.likes = parseInt(likes);
   this.images = [{
     id: post.image_id,
     link: post.image_link,
@@ -70,7 +70,7 @@ async function getAllPosts(loggedInUserProfileId, categoryName, pageNumber = 1) 
     const postsData = await client.query(sqlQuery, safeValues);
     const hasNext = postsData.rowCount > PAGE_SIZE;
     let results = postsData.rows.map(post => {
-      let likes=post.likes? post.likes.split(',')[1].split(')')[0]:0;
+      let likes = post.likes? post.likes.split(',')[1].split(')')[0]:0;
       return new Post(post,likes);
     });
     if(hasNext)  results = results.slice(0, -1);
@@ -169,7 +169,7 @@ async function getSinglePost(loggedInUserProfileId, id) {
 }
 
 // Create post
-async function createPost(postObj) {
+async function createPost(loggedInUserProfileId, postObj) {
   try {
     let sqlQuery = `
     INSERT INTO post (profile_id, text, category_id) VALUES ($1, $2, $3) RETURNING *;
@@ -191,7 +191,7 @@ async function createPost(postObj) {
       attachmentsSqlQuery += 'RETURNING post_id;';
       attachmentData = await client.query(attachmentsSqlQuery, safeValues);
     }
-    const result = await getSinglePost(postsData.rows[0].id);
+    const result = await getSinglePost(loggedInUserProfileId, postsData.rows[0].id);
     return result;   
   } catch (e) {
     throw new Error(e);
@@ -199,7 +199,7 @@ async function createPost(postObj) {
 }
 
 // Update post
-async function updatePost(id, postObj) {
+async function updatePost(loggedInUserProfileId, id, postObj) {
   try {
     let sqlQuery = `
     UPDATE post SET text = $1, category_id = $2 WHERE id=$3 RETURNING id;
@@ -228,7 +228,7 @@ async function updatePost(id, postObj) {
       attachmentsSqlQuery += ';';
       let attachmentData = await client.query(attachmentsSqlQuery, safeValues);
     }
-    const result = await getSinglePost(postsData.rows[0].id);
+    const result = await getSinglePost(loggedInUserProfileId, postsData.rows[0].id);
     return result;    
 
   } catch (e) {
