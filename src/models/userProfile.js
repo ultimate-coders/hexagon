@@ -138,12 +138,12 @@ async function getSingleProfile(userName, requester) {
     `;
     safeValues = [response.id, requester];
     const followData = await client.query(sqlQuery, safeValues);
-    response['followers'] = followData.rows[0].followers
+    response['followers'] = parseInt(followData.rows[0].followers
       .split('(')[1]
-      .split(')')[0];
-    response['followings'] = followData.rows[0].followings
+      .split(')')[0]);
+    response['followings'] = parseInt(followData.rows[0].followings
       .split('(')[1]
-      .split(')')[0];
+      .split(')')[0]);
 
     response['am_follow'] =
       parseInt(followData.rows[0].am_follow.split('(')[1].split(')')[0]) > 0
@@ -170,12 +170,12 @@ async function getProfileByUserId(id) {
     `;
     safeValues = [id];
     const followData = await client.query(sqlQuery, safeValues);
-    response['followers'] = followData.rows[0].followers
+    response['followers'] = parseInt(followData.rows[0].followers
       .split('(')[1]
-      .split(')')[0];
-    response['followings'] = followData.rows[0].followings
+      .split(')')[0]);
+    response['followings'] = parseInt(followData.rows[0].followings
       .split('(')[1]
-      .split(')')[0];
+      .split(')')[0]);
 
     return response;
   } catch (e) {
