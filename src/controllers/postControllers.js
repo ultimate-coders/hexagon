@@ -66,7 +66,7 @@ const createPostsHandler = async (req, res, next) => {
     let fileUploadResponse = await saveFile(req.files);
     req.body['images'] = fileUploadResponse.map((file) => file.id);
     req.body['profile_id'] = req.user.profile_id;
-    const post = await createPost(req.body);
+    const post = await createPost(req.user.profile_id, req.body);
     res.status(201).json(post);
   } catch (e) {
     next(e);
@@ -76,7 +76,7 @@ const createPostsHandler = async (req, res, next) => {
 const updatePostsHandler = async (req, res, next) => {
   try {
     const id = req.params.id;
-    const post = await updatePost(id, req.body);
+    const post = await updatePost(req.user.profile_id, id, req.body);
     res.status(201).json(post);
   } catch (e) {
     next(e);
