@@ -56,14 +56,14 @@ async function getAllPosts(loggedInUserProfileId, categoryName, pageNumber = 1) 
     let sqlQuery = `
     SELECT post.id AS post_id, post.created_at, profile.id AS profile_id, profile_image.id AS file_id, profile_image.file AS profile_picture, client.id AS user_id, client.last_login as last_login, category.id AS category_id, name AS category_name, text, first_name, last_name, caption, user_name, email, post_image.id AS image_id, post_image.file AS image_link ,likes, am_like.like as am_like FROM post JOIN profile ON post.profile_id = profile.id JOIN client ON client.id = profile.user_id JOIN category ON post.category_id = category.id LEFT JOIN user_file AS profile_image ON profile.profile_picture = profile_image.id LEFT JOIN attachment ON attachment.post_id = post.id LEFT JOIN user_file AS post_image ON attachment.file_id = post_image.id left join (select post_id, count(*) from interaction  group by post_id) as likes on likes.post_id = post.id left join (select post_id, count(*) as like from interaction where profile_id=$1 group by post_id ) as am_like on am_like.post_id = post.id ORDER BY post.created_at DESC LIMIT $2 OFFSET $3;
     `;
-    let startFrom = (parseInt(pageNumber) - 1) * PAGE_SIZE;
+    let startFrom = (pageNumber - 1) * PAGE_SIZE;
     let safeValues = [loggedInUserProfileId, PAGE_SIZE + 1, startFrom];
     // Filtering
     if(categoryName && categoryName !== ''){
       sqlQuery = `
       SELECT post.id AS post_id, post.created_at, profile.id AS profile_id, profile_image.id AS file_id, profile_image.file AS profile_picture, client.id AS user_id, client.last_login as last_login, category.id AS category_id, name AS category_name, text, first_name, last_name, caption, user_name, email, post_image.id AS image_id, post_image.file AS image_link ,likes, am_like.like as am_like FROM post JOIN profile ON post.profile_id = profile.id JOIN client ON client.id = profile.user_id JOIN category ON post.category_id = category.id LEFT JOIN user_file AS profile_image ON profile.profile_picture = profile_image.id LEFT JOIN attachment ON attachment.post_id = post.id LEFT JOIN user_file AS post_image ON attachment.file_id = post_image.id left join (select post_id, count(*) from interaction  group by post_id) as likes on likes.post_id = post.id left join (select post_id, count(*) as like from interaction where profile_id=$1 group by post_id ) as am_like on am_like.post_id = post.id WHERE category.name = $2 ORDER BY post.created_at DESC LIMIT $3 OFFSET $4;
       `;
-      startFrom = (parseInt(pageNumber) - 1) * PAGE_SIZE;
+      startFrom = (pageNumber - 1) * PAGE_SIZE;
       safeValues = [loggedInUserProfileId, categoryName, PAGE_SIZE + 1, startFrom];
     }
     // Query the database
@@ -91,7 +91,7 @@ async function getTimelinePosts(loggedInUserProfileId, pageNumber = 1) {
     let sqlQuery = `
     SELECT post.id AS post_id, post.created_at, profile.id AS profile_id, profile_image.id AS file_id, profile_image.file AS profile_picture, client.id AS user_id, client.last_login as last_login, category.id AS category_id, name AS category_name, text, first_name, last_name, caption, user_name, email, post_image.id AS image_id, post_image.file AS image_link ,likes, am_like.like as am_like FROM post JOIN profile ON post.profile_id = profile.id JOIN client ON client.id = profile.user_id JOIN category ON post.category_id = category.id LEFT JOIN user_file AS profile_image ON profile.profile_picture = profile_image.id LEFT JOIN attachment ON attachment.post_id = post.id LEFT JOIN user_file AS post_image ON attachment.file_id = post_image.id left join (select post_id, count(*) from interaction  group by post_id) as likes on likes.post_id = post.id left join (select post_id, count(*) as like from interaction where profile_id=$1 group by post_id ) as am_like on am_like.post_id = post.id WHERE post.profile_id in (SELECT following FROM follow WHERE follower = $1 OR following = $1) ORDER BY post.created_at DESC LIMIT $2 OFFSET $3;
     `;
-    let startFrom = (parseInt(pageNumber) - 1) * PAGE_SIZE;
+    let startFrom = (pageNumber - 1) * PAGE_SIZE;
     let safeValues = [loggedInUserProfileId, PAGE_SIZE + 1, startFrom];
     // Query the database
     const postsData = await client.query(sqlQuery, safeValues);
@@ -119,7 +119,7 @@ async function getProfilePosts(requesterId, profileId, pageNumber = 1) {
     let sqlQuery = `
     SELECT post.id AS post_id, post.created_at, profile.id AS profile_id, profile_image.id AS file_id, profile_image.file AS profile_picture, client.id AS user_id, client.last_login as last_login, category.id AS category_id, name AS category_name, text, first_name, last_name, caption, user_name, email, post_image.id AS image_id, post_image.file AS image_link ,likes, am_like.like as am_like FROM post JOIN profile ON post.profile_id = profile.id JOIN client ON client.id = profile.user_id JOIN category ON post.category_id = category.id LEFT JOIN user_file AS profile_image ON profile.profile_picture = profile_image.id LEFT JOIN attachment ON attachment.post_id = post.id LEFT JOIN user_file AS post_image ON attachment.file_id = post_image.id left join (select post_id, count(*) from interaction  group by post_id) as likes on likes.post_id = post.id left join (select post_id, count(*) as like from interaction where profile_id=$1 group by post_id ) as am_like on am_like.post_id = post.id WHERE post.profile_id = $2  ORDER BY post.created_at DESC LIMIT $3 OFFSET $4;
     `;
-    let startFrom = (parseInt(pageNumber) - 1) * PAGE_SIZE;
+    let startFrom = (pageNumber - 1) * PAGE_SIZE;
     let safeValues = [requesterId, profileId, PAGE_SIZE + 1, startFrom];
     // Query the database
     const postsData = await client.query(sqlQuery, safeValues);
