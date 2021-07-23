@@ -67,11 +67,7 @@ async function getAllProfiles(keyword = '', pageNumber = 1) {
 }
 
 // Get all profiles
-async function getProfilesWithMessages(
-  loggedInProfileId,
-  keyword = '',
-  pageNumber = 1
-) {
+async function getProfilesWithMessages( loggedInProfileId, keyword = '', pageNumber = 1 ) {
   try {
     let sqlQuery = `
     SELECT profile.id AS profile_id, client.id AS user_id, client.last_login as last_login, user_file.id as file_id, first_name, last_name, caption, file as profile_picture, user_name, email FROM profile JOIN client ON profile.user_id = client.id LEFT JOIN user_file ON profile.profile_picture = user_file.id WHERE profile.id in (SELECT DISTINCT receiver_id FROM message WHERE sender_id = $1) OR profile.id in (SELECT DISTINCT sender_id FROM message WHERE receiver_id = $1) ORDER BY profile.created_at DESC LIMIT $2 OFFSET $3;
