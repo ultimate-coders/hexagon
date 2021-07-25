@@ -103,7 +103,7 @@ async function getTimelinePosts(loggedInUserProfileId, pageNumber = 1) {
 
     if(hasNext)  results = results.slice(0, -1);
     const response = {
-      page: pageNumber,
+      page: parseInt(pageNumber),
       hasNext: hasNext,
       results: results,
     };
@@ -131,7 +131,7 @@ async function getProfilePosts(requesterId, profileId, pageNumber = 1) {
 
     if(hasNext)  results = results.slice(0, -1);
     const response = {
-      page: pageNumber,
+      page: parseInt(pageNumber),
       hasNext: hasNext,
       results: results,
     };
