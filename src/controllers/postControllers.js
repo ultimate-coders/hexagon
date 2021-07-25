@@ -86,7 +86,7 @@ const updatePostsHandler = async (req, res, next) => {
 const deletePostsHandler = async (req, res, next) => {
   try {
     const id = req.params.id;
-    const post = await getSinglePost(id);
+    const post = await getSinglePost(req.user.profile_id, id);
     post['images'].forEach(async image => {
       await deleteRemoteFile(image.link);
       await deleteFile(image.link);
