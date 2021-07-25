@@ -20,7 +20,7 @@ let getMessage = async (senderId , receiverId, pageNumber = 1) =>{
     const hasNext = messagesData.rowCount > PAGE_SIZE;
     if(hasNext)  results = results.slice(0, -1);
     const response = {
-      page: pageNumber,
+      page: parseInt(pageNumber),
       hasNext: hasNext,
       results: results,
     };
