@@ -26,7 +26,7 @@ let getMessageHandler = async (req, res, next) => {
   try {
     const page = req.query.page || '1';
 
-    let { receiver_id } = req.body;
+    let receiver_id = req.params.receiver_id;
     if(!receiver_id){
       const error = new Error('missing receiver_id!');
       error.statusCode = 403;
