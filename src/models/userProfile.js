@@ -152,7 +152,7 @@ async function getSingleProfile(userName, requester) {
 }
 
 // Get profile by user id
-async function getProfileByUserId(id) {
+async function getProfileByUserId(id, profile_id) {
   try {
     let sqlQuery = `
     SELECT profile.id AS profile_id, client.id AS user_id, client.last_login as last_login, user_file.id as file_id, first_name, last_name, caption, file as profile_picture, user_name, email FROM profile JOIN client ON profile.user_id = client.id LEFT JOIN user_file ON profile.profile_picture = user_file.id WHERE client.id = $1;
@@ -164,7 +164,7 @@ async function getProfileByUserId(id) {
     sqlQuery = `
     select followers, followings from (select count(*) from follow where following = $1) as followers, (select count(*) from follow where follower = $1) as followings; 
     `;
-    safeValues = [id];
+    safeValues = [profile_id];
     const followData = await client.query(sqlQuery, safeValues);
     response['followers'] = parseInt(followData.rows[0].followers
       .split('(')[1]
