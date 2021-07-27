@@ -9,5 +9,7 @@ const { messages } = require('../server');
 
 
 messages.on('connection', (socket) => {
-  // events go here
+  socket.on('join', payload => {
+    socket.join(payload.user_id);
+  });
 });
