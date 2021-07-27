@@ -24,7 +24,7 @@ async function createCommentHandler(req, res, next) {
     req.body.profile_id = req.user.profile_id;
     let result = await createComment(req);
     if(req.body.profile_id !== result.profile.id){
-      await sendNotification(`${result.profile.first_name} commented on you post`, result.post_owner, req.body.post_id);
+      await sendNotification(`${result.profile.first_name} commented on you post`, result, result.post_owner, req.body.post_id);
     }
     res.status(201).json(result);
   } catch (e) {
