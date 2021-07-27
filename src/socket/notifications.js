@@ -9,6 +9,7 @@ const { notifications } = require('../server');
 // });
 
 notifications.on('connection', (socket) => {
+  console.log('a user Connected to notifications service :', socket.id);
   socket.on('join', payload => {
     socket.join(payload.user_id);
   });
