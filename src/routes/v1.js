@@ -60,7 +60,7 @@ router.put('/notifications/:id',notificationCheck, updateNotificationHandler);
 
 // Messages routes
 router.post('/messages', messageCheck, createMessageHandler);
-router.get('/messages', messageCheck, getMessageHandler);
+router.get('/messages/:receiver_id', messageCheck, getMessageHandler);
 router.delete('/messages/:id',messageCheck, deleteMessageHandler);
 router.put('/messages/:id',messageCheck, updateMessageHandler);
 
