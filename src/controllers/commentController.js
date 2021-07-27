@@ -13,7 +13,7 @@ async function getPostCommentsHandler(req, res, next) {
     const page = req.query.page || '1';
 
     let result = await getPostComments(req.params.postId, page);
-    res.status(201).json(result);
+    res.status(200).json(result);
   } catch (e) {
     next(e);
   }
@@ -36,7 +36,7 @@ async function updateCommentHandler(req, res, next) {
   try {
     let result = await updateComment(req);
 
-    res.status(201).json(result);
+    res.status(200).json(result);
   } catch (e) {
     next(e);
   }
