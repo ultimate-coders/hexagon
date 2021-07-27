@@ -1,5 +1,5 @@
 'use strict';
 
 module.exports = {
-  PAGE_SIZE: 10,
+  PAGE_SIZE: 15,
 };
