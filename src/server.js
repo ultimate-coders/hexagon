@@ -54,14 +54,14 @@ messages.on('connection', () => {
 
 events.on('notification', (payload) => {
   console.log('Notification has been triggered',payload);
-  notifications.to(payload.receiver_id, payload).emit('notification', payload);
+  notifications.to(payload.receiver_id).emit('notification', payload);
 });
 
 // send messages
 events.on('message', (payload) => {
   console.log('Message has been triggered',payload);
-  messages.to(payload.receiver_id, payload).emit('message', payload);
-  messages.to(payload.sender_id, payload).emit('message', payload);
+  messages.to(payload.receiver_id).emit('message', payload);
+  messages.to(payload.sender_id).emit('message', payload);
 });
 
 // Use Routes
