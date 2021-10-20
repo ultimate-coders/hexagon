@@ -79,7 +79,7 @@ CREATE TABLE message(
 );
 
 CREATE TABLE category(
-  id SERIAL PRIMARY KEY,
+  id uuid DEFAULT uuid_generate_v4 () PRIMARY KEY
   name VARCHAR(20) NOT NULL UNIQUE
 );
 
