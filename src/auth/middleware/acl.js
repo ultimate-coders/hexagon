@@ -43,7 +43,7 @@ async function messageCheck(req, res, next) {
       return;
     }
 
-    let SQL = `select sender_id from message where id =$1;`;
+    let SQL = `select receiver_id from message where id =$1;`;
     let safeValue = [req.params.id];
     let query = await client.query(SQL, safeValue);
     if (req.user.profile_id === query.rows[0].receiver_id) {
